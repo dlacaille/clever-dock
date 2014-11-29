@@ -1,0 +1,29 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:CleverDock.Controls"
+        x:Class="CleverDock.MainWindow" Title="WPDock" Width="1080" Height="180" Visibility="Visible"
+        WindowStyle="None" AllowsTransparency="True" HorizontalAlignment="Center" VerticalAlignment="Center"
+        Background="Transparent">
+    <Canvas VerticalAlignment="Top" Background="#00000000">
+        <!--<Rectangle x:Name="DockPanelBackground" Fill="#FF212121" RadiusX="4" RadiusY="4" Stroke="#FF646464" Height="68"
+                   StrokeThickness="2" Width="{Binding ElementName=DockIcons, Path=ActualWidth }"
+                   Canvas.Left="{Binding ElementName=DockIcons, Path=(Canvas.Left) }"
+                   Canvas.Top="{Binding ElementName=DockIcons, Path=(Canvas.Top) }" RenderTransformOrigin="0.5,0.5">
+            <Rectangle.Effect>
+                <DropShadowEffect Direction="0" ShadowDepth="0" BlurRadius="8" Opacity="0.5" />
+            </Rectangle.Effect>
+        </Rectangle>
+        <Rectangle x:Name="DockPanelStroke" Fill="Transparent" RadiusX="4" RadiusY="4" Stroke="#FF060606" Height="68"
+                   Width="{Binding ElementName=DockIcons, Path=ActualWidth }"
+                   Canvas.Left="{Binding ElementName=DockIcons, Path=(Canvas.Left) }"
+                   Canvas.Top="{Binding ElementName=DockIcons, Path=(Canvas.Top) }" />-->
+        <Polygon x:Name="DockPanelBackground" 
+                   Canvas.Left="{Binding ElementName=DockIcons, Path=(Canvas.Left) }"
+                   Canvas.Top="{Binding ElementName=DockIcons, Path=(Canvas.Top) }"
+                   Style="{DynamicResource DockBackgroundStyle}"/>
+        <Polygon x:Name="DockPanelStroke" 
+                    Canvas.Left="{Binding ElementName=DockIcons, Path=(Canvas.Left) }"
+                    Canvas.Top="{Binding ElementName=DockIcons, Path=(Canvas.Top) }"
+                    Style="{DynamicResource DockBackgroundStrokeStyle}"/>
+        <Controls:DockIconContainer x:Name="DockIcons" Height="64" SnapsToDevicePixels="True" MinWidth="64" Style="{DynamicResource DockIconContainerStyle}"/>
+    </Canvas>
+</Window>

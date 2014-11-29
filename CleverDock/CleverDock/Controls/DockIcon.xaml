@@ -1,0 +1,46 @@
+﻿<UserControl x:Name="DockIconControl" x:Class="CleverDock.Controls.DockIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="64" d:DesignWidth="64"
+             Width="64" Height="64">
+    <Grid Name="IconGrid">
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Name="MenuPin" Header="Pin To Dock" Click="MenuPin_Click" IsCheckable="True"/>
+                <MenuItem Name="MenuMinimize" Header="Minimize" Click="MenuMinimize_Click"/>
+                <MenuItem Name="MenuRestore" Header="Restore" Click="MenuRestore_Click"/>
+                <MenuItem Name="MenuClose" Header="Close" Click="MenuClose_Click"/>
+                <Separator />
+                <MenuItem Header="Exit CleverDock" Click="MenuCloseDock_Click"/>
+                <MenuItem Header="CleverDock Settings"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
+        <Rectangle Name="IconBackground" Style="{DynamicResource IconBackgroundStyle}"/>
+        <Image Name="IconImageMirror"  Width="48" Height="48" Source="{Binding ElementName=DockIconControl, Path=BlurredIcon}" Style="{DynamicResource IconImageMirrorStyle}"/>
+        <Image Name="IconImage" Width="48" Height="48" Source="{Binding ElementName=DockIconControl, Path=Icon}" Style="{DynamicResource IconImageStyle}">
+            <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0" ScaleY="0" />
+                        <SkewTransform />
+                        <RotateTransform />
+                        <TranslateTransform Y="0" x:Name="ImageTransform" />
+                    </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <Image Name="IconImageSmall" Visibility="Hidden" Width="20" Height="20" Margin="28,24,0,0" Source="{Binding ElementName=DockIconControl, Path=ChildIcon}" Style="{DynamicResource IconImageStyle}">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0" ScaleY="0" />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform Y="0" x:Name="ImageSmallTransform" />
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <Rectangle Name="IconButton" Style="{DynamicResource IconButtonStyle}"/>
+        <Label Name="IconText" Content="{Binding ElementName=DockIconControl, Path=Text}" Style="{DynamicResource IconTextStyle}"/>
+        <Rectangle Name="IconLight" IsHitTestVisible="False" Style="{DynamicResource IconLightStyle}"/>
+    </Grid>
+</UserControl>
