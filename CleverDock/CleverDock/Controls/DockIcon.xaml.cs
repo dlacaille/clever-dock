@@ -119,7 +119,7 @@ namespace CleverDock.Controls
             if (hasWindows)
             {
                 Window window = Windows.First();
-                Text = window.Title;
+                Text = StringUtils.LimitCharacters(window.Title, 50, 60);
                 var bitmap = IconManager.GetIcon(window.FileName, SettingsManager.Settings.IconSize);
                 Icon = bitmap;
                 BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);

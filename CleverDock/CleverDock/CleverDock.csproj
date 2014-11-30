@@ -155,6 +155,7 @@
     <Compile Include="Decorators\IconDragDecorator.cs" />
     <Compile Include="Tools\BitmapEffectHelper.cs" />
     <Compile Include="Tools\PathTools.cs" />
+    <Compile Include="Tools\StringUtils.cs" />
     <Compile Include="Tools\XamlHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -203,7 +204,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Resource Include="Effects\BrightnessEffect.ps" />
-    <None Include="app.manifest" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
