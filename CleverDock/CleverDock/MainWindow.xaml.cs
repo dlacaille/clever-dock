@@ -72,10 +72,12 @@ namespace CleverDock
 
         public void SetDimensions()
         {
-            WorkAreaManager.SetWorkingArea(0, 0, 1920, 1080);
+            int screenWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            int screenHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
+            WorkAreaManager.SetWorkingArea(0, 0, screenWidth, screenHeight);
             WindowState = System.Windows.WindowState.Maximized;
-            Width = 1920;
-            Height = 1080;
+            Width = screenWidth;
+            Height = screenHeight;
             DockIcons.Height = SettingsManager.Settings.OuterIconSize;
             DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconSize + 4;
             PlaceDock();
