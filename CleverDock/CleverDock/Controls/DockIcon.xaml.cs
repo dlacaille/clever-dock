@@ -128,7 +128,11 @@ namespace CleverDock.Controls
                     IconImageSmall.Visibility = Visibility.Visible;
             }
             if (Info.Pinned && string.IsNullOrEmpty(Info.ImagePath))
-                Icon = IconManager.GetIcon(Info.Path, SettingsManager.Settings.IconSize);
+            {
+                var bitmap = IconManager.GetIcon(Info.Path, SettingsManager.Settings.IconSize);
+                Icon = bitmap;
+                BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
+            }
         }
 
         void Manager_ActiveWindowChanged(object sender, EventArgs e)
