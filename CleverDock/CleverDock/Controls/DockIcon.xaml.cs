@@ -65,7 +65,11 @@ namespace CleverDock.Controls
             else
             {
                 if (string.IsNullOrEmpty(info.ImagePath))
-                    Icon = IconManager.GetIcon(info.Path, SettingsManager.Settings.IconSize);
+                {
+                    var bitmap = IconManager.GetIcon(info.Path, SettingsManager.Settings.IconSize);
+                    Icon = bitmap;
+                    BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
+                }
                 Text = info.Name;
                 MenuPin.IsChecked = info.Pinned;
             }
