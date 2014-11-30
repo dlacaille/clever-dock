@@ -131,6 +131,7 @@
     </ApplicationDefinition>
     <Compile Include="Decorators\WindowManagerDecorator.cs" />
     <Compile Include="Effects\BrightnessEffect.cs" />
+    <Compile Include="Handlers\ThemeEventArgs.cs" />
     <Compile Include="Handlers\WindowEventArgs.cs" />
     <Compile Include="Interop\DwmInterop.cs" />
     <Compile Include="Interop\ProcessInterop.cs" />

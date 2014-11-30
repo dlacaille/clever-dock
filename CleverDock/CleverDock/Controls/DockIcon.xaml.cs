@@ -79,15 +79,23 @@ namespace CleverDock.Controls
             IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;  
             SetDimensions();
             BindThemes();
+            ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
+        }
+
+        void Manager_ThemeChanged(object sender, Handlers.ThemeEventArgs e)
+        {
+            BindThemes();
         }
 
         private void BindThemes()
         {
+            SelectTheme.Items.Clear();
             foreach(var theme in ThemeManager.Manager.GetThemes())
             {
                 var menuItem = new MenuItem();
                 menuItem.Header = theme.Name;
                 menuItem.Tag = theme;
+                menuItem.IsChecked = SettingsManager.Settings.Theme.Path == theme.Path;
                 menuItem.Click += menuItem_Click;
                 SelectTheme.Items.Add(menuItem);
             }

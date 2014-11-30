@@ -1,4 +1,5 @@
-﻿using CleverDock.Tools;
+﻿using CleverDock.Handlers;
+using CleverDock.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +22,8 @@ namespace CleverDock.Managers
                 return _manager;
             }
         }
+
+        public event EventHandler<ThemeEventArgs> ThemeChanged;
 
         public static Theme DefaultTheme = new Theme
         {
@@ -49,6 +52,8 @@ namespace CleverDock.Managers
                 LoadResourceDictionary(xaml);
             }
             SettingsManager.Settings.Theme = theme;
+            if (ThemeChanged != null)
+                ThemeChanged(this, new ThemeEventArgs(theme));
         }
 
         public void LoadComponentTheme(string path)
