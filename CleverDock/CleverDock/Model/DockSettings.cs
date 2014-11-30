@@ -5,7 +5,7 @@ namespace CleverDock.Model
 {
     public class DockSettings
     {
-        public const string SETTINGS_VERSION = "1.0.0";
+        public const string SETTINGS_VERSION = "0.2.0";
 
         public static DockSettings DefaultDockSettings = new DockSettings
         {
@@ -17,13 +17,13 @@ namespace CleverDock.Model
                 Theme = ThemeManager.DefaultTheme
         };
 
+        public string Version = SETTINGS_VERSION;
         public double CollapseDuration;
         public int IconPadding;
         public int IconSize;
         public Theme Theme;
         public List<SerializableIconInfo> Icons;
         public bool SaveAutomatically;
-        public string Version = SETTINGS_VERSION;
 
         public int OuterIconSize
         {

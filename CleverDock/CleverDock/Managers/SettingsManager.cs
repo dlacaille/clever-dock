@@ -3,12 +3,13 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using CleverDock.Model;
+using Newtonsoft.Json;
 
 namespace CleverDock.Managers
 {
     internal class SettingsManager
     {
-        public const string SettingsFile = "config.xml";
+        public const string SettingsFile = "config.json";
 
         private static DockSettings settings;
 
@@ -32,11 +33,11 @@ namespace CleverDock.Managers
         {
             if (!File.Exists(path))
                 return;
-            using (var reader = File.OpenRead(path))
+            using (var stream = new StreamReader(path))
             {
                 try
                 {
-                    settings = GetSerializer().Deserialize(reader) as DockSettings;
+                    settings = JsonConvert.DeserializeObject<DockSettings>(stream.ReadToEnd());
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -48,25 +49,21 @@ namespace CleverDock.Managers
 
         public static void SaveSettings(string path = SettingsFile)
         {
-            new Action(() =>
-            {
-                using (var writer = File.Open(path, FileMode.Create, FileAccess.Write))
-                    GetSerializer().Serialize(writer, Settings);
-            }).BeginInvoke(null, null);
+            var json = JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
+            using (var stream = new StreamWriter(path, false))
+                stream.Write(json);
         }
 
         public static bool CanDeserialize(string path)
         {
             if (!File.Exists(path))
                 return false;
-            using (var reader = File.OpenRead(path))
-            using (var xmlreader = XmlReader.Create(reader))
-                return GetSerializer().CanDeserialize(xmlreader);
+            return true; // TODO: Check if json is valid.
         }
 
-        public static XmlSerializer GetSerializer()
+        public static JsonSerializer GetSerializer()
         {
-            return new XmlSerializer(typeof (DockSettings));
+            return new JsonSerializer();
         }
     }
 }

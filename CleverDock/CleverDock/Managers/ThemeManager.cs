@@ -39,7 +39,9 @@ namespace CleverDock.Managers
 
         public void LoadTheme(Theme theme)
         {
-            if (theme == DefaultTheme)
+            if (theme == null)
+                theme = DefaultTheme;
+            if (theme.Path.StartsWith("/Cleverdock;component/"))
                 LoadComponentTheme(theme.Path);
             else
             {
