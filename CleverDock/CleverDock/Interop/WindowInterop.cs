@@ -174,7 +174,7 @@ namespace CleverDock.Interop
         /// </summary>
         /// <param name="lpClassName"> The window class name. If lpClassName is NULL, it finds any window whose title matches the lpWindowName parameter. </param>
         /// <param name="lpWindowName"> The window name (the window's title). If this parameter is NULL, all window names match. </param>
-        /// <returns> The window name (the window's title). If this parameter is NULL, all window names match. </returns>
+        /// <returns> If the function succeeds, the return value is a handle to the window that has the specified class name and window name. </returns>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 

@@ -89,7 +89,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Kaliko.ImageLibrary, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -208,7 +209,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Effects\BrightnessEffect.fx" />
-    <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
