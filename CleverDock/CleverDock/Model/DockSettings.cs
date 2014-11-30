@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CleverDock.Managers;
+using System.Collections.Generic;
 
 namespace CleverDock.Model
 {
@@ -12,12 +13,14 @@ namespace CleverDock.Model
                 IconPadding = 20,
                 CollapseDuration = 0.3,
                 SaveAutomatically = true,
-                Icons = new List<SerializableIconInfo>()
+                Icons = new List<SerializableIconInfo>(),
+                Theme = ThemeManager.DefaultTheme
         };
 
         public double CollapseDuration;
         public int IconPadding;
         public int IconSize;
+        public Theme Theme;
         public List<SerializableIconInfo> Icons;
         public bool SaveAutomatically;
         public string Version = SETTINGS_VERSION;

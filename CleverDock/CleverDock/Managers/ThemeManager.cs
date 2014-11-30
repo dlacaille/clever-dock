@@ -22,7 +22,7 @@ namespace CleverDock.Managers
             }
         }
 
-        private static Theme DefaultTheme = new Theme
+        public static Theme DefaultTheme = new Theme
         {
             Name = "Default - Metal",
             Path = "/Cleverdock;component/Themes/Metal.xaml"
@@ -34,7 +34,7 @@ namespace CleverDock.Managers
         public void ThemeWindow(Window window)
         {            
             this.window = window;
-            LoadTheme(DefaultTheme);
+            LoadTheme(SettingsManager.Settings.Theme);
         }
 
         public void LoadTheme(Theme theme)
@@ -46,6 +46,7 @@ namespace CleverDock.Managers
                 var xaml = XamlHelper.LoadXaml(theme.Path);
                 LoadResourceDictionary(xaml);
             }
+            SettingsManager.Settings.Theme = theme;
         }
 
         public void LoadComponentTheme(string path)
