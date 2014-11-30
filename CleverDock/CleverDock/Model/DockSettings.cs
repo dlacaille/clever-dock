@@ -9,12 +9,13 @@ namespace CleverDock.Model
 
         public static DockSettings DefaultDockSettings = new DockSettings
         {
-                IconSize = 48,
-                IconPadding = 20,
-                CollapseDuration = 0.3,
-                SaveAutomatically = true,
-                Icons = new List<SerializableIconInfo>(),
-                Theme = ThemeManager.DefaultTheme
+            IconSize = 48,
+            IconPadding = 20,
+            CollapseDuration = 0.3,
+            SaveAutomatically = true,
+            ReserveScreenSpace = false,
+            Icons = new List<SerializableIconInfo>(),
+            Theme = ThemeManager.DefaultTheme
         };
 
         public string Version = SETTINGS_VERSION;
@@ -24,6 +25,7 @@ namespace CleverDock.Model
         public Theme Theme;
         public List<SerializableIconInfo> Icons;
         public bool SaveAutomatically;
+        public bool ReserveScreenSpace;
 
         public int OuterIconSize
         {

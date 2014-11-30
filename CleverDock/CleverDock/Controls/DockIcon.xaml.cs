@@ -82,9 +82,18 @@ namespace CleverDock.Controls
             InitializeComponent();
             IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;
             MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = Windows.Any();
+            ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
+            ReserveScreen.Click += ReserveScreen_Click;
             SetDimensions();
             BindThemes();
             ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
+        }
+
+        void ReserveScreen_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsManager.Settings.ReserveScreenSpace = !SettingsManager.Settings.ReserveScreenSpace;
+            ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
+            MainWindow.Window.SetDimensions();
         }
 
         void Manager_ThemeChanged(object sender, Handlers.ThemeEventArgs e)

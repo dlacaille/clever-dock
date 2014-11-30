@@ -15,10 +15,14 @@ namespace CleverDock
     /// </summary>
     public partial class MainWindow : Window
     {
-        public double Distance = 20;
+        public static MainWindow Window;
+
+        public double Distance = 10;
+        public double TopMargin = 20;
 
         public MainWindow()
         {
+            Window = this;
             InitializeComponent();
             SetDimensions();
             SourceInitialized += MainWindow_SourceInitialized;
@@ -74,12 +78,13 @@ namespace CleverDock
         {
             int screenWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
             int screenHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
-            WorkAreaManager.SetWorkingArea(0, 0, screenWidth, screenHeight);
             WindowState = System.Windows.WindowState.Maximized;
             Width = screenWidth;
             Height = screenHeight;
             DockIcons.Height = SettingsManager.Settings.OuterIconSize;
             DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconSize + 4;
+            int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopMargin : 0);
+            WorkAreaManager.SetWorkingArea(0, 0, screenWidth, screenHeight - reservedSpace);
             PlaceDock();
         }
 
