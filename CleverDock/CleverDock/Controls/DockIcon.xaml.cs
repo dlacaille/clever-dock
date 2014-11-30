@@ -76,7 +76,8 @@ namespace CleverDock.Controls
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             Windows.CollectionChanged += Windows_CollectionChanged;
             InitializeComponent();
-            IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;  
+            IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;
+            MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = Windows.Any();
             SetDimensions();
             BindThemes();
             ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
@@ -123,6 +124,7 @@ namespace CleverDock.Controls
             bool hasWindows = Windows.Any();
 
             IconLight.Visibility = hasWindows ? Visibility.Visible : Visibility.Hidden;
+            MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = hasWindows;
 
             if (hasWindows)
             {
