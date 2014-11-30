@@ -129,7 +129,7 @@ namespace CleverDock.Managers
         private bool isTaskBarWindow(IntPtr hwnd)
         {
             long style = WindowInterop.GetWindowLongPtr(hwnd, WindowInterop.GWL_STYLE); // Get style.
-            if (HasFlag(style, TARGETWINDOW) &&
+            if (//HasFlag(style, TARGETWINDOW) &&
                 WindowInterop.IsWindowVisible(hwnd))// &&
                 //WindowInvoke.GetParent(hwnd) == IntPtr.Zero)
             {
