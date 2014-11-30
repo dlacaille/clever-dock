@@ -85,8 +85,10 @@ namespace CleverDock
 
         public void PlaceDock()
         {
-            DockIcons.SetValue(Canvas.TopProperty, Math.Round(Height - DockIcons.ActualHeight - Distance));
-            DockIcons.SetValue(Canvas.LeftProperty, Math.Round(Width/2 - DockIcons.ActualWidth/2));
+            int screenWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            int screenHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
+            DockIcons.SetValue(Canvas.TopProperty, Math.Round(screenHeight - DockIcons.Height - Distance));
+            DockIcons.SetValue(Canvas.LeftProperty, Math.Round(screenWidth / 2 - DockIcons.ActualWidth / 2));
         }
     }
 }
