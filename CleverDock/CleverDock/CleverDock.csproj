@@ -126,12 +126,14 @@
     <Compile Include="Managers\ProcessManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\TaskbarManager.cs" />
+    <Compile Include="Managers\ThemeManager.cs" />
     <Compile Include="Managers\WindowManager.cs" />
     <Compile Include="Managers\WorkAreaManager.cs" />
     <Compile Include="Model\SerializableIconInfo.cs" />
     <Compile Include="Model\DockSettings.cs" />
     <Compile Include="Interop\IconInterop.cs" />
     <Compile Include="Interop\WindowInterop.cs" />
+    <Compile Include="Model\Theme.cs" />
     <Compile Include="Model\Window.cs" />
     <Compile Include="Tools\AnimationTools.cs" />
     <Compile Include="Controls\DockIconContainer.cs" />
@@ -141,6 +143,7 @@
     <Compile Include="Decorators\IconDragDecorator.cs" />
     <Compile Include="Tools\BitmapEffectHelper.cs" />
     <Compile Include="Tools\PathTools.cs" />
+    <Compile Include="Tools\XamlHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -162,6 +165,7 @@
     <Page Include="Themes\Metal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using CleverDock.Managers;
 using CleverDock.Interop;
+using System.IO;
+using System.Windows.Markup;
 
 namespace CleverDock
 {
@@ -26,7 +28,7 @@ namespace CleverDock
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             Application.Current.Exit += Application_Exit;
             ShowInTaskbar = false;
-            LoadTheme("Metal");
+            ThemeManager.Manager.ThemeWindow(this);
         }
 
         void Manager_ActiveWindowChanged(object sender, EventArgs e)
@@ -37,12 +39,6 @@ namespace CleverDock
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             SetTopmost();
-        }
-
-        void LoadTheme(string name)
-        {
-            var theme = Application.LoadComponent(new Uri("/Cleverdock;component/Themes/" + name + ".xaml", UriKind.Relative)) as ResourceDictionary;
-            Resources.MergedDictionaries.Add(theme);
         }
 
         void MainWindow_SourceInitialized(object sender, EventArgs e)

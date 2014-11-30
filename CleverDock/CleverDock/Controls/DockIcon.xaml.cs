@@ -21,21 +21,11 @@ namespace CleverDock.Controls
     /// </summary>
     public partial class DockIcon : UserControl
     {
-        public static readonly DependencyProperty IconProperty =
-                DependencyProperty.Register("Icon", typeof(ImageSource), typeof(DockIcon));
-
-        public static readonly DependencyProperty BlurredIconProperty =
-                DependencyProperty.Register("BlurredIcon", typeof(ImageSource), typeof(DockIcon));
-
-        public static readonly DependencyProperty ChildIconProperty =
-                DependencyProperty.Register("ChildIcon", typeof(ImageSource), typeof(DockIcon));
-
-        public static readonly DependencyProperty TextProperty =
-                DependencyProperty.Register("Text", typeof (string), typeof (DockIcon));
-
-        public static readonly DependencyProperty IsActiveProperty =
-                DependencyProperty.Register("IsActive", typeof(bool), typeof(DockIcon));
-
+        public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof(ImageSource), typeof(DockIcon));
+        public static readonly DependencyProperty BlurredIconProperty = DependencyProperty.Register("BlurredIcon", typeof(ImageSource), typeof(DockIcon));
+        public static readonly DependencyProperty ChildIconProperty = DependencyProperty.Register("ChildIcon", typeof(ImageSource), typeof(DockIcon));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof (string), typeof (DockIcon));
+        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive", typeof(bool), typeof(DockIcon));
         public ObservableCollection<Window> Windows = new ObservableCollection<Window>();
 
         public ImageSource Icon
@@ -86,8 +76,27 @@ namespace CleverDock.Controls
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             Windows.CollectionChanged += Windows_CollectionChanged;
             InitializeComponent();
-            IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;
+            IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;  
             SetDimensions();
+            BindThemes();
+        }
+
+        private void BindThemes()
+        {
+            foreach(var theme in ThemeManager.Manager.GetThemes())
+            {
+                var menuItem = new MenuItem();
+                menuItem.Header = theme.Name;
+                menuItem.Tag = theme;
+                menuItem.Click += menuItem_Click;
+                SelectTheme.Items.Add(menuItem);
+            }
+        }
+
+        void menuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            ThemeManager.Manager.LoadTheme(menuItem.Tag as Theme);
         }
 
         public DockIconContainer GetContainer()

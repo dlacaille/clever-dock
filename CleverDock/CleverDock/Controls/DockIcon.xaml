@@ -13,6 +13,7 @@
                 <MenuItem Name="MenuRestore" Header="Restore" Click="MenuRestore_Click"/>
                 <MenuItem Name="MenuClose" Header="Close" Click="MenuClose_Click"/>
                 <Separator />
+                <MenuItem Name="SelectTheme" Header="Select Theme"/>
                 <MenuItem Header="Exit CleverDock" Click="MenuCloseDock_Click"/>
             </ContextMenu>
         </Grid.ContextMenu>
