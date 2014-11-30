@@ -1,6 +1,6 @@
 ﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:CleverDock.Controls"
-        x:Class="CleverDock.MainWindow" Title="WPDock" Width="1080" Height="180" Visibility="Visible"
+        x:Class="CleverDock.MainWindow" Title="CleverDock" Width="1080" Height="180" Visibility="Visible"
         WindowStyle="None" AllowsTransparency="True" HorizontalAlignment="Center" VerticalAlignment="Center"
         Background="Transparent">
     <Canvas VerticalAlignment="Top" Background="#00000000">
