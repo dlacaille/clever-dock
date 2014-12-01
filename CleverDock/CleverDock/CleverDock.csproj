@@ -89,12 +89,24 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Kaliko.ImageLibrary, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\ImageLibrary.2.0.0\lib\Kaliko.ImageLibrary.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -119,6 +131,7 @@
     </ApplicationDefinition>
     <Compile Include="Decorators\WindowManagerDecorator.cs" />
     <Compile Include="Effects\BrightnessEffect.cs" />
+    <Compile Include="Handlers\ThemeEventArgs.cs" />
     <Compile Include="Handlers\WindowEventArgs.cs" />
     <Compile Include="Interop\DwmInterop.cs" />
     <Compile Include="Interop\ProcessInterop.cs" />
@@ -126,12 +139,14 @@
     <Compile Include="Managers\ProcessManager.cs" />
     <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\TaskbarManager.cs" />
+    <Compile Include="Managers\ThemeManager.cs" />
     <Compile Include="Managers\WindowManager.cs" />
     <Compile Include="Managers\WorkAreaManager.cs" />
     <Compile Include="Model\SerializableIconInfo.cs" />
     <Compile Include="Model\DockSettings.cs" />
     <Compile Include="Interop\IconInterop.cs" />
     <Compile Include="Interop\WindowInterop.cs" />
+    <Compile Include="Model\Theme.cs" />
     <Compile Include="Model\Window.cs" />
     <Compile Include="Tools\AnimationTools.cs" />
     <Compile Include="Controls\DockIconContainer.cs" />
@@ -141,6 +156,8 @@
     <Compile Include="Decorators\IconDragDecorator.cs" />
     <Compile Include="Tools\BitmapEffectHelper.cs" />
     <Compile Include="Tools\PathTools.cs" />
+    <Compile Include="Tools\StringUtils.cs" />
+    <Compile Include="Tools\XamlHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -159,6 +176,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Content Include="Themes\Dark.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Page Include="Themes\Metal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -184,6 +205,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Resource Include="Effects\BrightnessEffect.ps" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -196,7 +220,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Effects\BrightnessEffect.fx" />
-    <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

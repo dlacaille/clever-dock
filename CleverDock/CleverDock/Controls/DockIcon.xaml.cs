@@ -21,21 +21,11 @@ namespace CleverDock.Controls
     /// </summary>
     public partial class DockIcon : UserControl
     {
-        public static readonly DependencyProperty IconProperty =
-                DependencyProperty.Register("Icon", typeof(ImageSource), typeof(DockIcon));
-
-        public static readonly DependencyProperty BlurredIconProperty =
-                DependencyProperty.Register("BlurredIcon", typeof(ImageSource), typeof(DockIcon));
-
-        public static readonly DependencyProperty ChildIconProperty =
-                DependencyProperty.Register("ChildIcon", typeof(ImageSource), typeof(DockIcon));
-
-        public static readonly DependencyProperty TextProperty =
-                DependencyProperty.Register("Text", typeof (string), typeof (DockIcon));
-
-        public static readonly DependencyProperty IsActiveProperty =
-                DependencyProperty.Register("IsActive", typeof(bool), typeof(DockIcon));
-
+        public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof(ImageSource), typeof(DockIcon));
+        public static readonly DependencyProperty BlurredIconProperty = DependencyProperty.Register("BlurredIcon", typeof(ImageSource), typeof(DockIcon));
+        public static readonly DependencyProperty ChildIconProperty = DependencyProperty.Register("ChildIcon", typeof(ImageSource), typeof(DockIcon));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof (string), typeof (DockIcon));
+        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive", typeof(bool), typeof(DockIcon));
         public ObservableCollection<Window> Windows = new ObservableCollection<Window>();
 
         public ImageSource Icon
@@ -75,7 +65,11 @@ namespace CleverDock.Controls
             else
             {
                 if (string.IsNullOrEmpty(info.ImagePath))
-                    Icon = IconManager.GetIcon(info.Path, SettingsManager.Settings.IconSize);
+                {
+                    var bitmap = IconManager.GetIcon(info.Path, SettingsManager.Settings.IconSize);
+                    Icon = bitmap;
+                    BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
+                }
                 Text = info.Name;
                 MenuPin.IsChecked = info.Pinned;
             }
@@ -87,7 +81,50 @@ namespace CleverDock.Controls
             Windows.CollectionChanged += Windows_CollectionChanged;
             InitializeComponent();
             IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;
+            MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = Windows.Any();
+            ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
+            ReserveScreen.Click += ReserveScreen_Click;
             SetDimensions();
+            BindThemes();
+            ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
+            ThemeManager.Manager.ThemeListChanged += Manager_ThemeListChanged;
+        }
+
+        void Manager_ThemeListChanged(object sender, EventArgs e)
+        {
+            BindThemes();
+        }
+
+        void ReserveScreen_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsManager.Settings.ReserveScreenSpace = !SettingsManager.Settings.ReserveScreenSpace;
+            ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
+            MainWindow.Window.SetDimensions();
+        }
+
+        void Manager_ThemeChanged(object sender, Handlers.ThemeEventArgs e)
+        {
+            BindThemes();
+        }
+
+        private void BindThemes()
+        {
+            SelectTheme.Items.Clear();
+            foreach(var theme in ThemeManager.Manager.GetThemes())
+            {
+                var menuItem = new MenuItem();
+                menuItem.Header = theme.Name;
+                menuItem.Tag = theme;
+                menuItem.IsChecked = SettingsManager.Settings.Theme.Path == theme.Path;
+                menuItem.Click += menuItem_Click;
+                SelectTheme.Items.Add(menuItem);
+            }
+        }
+
+        void menuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            ThemeManager.Manager.LoadTheme(menuItem.Tag as Theme);
         }
 
         public DockIconContainer GetContainer()
@@ -106,11 +143,12 @@ namespace CleverDock.Controls
             bool hasWindows = Windows.Any();
 
             IconLight.Visibility = hasWindows ? Visibility.Visible : Visibility.Hidden;
+            MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = hasWindows;
 
             if (hasWindows)
             {
                 Window window = Windows.First();
-                Text = window.Title;
+                Text = StringUtils.LimitCharacters(window.Title, 50, 60);
                 var bitmap = IconManager.GetIcon(window.FileName, SettingsManager.Settings.IconSize);
                 Icon = bitmap;
                 BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
@@ -119,7 +157,11 @@ namespace CleverDock.Controls
                     IconImageSmall.Visibility = Visibility.Visible;
             }
             if (Info.Pinned && string.IsNullOrEmpty(Info.ImagePath))
-                Icon = IconManager.GetIcon(Info.Path, SettingsManager.Settings.IconSize);
+            {
+                var bitmap = IconManager.GetIcon(Info.Path, SettingsManager.Settings.IconSize);
+                Icon = bitmap;
+                BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
+            }
         }
 
         void Manager_ActiveWindowChanged(object sender, EventArgs e)

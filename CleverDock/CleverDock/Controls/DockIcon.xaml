@@ -9,10 +9,12 @@
         <Grid.ContextMenu>
             <ContextMenu>
                 <MenuItem Name="MenuPin" Header="Pin To Dock" Click="MenuPin_Click" IsCheckable="True"/>
-                <MenuItem Name="MenuMinimize" Header="Minimize" Click="MenuMinimize_Click"/>
-                <MenuItem Name="MenuRestore" Header="Restore" Click="MenuRestore_Click"/>
-                <MenuItem Name="MenuClose" Header="Close" Click="MenuClose_Click"/>
+                <MenuItem Name="MenuMinimize" Header="Minimize" Click="MenuMinimize_Click" IsEnabled="False"/>
+                <MenuItem Name="MenuRestore" Header="Restore" Click="MenuRestore_Click" IsEnabled="False"/>
+                <MenuItem Name="MenuClose" Header="Close" Click="MenuClose_Click" IsEnabled="False"/>
                 <Separator />
+                <MenuItem Name="SelectTheme" Header="Select Theme"/>
+                <MenuItem Name="ReserveScreen" Header="Reserve screen edge"/>
                 <MenuItem Header="Exit CleverDock" Click="MenuCloseDock_Click"/>
             </ContextMenu>
         </Grid.ContextMenu>

@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using CleverDock.Managers;
 using CleverDock.Interop;
+using System.IO;
+using System.Windows.Markup;
 
 namespace CleverDock
 {
@@ -13,10 +15,14 @@ namespace CleverDock
     /// </summary>
     public partial class MainWindow : Window
     {
-        public double Distance = 20;
+        public static MainWindow Window;
+
+        public double Distance = 10;
+        public double TopMargin = 20;
 
         public MainWindow()
         {
+            Window = this;
             InitializeComponent();
             SetDimensions();
             SourceInitialized += MainWindow_SourceInitialized;
@@ -26,7 +32,7 @@ namespace CleverDock
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             Application.Current.Exit += Application_Exit;
             ShowInTaskbar = false;
-            LoadTheme("Metal");
+            ThemeManager.Manager.ThemeWindow(this);
         }
 
         void Manager_ActiveWindowChanged(object sender, EventArgs e)
@@ -37,12 +43,6 @@ namespace CleverDock
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             SetTopmost();
-        }
-
-        void LoadTheme(string name)
-        {
-            var theme = Application.LoadComponent(new Uri("/Cleverdock;component/Themes/" + name + ".xaml", UriKind.Relative)) as ResourceDictionary;
-            Resources.MergedDictionaries.Add(theme);
         }
 
         void MainWindow_SourceInitialized(object sender, EventArgs e)
@@ -76,19 +76,24 @@ namespace CleverDock
 
         public void SetDimensions()
         {
-            WorkAreaManager.SetWorkingArea(0, 0, 1920, 1080);
+            int screenWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            int screenHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
             WindowState = System.Windows.WindowState.Maximized;
-            Width = 1920;
-            Height = 1080;
+            Width = screenWidth;
+            Height = screenHeight;
             DockIcons.Height = SettingsManager.Settings.OuterIconSize;
             DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconSize + 4;
+            int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopMargin : 0);
+            WorkAreaManager.SetWorkingArea(0, 0, screenWidth, screenHeight - reservedSpace);
             PlaceDock();
         }
 
         public void PlaceDock()
         {
-            DockIcons.SetValue(Canvas.TopProperty, Math.Round(Height - DockIcons.ActualHeight - Distance));
-            DockIcons.SetValue(Canvas.LeftProperty, Math.Round(Width/2 - DockIcons.ActualWidth/2));
+            int screenWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            int screenHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
+            DockIcons.SetValue(Canvas.TopProperty, Math.Round(screenHeight - DockIcons.Height - Distance));
+            DockIcons.SetValue(Canvas.LeftProperty, Math.Round(screenWidth / 2 - DockIcons.ActualWidth / 2));
         }
     }
 }
