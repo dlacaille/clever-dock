@@ -6,7 +6,7 @@ reflections. The dock is fully compatible with Windows Vista/7/8/8.1.
 
 This software is still an early alpha and may contain bugs.
 
-![alt tag](https://raw.githubusercontent.com/ldom66/clever-dock/develop/screenshot-0.2.0.jpg)
+![alt tag](https://raw.githubusercontent.com/ldom66/clever-dock/master/screenshot-0.2.0.jpg)
 
 What's new in 0.2.0
 -------------------
@@ -17,3 +17,5 @@ What's new in 0.2.0
 - Settings file now in .json format for better readability and performance.
 - Bug fixes in the dock icons context menus.
 - Better screen size detection and dock placement.
+- Added an option to reserve a screen edge for the dock.
+- Themes update instantly as the .xaml files are saved.
