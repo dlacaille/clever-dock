@@ -1,4 +1,4 @@
-clever-dock
+CleverDock
 ===========
 
 A simple dock for Windows which features extensive theming capabilities and blurry 
