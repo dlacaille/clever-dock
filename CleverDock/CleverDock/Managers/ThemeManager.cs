@@ -24,6 +24,9 @@ namespace CleverDock.Managers
         }
 
         public event EventHandler<ThemeEventArgs> ThemeChanged;
+        public event EventHandler<EventArgs> ThemeListChanged;
+
+        private const string ThemeFolder = "Themes";
 
         public static Theme DefaultTheme = new Theme
         {
@@ -38,6 +41,7 @@ namespace CleverDock.Managers
         {            
             this.window = window;
             LoadTheme(SettingsManager.Settings.Theme);
+            WatchChanges(ThemeFolder);
         }
 
         public void LoadTheme(Theme theme)
@@ -70,9 +74,35 @@ namespace CleverDock.Managers
             window.Resources.MergedDictionaries.Add(theme = resourceDict);
         }
 
+        public void WatchChanges(string path)
+        {
+            var watcher = new FileSystemWatcher();
+            watcher.Path = ThemeFolder;
+            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+               | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            watcher.Filter = "*.xaml";
+            watcher.Changed += OnChanged;
+            watcher.Created += OnChanged;
+            watcher.Deleted += OnChanged;
+            watcher.Renamed += OnChanged;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void OnChanged(object source, EventArgs e)
+        {
+            window.Dispatcher.Invoke(() =>
+            {
+                if (ThemeListChanged != null)
+                    ThemeListChanged(this, new EventArgs());
+                // Reload theme if it still exists
+                if (GetThemes().Any(t => t.Path == SettingsManager.Settings.Theme.Path))
+                    LoadTheme(SettingsManager.Settings.Theme);
+            });
+        }
+
         public Theme[] GetThemes()
         {
-            var themes = Directory.GetFiles("Themes", "*.xaml").Select(f => new Theme()
+            var themes = Directory.GetFiles(ThemeFolder, "*.xaml").Select(f => new Theme()
                 {
                     Name = Path.GetFileNameWithoutExtension(f),
                     Path = f

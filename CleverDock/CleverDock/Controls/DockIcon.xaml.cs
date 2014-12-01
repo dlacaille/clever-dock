@@ -87,6 +87,12 @@ namespace CleverDock.Controls
             SetDimensions();
             BindThemes();
             ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
+            ThemeManager.Manager.ThemeListChanged += Manager_ThemeListChanged;
+        }
+
+        void Manager_ThemeListChanged(object sender, EventArgs e)
+        {
+            BindThemes();
         }
 
         void ReserveScreen_Click(object sender, RoutedEventArgs e)
