@@ -42,8 +42,10 @@ namespace CleverDock.Tools
             stream.Position = 0;
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.StreamSource = stream;
             bitmap.EndInit();
+            bitmap.Freeze();
             return bitmap;
         }
     }
