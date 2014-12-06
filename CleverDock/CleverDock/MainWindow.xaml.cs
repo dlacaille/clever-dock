@@ -7,6 +7,8 @@ using CleverDock.Managers;
 using CleverDock.Interop;
 using System.IO;
 using System.Windows.Markup;
+using System.Windows.Media.Animation;
+using System.Windows.Media;
 
 namespace CleverDock
 {
@@ -33,6 +35,9 @@ namespace CleverDock
             Application.Current.Exit += Application_Exit;
             ShowInTaskbar = false;
             ThemeManager.Manager.ThemeWindow(this);
+            Console.WriteLine("Render Capability is Tier " + (RenderCapability.Tier >> 16));
+            Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline),
+               new FrameworkPropertyMetadata { DefaultValue = 60 });
         }
 
         void Manager_ActiveWindowChanged(object sender, EventArgs e)
