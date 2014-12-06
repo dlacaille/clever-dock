@@ -1,9 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:Effects="clr-namespace:CleverDock.Effects" xmlns:Controls="clr-namespace:CleverDock.Controls">
+                    xmlns:Effects="clr-namespace:CleverDock.Effects"
+                    xmlns:Controls="clr-namespace:CleverDock.Controls">
+    <!-- Effects -->
+    <Effects:BrightnessEffect x:Key="BrightnessEffect" Brightness="0.1" />
     <!-- Dock styles -->
     <Style TargetType="{x:Type ContextMenu}">
-        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="False" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Grid.IsSharedSizeScope" Value="true" />
         <Setter Property="HasDropShadow" Value="True" />
@@ -77,15 +80,10 @@
     <!-- Icon styles -->
     <Style TargetType="Image" x:Key="IconImageStyle">
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+        <Setter Property="RenderOptions.BitmapScalingMode" Value="LowQuality"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="Margin" Value="0,0,0,10"/>
-        <Setter Property="Image.Effect">
-            <Setter.Value>
-                <Effects:BrightnessEffect Brightness="0"/>
-            </Setter.Value>
-        </Setter>
         <Setter Property="Image.RenderTransform">
             <Setter.Value>
                 <TransformGroup>
@@ -110,43 +108,20 @@
                 </BeginStoryboard>
             </EventTrigger>
             <DataTrigger Binding="{Binding ElementName=IconButton, Path=IsMouseOver}" Value="True">
-                <DataTrigger.EnterActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(Image.Effect).Brightness" To="0.1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </DataTrigger.EnterActions>
-                <DataTrigger.ExitActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="(Image.Effect).Brightness" To="0" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </DataTrigger.ExitActions>
+                <Setter Property="Image.Effect" Value="{StaticResource BrightnessEffect}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding ElementName=IconButton, Path=IsMouseOver}" Value="False">
+                <Setter Property="Image.Effect" Value="{x:Null}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
     <Style TargetType="Image" x:Key="IconImageMirrorStyle">
         <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="RenderOptions.BitmapScalingMode" Value="Unspecified"/>
+        <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="Margin" Value="0,80,0,-30"/>
-        <Setter Property="Opacity" Value="0.5"/>
-        <!--<Setter Property="Image.Effect">
-            <Setter.Value>
-                <BlurEffect Radius="5" KernelType="Box"/>
-            </Setter.Value>
-        </Setter>-->
-        <Setter Property="Image.OpacityMask">
-            <Setter.Value>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="White" Offset="1"/>
-                    <GradientStop/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Opacity" Value="0.25"/>
         <Setter Property="Image.RenderTransform">
             <Setter.Value>
                 <TransformGroup>
@@ -205,7 +180,6 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Width" Value="34"/>
         <Setter Property="Height" Value="4"/>
-        <Setter Property="Visibility" Value="Visible"/>
         <Setter Property="Margin" Value="0,0,0,-4"/>
         <Setter Property="Rectangle.Fill">
             <Setter.Value>
