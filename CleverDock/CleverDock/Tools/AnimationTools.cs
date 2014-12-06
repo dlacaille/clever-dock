@@ -45,11 +45,13 @@ namespace CleverDock.Tools
         {
             Storyboard.SetTarget(animation, element);
             Storyboard.SetTargetProperty(animation, new PropertyPath(parameter));
-
             var sb = new Storyboard();
             sb.Children.Add(animation);
             if (completed != null)
-                sb.Completed += (s, e) => { completed.Invoke(); };
+                sb.Completed += (s, e) => {
+                    completed.Invoke();
+                    sb.Stop();
+                };
             sb.Begin(element);
         }
     }
