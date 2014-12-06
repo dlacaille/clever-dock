@@ -23,9 +23,9 @@ namespace CleverDock.Tools
             {
                     To = finalWidth,
                     Duration = TimeSpan.FromSeconds(seconds),
-                    BeginTime = TimeSpan.FromSeconds(delay)
+                    BeginTime = TimeSpan.FromSeconds(delay),
+                    EasingFunction = new QuadraticEase()
             };
-            //collapse.EasingFunction = new CubicEase();
             BeginAnimation(collapse, element, FrameworkElement.WidthProperty, completed);
         }
 
@@ -34,9 +34,9 @@ namespace CleverDock.Tools
             var collapse = new DoubleAnimation
             {
                     To = 0,
-                    Duration = TimeSpan.FromSeconds(seconds)
+                    Duration = TimeSpan.FromSeconds(seconds),
+                    EasingFunction = new QuadraticEase()
             };
-            //collapse.EasingFunction = new CubicEase();
             BeginAnimation(collapse, element, FrameworkElement.WidthProperty, completed);
         }
 
