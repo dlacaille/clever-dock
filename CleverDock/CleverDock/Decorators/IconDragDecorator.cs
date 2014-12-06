@@ -94,14 +94,12 @@ namespace CleverDock.Decorators
         {
             placeholder = new Separator {Width = 0, Visibility = Visibility.Hidden};
             container.Children.Insert(index, placeholder);
-            placeholder.Width = SettingsManager.Settings.OuterIconSize;
             AnimationTools.ExpandX(SettingsManager.Settings.CollapseDuration, SettingsManager.Settings.OuterIconSize, placeholder, null, 0.1);
         }
 
         public void RemovePlaceholder()
         {
             Separator p = placeholder;
-            container.Children.Remove(p);
             AnimationTools.CollapseX(SettingsManager.Settings.CollapseDuration, p, () => container.Children.Remove(p));
             placeholder = null;
         }
@@ -133,8 +131,8 @@ namespace CleverDock.Decorators
             {
                 IsDragging = true;
                 DetachDraggedIcon();
-                offset.X = cpos.X%iconsize - iconsize/2;
-                offset.Y = cpos.Y - container.ActualHeight/2;
+                offset.X = cpos.X % iconsize - iconsize /2;
+                offset.Y = cpos.Y - container.ActualHeight / 2;
             }
             if (IsDragging)
             {

@@ -11,7 +11,7 @@ namespace CleverDock.Model
         {
             IconSize = 48,
             IconPadding = 20,
-            CollapseDuration = 0.3,
+            CollapseDuration = 0.2,
             SaveAutomatically = true,
             ReserveScreenSpace = false,
             Icons = new List<SerializableIconInfo>(),
