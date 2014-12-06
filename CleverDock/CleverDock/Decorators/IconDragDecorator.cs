@@ -100,7 +100,9 @@ namespace CleverDock.Decorators
         public void RemovePlaceholder()
         {
             Separator p = placeholder;
-            AnimationTools.CollapseX(SettingsManager.Settings.CollapseDuration, p, () => container.Children.Remove(p));
+            AnimationTools.CollapseX(SettingsManager.Settings.CollapseDuration, p, () => {
+                container.Children.Remove(p);
+            });
             placeholder = null;
         }
 
