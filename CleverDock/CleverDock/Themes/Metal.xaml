@@ -100,10 +100,18 @@
                     <Storyboard>
                         <DoubleAnimation
                                 Storyboard.TargetProperty="(Image.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" To="1"
-                                Duration="0:0:0.15" />
+                                Duration="0:0:0.15">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
                         <DoubleAnimation
                                 Storyboard.TargetProperty="(Image.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" To="1"
-                                Duration="0:0:0.15" />
+                                Duration="0:0:0.15">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
