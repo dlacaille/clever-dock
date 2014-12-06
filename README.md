@@ -43,3 +43,6 @@ Troubleshooting
 #####CleverDock can not start, it crashes as soon as I try to open it.
 > You may not have .Net Framework 4.5. Try to install it using [This link](http://www.microsoft.com/fr-ca/download/details.aspx?id=30653)
 > If this issue persists, try to start the [debug version](https://github.com/ldom66/clever-dock/releases/download/v0.2.0/CleverDock-v0.2.0-Debug.zip) and contact me with the details of the crash.
+
+#####I can not restore/minimize/close a specific application on the dock.
+> The app you can't use may have been started as an administrator. The dock must have administrator rights to control these processes. Simply exit CleverDock then start it again by right clicking and selecting *Run as administrator*. You can also check the box *Run this program as an administrator* in the executable's properties window in the *Compatibility* tab.
