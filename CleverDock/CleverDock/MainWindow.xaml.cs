@@ -42,6 +42,7 @@ namespace CleverDock
             WindowManager.Manager.ActiveWindowRectChanged += Manager_ActiveWindowRectChanged;
             WindowManager.Manager.CursorPositionChanged += Manager_CursorPositionChanged;
             Application.Current.Exit += Application_Exit;
+            SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
             ShowInTaskbar = false;
             ThemeManager.Manager.ThemeWindow(this);
             Console.WriteLine("Render Capability is Tier " + (RenderCapability.Tier >> 16));
@@ -53,8 +54,20 @@ namespace CleverDock
             dockShowTimer.Elapsed += dockShowTimer_Elapsed;
         }
 
+        void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "AutoHide")
+            {
+                if (!SettingsManager.Settings.AutoHide && !DockIsVisible)
+                    ShowDock();
+            }
+
+        }
+
         void Manager_CursorPositionChanged(object sender, Handlers.CursorPosEventArgs e)
         {
+            if (!SettingsManager.Settings.AutoHide)
+                return;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (!DockIsVisible && !ShouldShowDock)
@@ -115,11 +128,18 @@ namespace CleverDock
 
         Rect MouseHotspot
         {
-            get { return new Rect(DockLeft, ScreenHeight - HotspotHeight, DockIcons.ActualWidth, HotspotHeight); }
+            get 
+            {
+                double hotspotWidth = Math.Max(DockIcons.ActualWidth, ScreenWidth / 2);
+                double hotspotLeft = (ScreenWidth - hotspotWidth) / 2;
+                return new Rect(hotspotLeft, ScreenHeight - HotspotHeight, hotspotWidth, HotspotHeight); 
+            }
         }
 
         void Manager_ActiveWindowRectChanged(object sender, Handlers.WindowRectEventArgs e)
         {
+            if (!SettingsManager.Settings.AutoHide)
+                return;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Rect rect = e.Rect; // Implicit conversion to Windows.Rect

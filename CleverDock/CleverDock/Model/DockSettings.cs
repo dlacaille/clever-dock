@@ -26,10 +26,11 @@ namespace CleverDock.Model
             IconSize = 48,
             IconPadding = 20,
             CollapseDuration = 0.2,
-            DockHideDuration = 0.6,
+            DockHideDuration = 0.5,
             DockShowDuration = 0.3,
             DockHideDelay = 300,
             DockShowDelay = 50,
+            AutoHide = true,
             SaveAutomatically = true,
             ReserveScreenSpace = false,
             Icons = new List<SerializableIconInfo>(),
@@ -110,6 +111,13 @@ namespace CleverDock.Model
         {
             get { return _reserveScreenSpace; }
             set {  _reserveScreenSpace = value; OnPropertyChanged(); }
+        }
+
+        private bool _autoHide;
+        public bool AutoHide
+        {
+            get { return _autoHide; }
+            set { _autoHide = value; OnPropertyChanged(); }
         }
 
         public int OuterIconSize
