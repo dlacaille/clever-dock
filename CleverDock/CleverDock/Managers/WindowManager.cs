@@ -99,7 +99,7 @@ namespace CleverDock.Managers
                     WindowInterop.GetCursorPos(out cPos);
                     if (CursorPosition != cPos && CursorPositionChanged != null)
                         CursorPositionChanged(this, new CursorPosEventArgs(CursorPosition = cPos));
-                    Thread.Sleep(33); // ~30ips
+                    Thread.Sleep(40); // ~25ips
                 }
             });
             checkWindowsThread.Start();
