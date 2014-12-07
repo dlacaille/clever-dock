@@ -63,7 +63,6 @@ namespace CleverDock
                 if (!SettingsManager.Settings.AutoHide && !DockIsVisible)
                     ShowDock();
             }
-
         }
 
         void Manager_CursorPositionChanged(object sender, Handlers.CursorPosEventArgs e)
@@ -147,7 +146,12 @@ namespace CleverDock
                 return;
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (ShouldHideDock)
+                Rect rect = e.Rect; // Implicit conversion to Windows.Rect
+                bool intersects = rect.IntersectsWith(Rect); // Check if the active window is intersecting with the dock.
+                bool hover = DockIcons.IsMouseOver;
+                var window = new Model.Window(WindowManager.Manager.ActiveWindow);
+                bool isDesktop = window.FileName.EndsWith("explorer.exe") && window.Title == "";
+                if (intersects && !hover && !isDesktop)
                     HideDock();
                 else
                     ShowDock();
