@@ -69,7 +69,7 @@ namespace CleverDock.Model
 
         public bool IsActive()
         {
-            return Hwnd == WindowManager.Manager.LastActive;
+            return Hwnd == WindowManager.Manager.ActiveWindow;
         }
 
         public bool IsChild()

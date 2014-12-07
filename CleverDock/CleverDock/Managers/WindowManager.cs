@@ -36,7 +36,7 @@ namespace CleverDock.Managers
         public event EventHandler<WindowRectEventArgs> ActiveWindowRectChanged;
         public event EventHandler ActiveWindowChanged;
         public event EventHandler<CursorPosEventArgs> CursorPositionChanged;
-        public IntPtr LastActive;
+        public IntPtr ActiveWindow;
         private IntPtr dockHwnd;
         public Point CursorPosition;
         public Rect ActiveWindowRect;
@@ -84,7 +84,7 @@ namespace CleverDock.Managers
                         WindowListChanged(this, new EventArgs());
                     // Check active window
                     IntPtr activeWindow = WindowInterop.GetForegroundWindow();
-                    if (LastActive != activeWindow && ActiveWindowChanged != null && activeWindow != dockHwnd)
+                    if (ActiveWindow != activeWindow && ActiveWindowChanged != null && activeWindow != dockHwnd)
                         ActiveWindowChanged(activeWindow, new EventArgs());
                     // Check active window location
                     if (activeWindow != IntPtr.Zero && activeWindow != dockHwnd)
@@ -113,7 +113,7 @@ namespace CleverDock.Managers
 
         void WindowManager_ActiveWindowChanged(object sender, EventArgs e)
         {
-            LastActive = (IntPtr)sender;
+            ActiveWindow = (IntPtr)sender;
         }
 
         void WindowManager_WindowListChanged(object sender, EventArgs e)
