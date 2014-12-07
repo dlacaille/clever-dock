@@ -50,8 +50,10 @@ namespace CleverDock
                new FrameworkPropertyMetadata { DefaultValue = 30 });
             dockHideTimer = new Timer(SettingsManager.Settings.DockHideDelay);
             dockHideTimer.Elapsed += dockHideTimer_Elapsed;
+            dockHideTimer.AutoReset = false;
             dockShowTimer = new Timer(SettingsManager.Settings.DockShowDelay);
             dockShowTimer.Elapsed += dockShowTimer_Elapsed;
+            dockShowTimer.AutoReset = false;
         }
 
         void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -119,10 +121,13 @@ namespace CleverDock
             {
                 if (!DockIsVisible)
                     return false;
-                bool hover = DockIcons.IsMouseOver;
-                bool isInHotspot = MouseHotspot.Contains(WindowManager.Manager.CursorPosition);
-                bool isActiveWindowOverlapping = WindowManager.Manager.ActiveWindowRect.IntersectsWith(Rect);
-                return DockIsVisible && !isInHotspot && !hover && isActiveWindowOverlapping;
+                var window = new Model.Window(WindowManager.Manager.ActiveWindow);
+                if (window.FileName.EndsWith("explorer.exe") && window.Title == "")
+                    return false; // Explorer.exe with no title should be the Desktop in most cases.
+                return WindowManager.Manager.ActiveWindowRect.IntersectsWith(Rect) // Dock intersects with foreground window
+                    && DockIsVisible
+                    && !MouseHotspot.Contains(WindowManager.Manager.CursorPosition) // Mouse is not in hotspot 
+                    && !DockIcons.IsMouseOver; // Mouse is not over the dock icons.
             }
         }
 
@@ -142,10 +147,7 @@ namespace CleverDock
                 return;
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Rect rect = e.Rect; // Implicit conversion to Windows.Rect
-                bool intersects = rect.IntersectsWith(Rect); // Check if the active window is intersecting with the dock.
-                bool hover = DockIcons.IsMouseOver;
-                if (intersects && !hover)
+                if (ShouldHideDock)
                     HideDock();
                 else
                     ShowDock();
