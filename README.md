@@ -41,7 +41,7 @@ Troubleshooting
 > If that did not work, open the task manager and close explorer, then use the file menu to start explorer.exe again.
 
 #####CleverDock can not start, it crashes as soon as I try to open it.
-> You may not have .Net Framework 4.5. Try to install it using [This link](http://www.microsoft.com/fr-ca/download/details.aspx?id=30653)
+> You may not have .Net Framework 4.5. Install it using [this link.](http://www.microsoft.com/fr-ca/download/details.aspx?id=30653)<br />
 > If this issue persists, try to start the [debug version](https://github.com/ldom66/clever-dock/releases/download/v0.2.0/CleverDock-v0.2.0-Debug.zip) and contact me with the details of the crash.
 
 #####I can not restore/minimize/close a specific application on the dock.
