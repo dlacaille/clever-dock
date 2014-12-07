@@ -86,8 +86,15 @@ namespace CleverDock.Controls
             ReserveScreen.Click += ReserveScreen_Click;
             SetDimensions();
             BindThemes();
+            SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
             ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
             ThemeManager.Manager.ThemeListChanged += Manager_ThemeListChanged;
+        }
+
+        void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "ReserveScreenSpace")
+                ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
         }
 
         void Manager_ThemeListChanged(object sender, EventArgs e)
