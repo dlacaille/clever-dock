@@ -24,8 +24,6 @@ namespace CleverDock
         public double Distance = 0;
         public double TopMargin = 20;
         public double HotspotHeight = 20;
-        public double DockShowDelay = 50;
-        public double DockHideDelay = 300;
         public bool DockIsVisible = true;
 
         private Timer dockShowTimer = null;
@@ -49,9 +47,9 @@ namespace CleverDock
             Console.WriteLine("Render Capability is Tier " + (RenderCapability.Tier >> 16));
             Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline),
                new FrameworkPropertyMetadata { DefaultValue = 30 });
-            dockHideTimer = new Timer(DockHideDelay);
+            dockHideTimer = new Timer(SettingsManager.Settings.DockHideDelay);
             dockHideTimer.Elapsed += dockHideTimer_Elapsed;
-            dockShowTimer = new Timer(DockShowDelay);
+            dockShowTimer = new Timer(SettingsManager.Settings.DockShowDelay);
             dockShowTimer.Elapsed += dockShowTimer_Elapsed;
         }
 
@@ -178,7 +176,7 @@ namespace CleverDock
             if (!DockIsVisible)
                 return;
             double dockHeight = DockIcons.ActualHeight + Distance + TopMargin;
-            AnimationTools.TranslateY(0.3, DockTop + dockHeight, Canvas.TopProperty, DockIcons);
+            AnimationTools.TranslateY(SettingsManager.Settings.DockHideDuration, DockTop + dockHeight, Canvas.TopProperty, DockIcons);
             DockIsVisible = false;
         }
 
@@ -186,7 +184,7 @@ namespace CleverDock
         {
             if (DockIsVisible)
                 return;
-            AnimationTools.TranslateY(0.3, DockTop, Canvas.TopProperty, DockIcons);
+            AnimationTools.TranslateY(SettingsManager.Settings.DockShowDuration, DockTop, Canvas.TopProperty, DockIcons);
             DockIsVisible = true;
         }
 
