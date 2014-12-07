@@ -46,7 +46,7 @@ namespace CleverDock.Tools
             {
                 To = to,
                 Duration = TimeSpan.FromSeconds(seconds),
-                EasingFunction = new QuadraticEase()
+                EasingFunction = new CubicEase()
             };
             BeginAnimation(collapse, element, property, completed);
         }
