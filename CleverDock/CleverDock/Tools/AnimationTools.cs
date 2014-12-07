@@ -40,17 +40,27 @@ namespace CleverDock.Tools
             BeginAnimation(collapse, element, FrameworkElement.WidthProperty, completed);
         }
 
-        public static void BeginAnimation(Timeline animation, FrameworkElement element, DependencyProperty parameter,
+        public static void TranslateY(double seconds, double to, DependencyProperty property, FrameworkElement element, Action completed = null)
+        {
+            var collapse = new DoubleAnimation
+            {
+                To = to,
+                Duration = TimeSpan.FromSeconds(seconds),
+                EasingFunction = new QuadraticEase()
+            };
+            BeginAnimation(collapse, element, property, completed);
+        }
+
+        public static void BeginAnimation(Timeline animation, FrameworkElement element, DependencyProperty property,
                                           Action completed = null)
         {
             Storyboard.SetTarget(animation, element);
-            Storyboard.SetTargetProperty(animation, new PropertyPath(parameter));
+            Storyboard.SetTargetProperty(animation, new PropertyPath(property));
             var sb = new Storyboard();
             sb.Children.Add(animation);
             if (completed != null)
                 sb.Completed += (s, e) => {
                     completed.Invoke();
-                    sb.Stop();
                 };
             sb.Begin(element);
         }
