@@ -15,6 +15,7 @@
                 <Separator />
                 <MenuItem Name="SelectTheme" Header="Select Theme"/>
                 <MenuItem Name="ReserveScreen" Header="Reserve screen edge"/>
+                <MenuItem Name="AutoHide" Header="AutoHide"/>
                 <MenuItem Header="Exit CleverDock" Click="MenuCloseDock_Click"/>
             </ContextMenu>
         </Grid.ContextMenu>

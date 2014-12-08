@@ -46,18 +46,26 @@ namespace CleverDock.Managers
 
         public void LoadTheme(Theme theme)
         {
-            if (theme == null)
-                theme = DefaultTheme;
-            if (theme.Path.StartsWith("/Cleverdock;component/"))
-                LoadComponentTheme(theme.Path);
-            else
+            try
             {
-                var xaml = XamlHelper.LoadXaml(theme.Path);
-                LoadResourceDictionary(xaml);
+                if (theme == null)
+                    theme = DefaultTheme;
+                if (theme.Path.StartsWith("/Cleverdock;component/"))
+                    LoadComponentTheme(theme.Path);
+                else
+                {
+                    var xaml = XamlHelper.LoadXaml(theme.Path);
+                    LoadResourceDictionary(xaml);
+                }
+                SettingsManager.Settings.Theme = theme;
+                if (ThemeChanged != null)
+                    ThemeChanged(this, new ThemeEventArgs(theme));
+            } 
+            catch (Exception ex)
+            {
+                MessageBox.Show("Theme \"" + theme.Name + "\" failed to load. \n" + ex.Message);
+                LoadTheme(DefaultTheme);
             }
-            SettingsManager.Settings.Theme = theme;
-            if (ThemeChanged != null)
-                ThemeChanged(this, new ThemeEventArgs(theme));
         }
 
         public void LoadComponentTheme(string path)

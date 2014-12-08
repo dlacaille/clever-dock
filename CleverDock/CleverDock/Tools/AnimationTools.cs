@@ -23,9 +23,9 @@ namespace CleverDock.Tools
             {
                     To = finalWidth,
                     Duration = TimeSpan.FromSeconds(seconds),
-                    BeginTime = TimeSpan.FromSeconds(delay)
+                    BeginTime = TimeSpan.FromSeconds(delay),
+                    EasingFunction = new QuadraticEase()
             };
-            //collapse.EasingFunction = new CubicEase();
             BeginAnimation(collapse, element, FrameworkElement.WidthProperty, completed);
         }
 
@@ -34,22 +34,37 @@ namespace CleverDock.Tools
             var collapse = new DoubleAnimation
             {
                     To = 0,
-                    Duration = TimeSpan.FromSeconds(seconds)
+                    Duration = TimeSpan.FromSeconds(seconds),
+                    EasingFunction = new QuadraticEase()
             };
-            //collapse.EasingFunction = new CubicEase();
             BeginAnimation(collapse, element, FrameworkElement.WidthProperty, completed);
         }
 
-        public static void BeginAnimation(Timeline animation, FrameworkElement element, DependencyProperty parameter,
+        public static void TranslateY(double seconds, double to, DependencyProperty property, FrameworkElement element, Action completed = null)
+        {
+            var collapse = new DoubleAnimation
+            {
+                To = to,
+                Duration = TimeSpan.FromSeconds(seconds),
+                EasingFunction = new QuadraticEase()
+                {
+                    EasingMode = EasingMode.EaseInOut
+                }
+            };
+            BeginAnimation(collapse, element, property, completed);
+        }
+
+        public static void BeginAnimation(Timeline animation, FrameworkElement element, DependencyProperty property,
                                           Action completed = null)
         {
             Storyboard.SetTarget(animation, element);
-            Storyboard.SetTargetProperty(animation, new PropertyPath(parameter));
-
+            Storyboard.SetTargetProperty(animation, new PropertyPath(property));
             var sb = new Storyboard();
             sb.Children.Add(animation);
             if (completed != null)
-                sb.Completed += (s, e) => { completed.Invoke(); };
+                sb.Completed += (s, e) => {
+                    completed.Invoke();
+                };
             sb.Begin(element);
         }
     }

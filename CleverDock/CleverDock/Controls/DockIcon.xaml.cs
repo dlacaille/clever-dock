@@ -84,15 +84,37 @@ namespace CleverDock.Controls
             MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = Windows.Any();
             ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
             ReserveScreen.Click += ReserveScreen_Click;
+            AutoHide.IsChecked = SettingsManager.Settings.AutoHide;
+            AutoHide.Click += AutoHide_Click;
             SetDimensions();
             BindThemes();
+            SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
             ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
             ThemeManager.Manager.ThemeListChanged += Manager_ThemeListChanged;
+        }
+
+        void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "ReserveScreenSpace":
+                    ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
+                    break;
+                case "AutoHide":
+                    AutoHide.IsChecked = SettingsManager.Settings.AutoHide;
+                    break;
+            }
         }
 
         void Manager_ThemeListChanged(object sender, EventArgs e)
         {
             BindThemes();
+        }
+        
+        void AutoHide_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsManager.Settings.AutoHide = !SettingsManager.Settings.AutoHide;
+            AutoHide.IsChecked = SettingsManager.Settings.AutoHide;
         }
 
         void ReserveScreen_Click(object sender, RoutedEventArgs e)

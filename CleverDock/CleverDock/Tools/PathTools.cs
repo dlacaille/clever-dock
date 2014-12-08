@@ -7,7 +7,7 @@ namespace CleverDock.Tools
     {
         public static bool SamePath(string a, string b)
         {
-            if (a == null || b == null)
+            if (String.IsNullOrEmpty(a) || String.IsNullOrEmpty(b))
                 return a == b;
             return String.Compare(
                     Path.GetFullPath(a).TrimEnd('\\'),

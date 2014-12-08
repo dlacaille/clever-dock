@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CleverDock.Interop
 {
-    internal class WindowInterop
+    public class WindowInterop
     {
         public static int WM_CLOSE = 0x10;
 
@@ -275,8 +275,51 @@ namespace CleverDock.Interop
         /// <param name="wFlags"> The window sizing and positioning flags. </param>
         /// <returns> If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError. </returns>
         [DllImport("user32.dll")]
-        public static extern int SetWindowPos(IntPtr hwnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy,
-                                              int wFlags);
+        public static extern int SetWindowPos(IntPtr hwnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int wFlags);
+
+        /// <summary>
+        /// Rectangle used in the GetWindowRect method.
+        /// </summary>
+        public struct Rect
+        {
+            public int Left, Top, Right, Bottom;
+
+            public static implicit operator System.Windows.Rect(Rect r)
+            {
+                return new System.Windows.Rect(r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the dimensions of the bounding rectangle of the specified window. The dimensions are given in screen coordinates that are relative to the upper-left corner of the screen.
+        /// </summary>
+        /// <param name="hwnd">A handle to the window.</param>
+        /// <param name="rectangle">A pointer to a RECT structure that receives the screen coordinates of the upper-left and lower-right corners of the window.</param>
+        /// <returns>Returns nonzero if successful or zero otherwise. To get extended error information, call GetLastError.</returns>
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
+
+        /// <summary>
+        /// Point structure used in GetCursorPos.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Point
+        {
+            public int X, Y;
+
+            public static implicit operator System.Windows.Point(Point point)
+            {
+                return new System.Windows.Point(point.X, point.Y);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the position of the mouse cursor, in screen coordinates.
+        /// </summary>
+        /// <param name="lpPoint">A pointer to a POINT structure that receives the screen coordinates of the cursor.</param>
+        /// <returns>Returns nonzero if successful or zero otherwise. To get extended error information, call GetLastError.</returns>
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out Point lpPoint);
 
         /// <summary>
         ///   Enumerates all top-level windows on the screen by passing the handle to each window, in turn, to an application-defined callback function. EnumWindows continues until the last top-level window is enumerated or the callback function returns FALSE.

@@ -33,9 +33,13 @@ namespace CleverDock.Managers
         public event EventHandler WindowListChanged;
         public event EventHandler<WindowEventArgs> WindowAdded;
         public event EventHandler<WindowEventArgs> WindowRemoved;
+        public event EventHandler<WindowRectEventArgs> ActiveWindowRectChanged;
         public event EventHandler ActiveWindowChanged;
-        public IntPtr LastActive;
+        public event EventHandler<CursorPosEventArgs> CursorPositionChanged;
+        public IntPtr ActiveWindow;
         private IntPtr dockHwnd;
+        public Point CursorPosition;
+        public Rect ActiveWindowRect;
 
         private static WindowManager manager;
         public static WindowManager Manager
@@ -76,14 +80,26 @@ namespace CleverDock.Managers
                             windowCount++;
                         return true;
                     }, 0);
-
                     if (windowCount != Windows.Count && WindowListChanged != null)
                         WindowListChanged(this, new EventArgs());
                     // Check active window
                     IntPtr activeWindow = WindowInterop.GetForegroundWindow();
-                    if(LastActive != activeWindow && ActiveWindowChanged != null && activeWindow != dockHwnd)
+                    if (ActiveWindow != activeWindow && ActiveWindowChanged != null && activeWindow != dockHwnd)
                         ActiveWindowChanged(activeWindow, new EventArgs());
-                    Thread.Sleep(40); // 25ips
+                    // Check active window location
+                    if (activeWindow != IntPtr.Zero && activeWindow != dockHwnd)
+                    {
+                        WindowInterop.Rect windowRect = new WindowInterop.Rect();
+                        WindowInterop.GetWindowRect(activeWindow, ref windowRect);
+                        if (windowRect != ActiveWindowRect && ActiveWindowRectChanged != null)
+                            ActiveWindowRectChanged(this, new WindowRectEventArgs(ActiveWindowRect = windowRect));
+                    }
+                    // Check current cursor position
+                    WindowInterop.Point cPos;
+                    WindowInterop.GetCursorPos(out cPos);
+                    if (CursorPosition != cPos && CursorPositionChanged != null)
+                        CursorPositionChanged(this, new CursorPosEventArgs(CursorPosition = cPos));
+                    Thread.Sleep(40); // ~25ips
                 }
             });
             checkWindowsThread.Start();
@@ -97,7 +113,7 @@ namespace CleverDock.Managers
 
         void WindowManager_ActiveWindowChanged(object sender, EventArgs e)
         {
-            LastActive = (IntPtr)sender;
+            ActiveWindow = (IntPtr)sender;
         }
 
         void WindowManager_WindowListChanged(object sender, EventArgs e)

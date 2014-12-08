@@ -8,6 +8,15 @@ This software is still an early alpha and may contain bugs.
 
 ![alt tag](https://raw.githubusercontent.com/ldom66/clever-dock/master/screenshot-0.2.0.jpg)
 
+What's new in 0.3.0
+-------------------
+- Optimized overall dock performance for smoother animations.
+- Added collapsing animations when icons are dragged.
+- Better theme loading error management.
+- Fixed a crash when a window does not have a file name.
+- Added the AutoHide feature.
+- Fixed a bug with the *Reserve screen space* checkbox.
+
 What's new in 0.2.0
 -------------------
 - Eliminated missing blurred icons.
@@ -22,6 +31,9 @@ What's new in 0.2.0
 
 Download
 --------
+Version 0.3.0 Standalone - Vista/7/8/8.1:<br />
+[CleverDock-v0.3.0.zip](https://github.com/ldom66/clever-dock/releases/download/v0.3.0/CleverDock-v0.3.0.zip)
+
 Version 0.2.0 Standalone - Vista/7/8/8.1:<br />
 [CleverDock-v0.2.0.zip](https://github.com/ldom66/clever-dock/releases/download/v0.2.0/CleverDock-v0.2.0.zip)
 
