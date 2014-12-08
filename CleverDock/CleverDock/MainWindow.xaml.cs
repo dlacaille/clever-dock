@@ -23,7 +23,7 @@ namespace CleverDock
 
         public double Distance = 0;
         public double TopMargin = 20;
-        public double HotspotHeight = 20;
+        public double HotspotHeight = 10;
         public bool DockIsVisible = true;
 
         private Timer dockShowTimer = null;
