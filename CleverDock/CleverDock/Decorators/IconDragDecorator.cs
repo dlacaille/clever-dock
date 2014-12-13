@@ -55,7 +55,6 @@ namespace CleverDock.Decorators
             container.Children.Insert(index, placeholder);
 
             draggedIconImage = draggedIcon.IconImage;
-            AnimationTools.FadeOut(0.15, draggedIconImage, 0.5);
             draggedIcon.IconGrid.Children.Remove(draggedIconImage);
             canvas.Children.Add(draggedIconImage);
         }
@@ -94,15 +93,11 @@ namespace CleverDock.Decorators
         {
             placeholder = new Separator {Width = 0, Visibility = Visibility.Hidden};
             container.Children.Insert(index, placeholder);
-            AnimationTools.ExpandX(SettingsManager.Settings.CollapseDuration, SettingsManager.Settings.OuterIconSize, placeholder, null, 0.1);
         }
 
         public void RemovePlaceholder()
         {
             Separator p = placeholder;
-            AnimationTools.CollapseX(SettingsManager.Settings.CollapseDuration, p, () => {
-                container.Children.Remove(p);
-            });
             placeholder = null;
         }
 
@@ -183,7 +178,6 @@ namespace CleverDock.Decorators
                 }
                 else
                 {
-                    AnimationTools.FadeOut(0.2, draggedIconImage, 0, () => canvas.Children.Remove(draggedIconImage));
                     if(draggedIcon.Windows.Any())
                     {
                         DockIcon icon = new DockIcon(draggedIcon.Info);

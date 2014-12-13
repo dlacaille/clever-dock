@@ -121,7 +121,7 @@ namespace CleverDock.Controls
         {
             SettingsManager.Settings.ReserveScreenSpace = !SettingsManager.Settings.ReserveScreenSpace;
             ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
-            MainWindow.Window.SetDimensions();
+            //MainWindow.Window.SetDimensions();
         }
 
         void Manager_ThemeChanged(object sender, Handlers.ThemeEventArgs e)

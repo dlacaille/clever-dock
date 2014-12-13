@@ -33,7 +33,7 @@ namespace CleverDock.Managers
                 if (hIcon == IntPtr.Zero)
                     hIcon = WI.GetClassLongPtr(hwnd, WI.GCL_HICONSM);
             }
-            catch (Exception ex)
+            catch (Exception)
             { }
             if (hIcon == IntPtr.Zero)
                 return null;
