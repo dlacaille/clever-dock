@@ -35,10 +35,8 @@ namespace Direct2D
             this.timer = new DispatcherTimer(DispatcherPriority.Render);
             this.timer.Tick += this.TimerTick;
 
-            // Calculate the number of times per second to render. Any large values
-            // will cause the interval to be zero, causing the timer to execute
-            // every time the Dispatcher queue is processed.
-            this.timer.Interval = TimeSpan.FromMilliseconds(1000 / desiredFps);
+            // Calculate the number of times per second to render, using ticks for precision.
+            this.timer.Interval = TimeSpan.FromTicks(1000000 / desiredFps);
         }
 
         public bool IsAnimating

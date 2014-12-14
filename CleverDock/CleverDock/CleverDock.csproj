@@ -279,6 +279,9 @@
       <Name>Direct2D</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>echo "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Utilities\bin\x64\fxc.exe" /T ps_2_0 /E main /Fo "$(ProjectDir)Effects\BrightnessEffect.ps" "$(ProjectDir)Effects\BrightnessEffect.fx"</PreBuildEvent>

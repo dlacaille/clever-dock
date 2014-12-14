@@ -12,6 +12,7 @@ namespace Direct2D
         private D3D10.D3DDevice device;
         private D2D.RenderTarget renderTarget;
         private D3D10.Texture2D texture;
+        public View View { get; set; }
         private bool disposed;
 
         /// <summary>
@@ -21,6 +22,7 @@ namespace Direct2D
         {
             // We'll create a multi-threaded one to make sure it plays nicely with WPF
             this.factory = D2D.D2DFactory.CreateFactory(D2D.D2DFactoryType.Multithreaded);
+            View = new View(this);
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace Direct2D
         /// <summary>
         /// Gets the <see cref="D2D.RenderTarget"/> used for drawing.
         /// </summary>
-        protected D2D.RenderTarget RenderTarget
+        public D2D.RenderTarget RenderTarget
         {
             get { return this.renderTarget; }
         }
@@ -93,9 +95,7 @@ namespace Direct2D
         {
             this.ThrowIfDisposed();
             if (this.device != null)
-            {
                 throw new InvalidOperationException("A previous call to CreateResources has not been followed by a call to FreeResources.");
-            }
 
             // Try to create a hardware device first and fall back to a
             // software (WARP doens't let us share resources)
@@ -104,9 +104,7 @@ namespace Direct2D
             {
                 device1 = TryCreateDevice1(D3D10.DriverType.Software);
                 if (device1 == null)
-                {
                     throw new DirectX.DirectXException("Unable to create a DirectX 10 device.");
-                }
             }
             this.device = device1.QueryInterface<D3D10.D3DDevice>();
             device1.Dispose();
@@ -121,7 +119,11 @@ namespace Direct2D
         public void FreeResources()
         {
             this.OnFreeResources();
-
+            if (this.View != null)
+            {
+                this.View.Dispose();
+                this.View = null;
+            }
             if (this.texture != null)
             {
                 this.texture.Dispose();
@@ -152,11 +154,11 @@ namespace Direct2D
         {
             this.ThrowIfDisposed();
             if (this.renderTarget == null)
-            {
                 throw new InvalidOperationException("Resize has not been called.");
-            }
-
+            this.RenderTarget.BeginDraw();
             this.OnRender();
+            this.View.Render();
+            this.RenderTarget.EndDraw();
             this.device.Flush();
             this.OnUpdated();
         }
@@ -180,17 +182,11 @@ namespace Direct2D
         {
             this.ThrowIfDisposed();
             if (width < 0)
-            {
                 throw new ArgumentOutOfRangeException("width", "Value must be positive.");
-            }
             if (height < 0)
-            {
                 throw new ArgumentOutOfRangeException("height", "Value must be positive.");
-            }
             if (this.device == null)
-            {
                 throw new InvalidOperationException("CreateResources has not been called.");
-            }
 
             // Recreate the render target
             this.CreateTexture(width, height);
@@ -209,10 +205,17 @@ namespace Direct2D
             viewport.Width = (uint)width;
             this.device.RS.Viewports = new D3D10.Viewport[] { viewport };
 
+            // Resize main view.
+            View.Bounds = new D2D.RectF(0, 0, width, height);
+
             // Destroy and recreate any dependent resources declared in a
             // derived class only (i.e don't destroy our resources).
             this.OnFreeResources();
             this.OnCreateResources();
+
+            // Destroy and create resources in main View.
+            View.FreeResources();
+            View.CreateResources();
         }
 
         /// <summary>
@@ -225,33 +228,29 @@ namespace Direct2D
         {
             this.FreeResources();
             if (disposing)
-            {
                 this.factory.Dispose();
-            }
-
             this.disposed = true;
         }
 
         /// <summary>
         /// When overriden in a derived class, creates device dependent resources.
         /// </summary>
-        protected virtual void OnCreateResources()
-        {
-        }
+        protected virtual void OnCreateResources() { }
 
         /// <summary>
         /// When overriden in a deriven class, releases device dependent resources.
         /// </summary>
-        protected virtual void OnFreeResources()
-        {
-        }
+        protected virtual void OnFreeResources() { }
+
+        /// <summary>
+        /// When overriden in a derived class, is called before rendering.
+        /// </summary>
+        protected virtual void OnBeforeRender() { }
 
         /// <summary>
         /// When overriden in a derived class, renders the Direct2D content.
         /// </summary>
-        protected virtual void OnRender()
-        {
-        }
+        protected virtual void OnRender() { }
 
         /// <summary>
         /// Throws an <see cref="ObjectDisposedException"/> if
@@ -260,9 +259,7 @@ namespace Direct2D
         protected void ThrowIfDisposed()
         {
             if (this.disposed)
-            {
                 throw new ObjectDisposedException(this.GetType().Name);
-            }
         }
 
         private static D3D10.D3DDevice1 TryCreateDevice1(D3D10.DriverType type)
@@ -280,7 +277,9 @@ namespace Direct2D
             {
                 try
                 {
-                    return D3D10.D3DDevice1.CreateDevice1(null, type, null, D3D10.CreateDeviceOptions.SupportBgra, level);
+                    var device = D3D10.D3DDevice1.CreateDevice1(null, type, null, D3D10.CreateDeviceOptions.SupportBgra, level);
+                    Console.WriteLine("Created device with feature level '{0}'", level.ToString());
+                    return device;
                 }
                 catch (ArgumentException) // E_INVALIDARG
                 {
@@ -314,9 +313,7 @@ namespace Direct2D
             var target = this.factory.CreateGraphicsSurfaceRenderTarget(surface, properties);
 
             if (this.renderTarget != null)
-            {
                 this.renderTarget.Dispose();
-            }
             this.renderTarget = target;
         }
 
@@ -338,9 +335,7 @@ namespace Direct2D
             // Assign result to temporary variable in case CreateTexture2D throws
             var texture = this.device.CreateTexture2D(description);
             if (this.texture != null)
-            {
                 this.texture.Dispose();
-            }
             this.texture = texture;
         }
 
@@ -348,9 +343,7 @@ namespace Direct2D
         {
             var callback = this.Updated;
             if (callback != null)
-            {
                 callback(this, EventArgs.Empty);
-            }
         }
     }
 }

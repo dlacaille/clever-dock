@@ -68,7 +68,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedScene.cs" />
-    <Compile Include="D3D10Image.cs" />
+    <Compile Include="Interop\D3D10Image.cs" />
+    <Compile Include="View.cs" />
+    <Compile Include="ViewCollection.cs" />
+    <Compile Include="Views\FPSCounterView.cs" />
+    <Compile Include="Views\ImageView.cs" />
     <Compile Include="WPF\Direct2DControl.cs" />
     <Compile Include="Interop\ComInterface.cs" />
     <Compile Include="Interop\Direct3D9Ex.cs" />

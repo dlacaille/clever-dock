@@ -3,3 +3,4 @@ P:\Git\clever-dock\CleverDock\Direct2D\bin\x86\Debug\Direct2D.dll
 P:\Git\clever-dock\CleverDock\Direct2D\bin\x86\Debug\Direct2D.pdb
 P:\Git\clever-dock\CleverDock\Direct2D\obj\x86\Debug\Direct2D.dll
 P:\Git\clever-dock\CleverDock\Direct2D\obj\x86\Debug\Direct2D.pdb
+P:\Git\clever-dock\CleverDock\Direct2D\obj\x86\Debug\Direct2D.csprojResolveAssemblyReference.cache

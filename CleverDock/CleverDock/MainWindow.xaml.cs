@@ -26,15 +26,15 @@ namespace CleverDock
         {
             InitializeComponent();
 
-            try
-            {
+            /*try
+            {*/
                 this.Direct2DControl.Scene = this.scene;
-            }
+            /*}
             catch (Exception)
             {
                 MessageBox.Show("Unable to create a Direct2D and/or Direct3D device.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 App.Current.Shutdown();
-            }
+            }*/
             this.scene.IsAnimating = true;
         }
     }
