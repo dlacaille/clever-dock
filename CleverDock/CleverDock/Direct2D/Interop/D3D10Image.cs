@@ -3,7 +3,7 @@ using System.Windows.Interop;
 using D3D10 = Microsoft.WindowsAPICodePack.DirectX.Direct3D10;
 using DirectX = Microsoft.WindowsAPICodePack.DirectX;
 
-namespace Direct2D
+namespace CleverDock.Direct2D
 {
     /// <summary>
     /// A <see cref="D3DImage"/> class that displays Direct3D 10 content.

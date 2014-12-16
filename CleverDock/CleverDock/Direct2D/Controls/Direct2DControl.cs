@@ -1,10 +1,11 @@
-﻿using System;
+﻿using CleverDock.Direct2D.Scenes;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace Direct2D.WPF
+namespace CleverDock.Direct2D.Controls
 {
     /// <summary>Hosts a <see cref="Scene"/> instance.</summary>
     public sealed class Direct2DControl : FrameworkElement

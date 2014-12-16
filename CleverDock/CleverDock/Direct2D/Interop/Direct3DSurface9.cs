@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Direct2D.Interop
+namespace CleverDock.Direct2D.Interop
 {
     internal sealed class Direct3DSurface9 : IDisposable
     {

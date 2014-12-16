@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Direct2D
+namespace CleverDock.Direct2D.Views
 {
     public class ViewCollection : IList<View>
     {

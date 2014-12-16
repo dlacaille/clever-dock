@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 
-namespace Direct2D
+namespace CleverDock.Direct2D.Scenes
 {
     /// <summary>
     /// Allows drawing of a Scene at a specified Frame Per Second.

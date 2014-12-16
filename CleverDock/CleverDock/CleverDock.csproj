@@ -164,6 +164,22 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Decorators\WindowManagerDecorator.cs" />
+    <Compile Include="Direct2D\Scenes\AnimatedScene.cs" />
+    <Compile Include="Direct2D\Interop\ComInterface.cs" />
+    <Compile Include="Direct2D\Interop\D3D10Image.cs" />
+    <Compile Include="Direct2D\Interop\Direct3D9Ex.cs" />
+    <Compile Include="Direct2D\Interop\Direct3DDevice9Ex.cs" />
+    <Compile Include="Direct2D\Interop\Direct3DSurface9.cs" />
+    <Compile Include="Direct2D\Interop\Direct3DTexture9.cs" />
+    <Compile Include="Direct2D\Interop\NativeMethods.cs" />
+    <Compile Include="Direct2D\Interop\NativeStructs.cs" />
+    <Compile Include="Direct2D\Scenes\Scene.cs" />
+    <Compile Include="Direct2D\Views\View.cs" />
+    <Compile Include="Direct2D\Views\ViewCollection.cs" />
+    <Compile Include="Direct2D\Views\FPSCounterView.cs" />
+    <Compile Include="Direct2D\Views\ImageView.cs" />
+    <Compile Include="Direct2D\Tools\BitmapHelper.cs" />
+    <Compile Include="Direct2D\Controls\Direct2DControl.cs" />
     <Compile Include="Effects\BrightnessEffect.cs" />
     <Compile Include="Handlers\CursorPosEventArgs.cs" />
     <Compile Include="Handlers\ThemeEventArgs.cs" />
@@ -272,12 +288,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Direct2D\Direct2D.csproj">
-      <Project>{8756f30a-d935-4205-9490-23fbca74afde}</Project>
-      <Name>Direct2D</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

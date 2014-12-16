@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 using D2D = Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 
-namespace Direct2D.Views
+namespace CleverDock.Direct2D.Views
 {
     public class FPSCounterView : View
     {
@@ -19,7 +20,7 @@ namespace Direct2D.Views
         private DWrite.DWriteFactory writeFactory;
         private D2D.SolidColorBrush whiteBrush;
 
-        public FPSCounterView(D2D.RectF bounds)
+        public FPSCounterView(Rectangle bounds)
             : base(bounds)
         {
             this.writeFactory = DWrite.DWriteFactory.CreateFactory();

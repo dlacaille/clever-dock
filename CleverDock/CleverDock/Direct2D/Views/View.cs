@@ -1,15 +1,17 @@
-﻿using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
+﻿using CleverDock.Direct2D.Scenes;
+using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Direct2D
+namespace CleverDock.Direct2D.Views
 {
     public class View : IDisposable
     {
-        private RectF bounds;
+        private Rectangle bounds;
 
         /// <summary>
         /// Allows the view to be rendered.
@@ -19,7 +21,7 @@ namespace Direct2D
         /// <summary>
         /// Bounds of the view, relative to its parent.
         /// </summary>
-        public RectF Bounds
+        public Rectangle Bounds
         {
             get
             {
@@ -65,7 +67,7 @@ namespace Direct2D
             }
         }
 
-        public View(RectF bounds)
+        public View(Rectangle bounds)
         {
             Subviews = new ViewCollection(this);
             Visible = true;
@@ -73,7 +75,7 @@ namespace Direct2D
         }
 
         public View(Scene scene)
-            : this(new RectF())
+            : this(new Rectangle())
         {
             Scene = scene;
         }
@@ -112,7 +114,11 @@ namespace Direct2D
                     Bounds.Bottom + Superview.Frame.Top);
             }
             else
-                Frame = Bounds;
+                Frame = new RectF(
+                    Bounds.Left,
+                    Bounds.Top,
+                    Bounds.Right,
+                    Bounds.Bottom);
             foreach (var view in Subviews)
                 view.RecalculateFrame();
         }

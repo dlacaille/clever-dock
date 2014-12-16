@@ -1,6 +1,10 @@
-﻿using Direct2D.Views;
+﻿using CleverDock.Direct2D;
+using CleverDock.Direct2D.Scenes;
+using CleverDock.Direct2D.Views;
+using CleverDock.Tools;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,28 +13,25 @@ using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 
 namespace CleverDock.Scenes
 {
-    class MainScene : Direct2D.AnimatedScene
+    class MainScene : AnimatedScene
     {
         private D2D.SolidColorBrush redBrush;
         private double widthRatio;
         private FPSCounterView fpsCounter;
+        private ImageView imgView;
 
         public MainScene()
             : base(120)
         {
-            fpsCounter = new FPSCounterView(new D2D.RectF(0, 0, 60, 20));
+            fpsCounter = new FPSCounterView(new Rectangle(0, 0, 60, 20));
             View.Subviews.Add(fpsCounter);
+            imgView = new ImageView(new Rectangle(100, 100, 48, 48), Image.FromFile("Chrome.png"));
+            View.Subviews.Add(imgView);
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-
-            if (fpsCounter != null)
-            {
-                fpsCounter.Dispose();
-                fpsCounter = null;
-            }
         }
 
         protected override void OnCreateResources()

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using CleverDock.Direct2D.Views;
+using System;
+using System.Drawing;
 using D2D = Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 using D3D10 = Microsoft.WindowsAPICodePack.DirectX.Direct3D10;
 using DirectX = Microsoft.WindowsAPICodePack.DirectX;
 
-namespace Direct2D
+namespace CleverDock.Direct2D.Scenes
 {
     /// <summary>Represents a Direct2D drawing.</summary>
     public abstract class Scene : IDisposable
@@ -206,7 +208,7 @@ namespace Direct2D
             this.device.RS.Viewports = new D3D10.Viewport[] { viewport };
 
             // Resize main view.
-            View.Bounds = new D2D.RectF(0, 0, width, height);
+            View.Bounds = new Rectangle(0, 0, width, height);
 
             // Destroy and recreate any dependent resources declared in a
             // derived class only (i.e don't destroy our resources).

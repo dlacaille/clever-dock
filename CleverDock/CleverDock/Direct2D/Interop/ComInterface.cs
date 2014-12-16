@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Direct2D.Interop
+namespace CleverDock.Direct2D.Interop
 {
     // These are the declarations taken from the DirectX SDK
     internal static class ComInterface
