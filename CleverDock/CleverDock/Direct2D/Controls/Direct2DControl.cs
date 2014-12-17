@@ -13,8 +13,7 @@ namespace CleverDock.Direct2D.Controls
         /// <summary>
         /// Identifies the <see cref="Scene"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SceneProperty =
-            DependencyProperty.Register("Scene", typeof(Scene), typeof(Direct2DControl), new UIPropertyMetadata(SceneChangedCallback));
+        public static readonly DependencyProperty SceneProperty = DependencyProperty.Register("Scene", typeof(Scene), typeof(Direct2DControl), new UIPropertyMetadata(SceneChangedCallback));
 
         // To prevent lots or resizing, we're going to use a timer to resize the
         // image after a set interval. We can then reset the timer if we recieve

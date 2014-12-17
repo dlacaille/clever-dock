@@ -1,15 +1,18 @@
 ﻿using CleverDock.Direct2D;
 using CleverDock.Direct2D.Scenes;
+using CleverDock.Direct2D.Tools;
 using CleverDock.Direct2D.Views;
+using CleverDock.Managers;
 using CleverDock.Tools;
+using SharpDX;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using D2D = Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
-using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
+using D2D = SharpDX.Direct2D1;
+using DWrite = SharpDX.DirectWrite;
+using WIC = SharpDX.WIC;
 
 namespace CleverDock.Scenes
 {
@@ -19,24 +22,30 @@ namespace CleverDock.Scenes
         private double widthRatio;
         private FPSCounterView fpsCounter;
         private ImageView imgView;
+        private WindowManager manager;
 
         public MainScene()
             : base(120)
         {
+            manager = new WindowManager();
+            manager.Start();
+
             fpsCounter = new FPSCounterView(new Rectangle(0, 0, 60, 20));
             View.Subviews.Add(fpsCounter);
-            imgView = new ImageView(new Rectangle(100, 100, 48, 48), Image.FromFile("Chrome.png"));
+            imgView = new ImageView(new RectangleF(100, 100, 48, 48), BitmapHelper.FromFile("chrome.png"));
             View.Subviews.Add(imgView);
         }
 
+
         protected override void Dispose(bool disposing)
         {
+            manager.Stop();
             base.Dispose(disposing);
         }
 
         protected override void OnCreateResources()
         {
-            this.redBrush = this.RenderTarget.CreateSolidColorBrush(new D2D.ColorF(1, 0, 0));
+            this.redBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 0f, 0f));
 
             base.OnCreateResources(); // Call this last to start the animation
         }
@@ -54,7 +63,6 @@ namespace CleverDock.Scenes
 
         protected override void OnRender()
         {
-
             // This is what we're going to draw. We'll animate the width of the
             // elipse over a span of five seconds (ElapsedTime / 5).
             this.widthRatio += this.ElapsedTime / 5;
@@ -63,10 +71,10 @@ namespace CleverDock.Scenes
 
             var size = this.RenderTarget.Size;
             float width = (float)((size.Width / 3.0) * this.widthRatio);
-            var ellipse = new D2D.Ellipse(new D2D.Point2F(size.Width / 2.0f, size.Height / 2.0f), width, size.Height / 3.0f);
+            var ellipse = new D2D.Ellipse(new Vector2(size.Width / 2.0f, size.Height / 2.0f), width, size.Height / 3.0f);
 
             // This draws the ellipse in red on a semi-transparent blue background
-            this.RenderTarget.Clear(new D2D.ColorF(0, 0, 0, 0.0f));
+            this.RenderTarget.Clear(new Color(0, 0, 0, 0.0f));
             this.RenderTarget.FillEllipse(ellipse, this.redBrush);
         }
     }

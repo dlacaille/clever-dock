@@ -1,8 +1,8 @@
 ﻿using CleverDock.Direct2D.Scenes;
-using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
+using SharpDX;
+using D2D = SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,17 +11,17 @@ namespace CleverDock.Direct2D.Views
 {
     public class View : IDisposable
     {
-        private Rectangle bounds;
 
         /// <summary>
         /// Allows the view to be rendered.
         /// </summary>
         public bool Visible { get; set; }
 
+        private RectangleF bounds;
         /// <summary>
         /// Bounds of the view, relative to its parent.
         /// </summary>
-        public Rectangle Bounds
+        public RectangleF Bounds
         {
             get
             {
@@ -37,7 +37,7 @@ namespace CleverDock.Direct2D.Views
         /// <summary>
         /// Frame of the view, relative to the scene.
         /// </summary>
-        public RectF Frame { get; set; }
+        public RectangleF Frame { get; set; }
 
         /// <summary>
         /// Subviews of the view which will be rendered over the view.
@@ -57,7 +57,7 @@ namespace CleverDock.Direct2D.Views
         /// <summary>
         /// Gets the <see cref="D2D.RenderTarget"/> used for drawing.
         /// </summary>
-        protected RenderTarget RenderTarget
+        protected D2D.RenderTarget RenderTarget
         {
             get
             {
@@ -67,7 +67,7 @@ namespace CleverDock.Direct2D.Views
             }
         }
 
-        public View(Rectangle bounds)
+        public View(RectangleF bounds)
         {
             Subviews = new ViewCollection(this);
             Visible = true;
@@ -75,7 +75,7 @@ namespace CleverDock.Direct2D.Views
         }
 
         public View(Scene scene)
-            : this(new Rectangle())
+            : this(new RectangleF())
         {
             Scene = scene;
         }
@@ -107,18 +107,14 @@ namespace CleverDock.Direct2D.Views
         {
             if (Superview != null)
             {
-                Frame = new RectF(
+                Frame = new RectangleF(
                     Bounds.Left + Superview.Frame.Left,
                     Bounds.Top + Superview.Frame.Top,
-                    Bounds.Right + Superview.Frame.Left,
-                    Bounds.Bottom + Superview.Frame.Top);
+                    Bounds.Width,
+                    Bounds.Height);
             }
             else
-                Frame = new RectF(
-                    Bounds.Left,
-                    Bounds.Top,
-                    Bounds.Right,
-                    Bounds.Bottom);
+                Frame = Bounds;
             foreach (var view in Subviews)
                 view.RecalculateFrame();
         }

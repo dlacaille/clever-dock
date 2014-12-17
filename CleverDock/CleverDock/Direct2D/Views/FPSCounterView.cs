@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
-using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
-using D2D = Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
+using SharpDX;
+using DWrite = SharpDX.DirectWrite;
+using D2D = SharpDX.Direct2D1;
 
 namespace CleverDock.Direct2D.Views
 {
@@ -17,20 +17,19 @@ namespace CleverDock.Direct2D.Views
         private int fps;
 
         private DWrite.TextFormat textFormat;
-        private DWrite.DWriteFactory writeFactory;
+        private DWrite.Factory writeFactory;
         private D2D.SolidColorBrush whiteBrush;
 
-        public FPSCounterView(Rectangle bounds)
+        public FPSCounterView(RectangleF bounds)
             : base(bounds)
         {
-            this.writeFactory = DWrite.DWriteFactory.CreateFactory();
-
-            this.textFormat = this.writeFactory.CreateTextFormat("Arial", 12);
+            this.writeFactory = new DWrite.Factory();
+            this.textFormat = new DWrite.TextFormat(writeFactory, "Arial", 12);
         }
 
         protected override void OnCreateResources()
         {
-            this.whiteBrush = this.RenderTarget.CreateSolidColorBrush(new D2D.ColorF(1, 1, 1));
+            this.whiteBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 1f, 1f));
 
             base.OnCreateResources();
         }

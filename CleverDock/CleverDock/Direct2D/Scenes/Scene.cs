@@ -1,17 +1,17 @@
 ﻿using CleverDock.Direct2D.Views;
+using SharpDX;
 using System;
-using System.Drawing;
-using D2D = Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
-using D3D10 = Microsoft.WindowsAPICodePack.DirectX.Direct3D10;
-using DirectX = Microsoft.WindowsAPICodePack.DirectX;
+using D2D = SharpDX.Direct2D1;
+using D3D10 = SharpDX.Direct3D10;
+using DXGI = SharpDX.DXGI;
 
 namespace CleverDock.Direct2D.Scenes
 {
     /// <summary>Represents a Direct2D drawing.</summary>
     public abstract class Scene : IDisposable
     {
-        private readonly D2D.D2DFactory factory;
-        private D3D10.D3DDevice device;
+        private readonly D2D.Factory factory;
+        private D3D10.Device device;
         private D2D.RenderTarget renderTarget;
         private D3D10.Texture2D texture;
         public View View { get; set; }
@@ -23,7 +23,7 @@ namespace CleverDock.Direct2D.Scenes
         protected Scene()
         {
             // We'll create a multi-threaded one to make sure it plays nicely with WPF
-            this.factory = D2D.D2DFactory.CreateFactory(D2D.D2DFactoryType.Multithreaded);
+            this.factory = new D2D.Factory(D2D.FactoryType.MultiThreaded);
             View = new View(this);
         }
 
@@ -56,7 +56,7 @@ namespace CleverDock.Direct2D.Scenes
         /// <summary>
         /// Gets the <see cref="D2D.D2DFactory"/> used to create the resources.
         /// </summary>
-        protected D2D.D2DFactory Factory
+        protected D2D.Factory Factory
         {
             get { return this.factory; }
         }
@@ -106,9 +106,9 @@ namespace CleverDock.Direct2D.Scenes
             {
                 device1 = TryCreateDevice1(D3D10.DriverType.Software);
                 if (device1 == null)
-                    throw new DirectX.DirectXException("Unable to create a DirectX 10 device.");
+                    throw new SharpDXException("Unable to create a DirectX 10 device.");
             }
-            this.device = device1.QueryInterface<D3D10.D3DDevice>();
+            this.device = device1.QueryInterface<D3D10.Device>();
             device1.Dispose();
         }
 
@@ -192,20 +192,20 @@ namespace CleverDock.Direct2D.Scenes
 
             // Recreate the render target
             this.CreateTexture(width, height);
-            using (var surface = this.texture.QueryInterface<DirectX.Graphics.Surface>())
+            using (var surface = this.texture.QueryInterface<DXGI.Surface>())
             {
                 this.CreateRenderTarget(surface);
             }
 
             // Resize our viewport
-            var viewport = new D3D10.Viewport();
-            viewport.Height = (uint)height;
+            var viewport = new Viewport();
+            viewport.Height = height;
             viewport.MaxDepth = 1;
             viewport.MinDepth = 0;
-            viewport.TopLeftX = 0;
-            viewport.TopLeftY = 0;
-            viewport.Width = (uint)width;
-            this.device.RS.Viewports = new D3D10.Viewport[] { viewport };
+            viewport.X = 0;
+            viewport.Y = 0;
+            viewport.Width = width;
+            this.device.Rasterizer.SetViewports(new Viewport[] { viewport });
 
             // Resize main view.
             View.Bounds = new Rectangle(0, 0, width, height);
@@ -264,22 +264,22 @@ namespace CleverDock.Direct2D.Scenes
                 throw new ObjectDisposedException(this.GetType().Name);
         }
 
-        private static D3D10.D3DDevice1 TryCreateDevice1(D3D10.DriverType type)
+        private static D3D10.Device1 TryCreateDevice1(D3D10.DriverType type)
         {
             // We'll try to create the device that supports any of these feature levels
-            DirectX.Direct3D.FeatureLevel[] levels =
+            D3D10.FeatureLevel[] levels =
             {
-                DirectX.Direct3D.FeatureLevel.Ten,
-                DirectX.Direct3D.FeatureLevel.NinePointThree,
-                DirectX.Direct3D.FeatureLevel.NinePointTwo,
-                DirectX.Direct3D.FeatureLevel.NinePointOne
+                D3D10.FeatureLevel.Level_10_0,
+                D3D10.FeatureLevel.Level_9_3,
+                D3D10.FeatureLevel.Level_9_2,
+                D3D10.FeatureLevel.Level_9_1
             };
 
             foreach (var level in levels)
             {
                 try
                 {
-                    var device = D3D10.D3DDevice1.CreateDevice1(null, type, null, D3D10.CreateDeviceOptions.SupportBgra, level);
+                    var device = new D3D10.Device1(type, D3D10.DeviceCreationFlags.BgraSupport, level);
                     Console.WriteLine("Created device with feature level '{0}'", level.ToString());
                     return device;
                 }
@@ -291,7 +291,7 @@ namespace CleverDock.Direct2D.Scenes
                 {
                     continue; // Try the next feature level
                 }
-                catch (DirectX.DirectXException) // D3DERR_INVALIDCALL or E_FAIL
+                catch (SharpDXException) // D3DERR_INVALIDCALL or E_FAIL
                 {
                     continue; // Try the next feature level
                 }
@@ -299,20 +299,20 @@ namespace CleverDock.Direct2D.Scenes
             return null; // We failed to create a device at any required feature level
         }
 
-        private void CreateRenderTarget(DirectX.Graphics.Surface surface)
+        private void CreateRenderTarget(DXGI.Surface surface)
         {
             // Create a D2D render target which can draw into our offscreen D3D
             // surface. D2D uses device independant units, like WPF, at 96/inch
             var properties = new D2D.RenderTargetProperties();
             properties.DpiX = 96;
             properties.DpiY = 96;
-            properties.MinLevel = DirectX.Direct3D.FeatureLevel.Default;
-            properties.PixelFormat = new D2D.PixelFormat(DirectX.Graphics.Format.Unknown, D2D.AlphaMode.Premultiplied);
-            properties.RenderTargetType = D2D.RenderTargetType.Default;
-            properties.Usage = D2D.RenderTargetUsages.None;
+            properties.MinLevel = D2D.FeatureLevel.Level_DEFAULT;
+            properties.PixelFormat = new D2D.PixelFormat(DXGI.Format.Unknown, D2D.AlphaMode.Premultiplied);
+            properties.Type = D2D.RenderTargetType.Default;
+            properties.Usage = D2D.RenderTargetUsage.None;
 
             // Assign result to temporary variable in case CreateGraphicsSurfaceRenderTarget throws
-            var target = this.factory.CreateGraphicsSurfaceRenderTarget(surface, properties);
+            var target = new D2D.RenderTarget(factory, surface, properties);
 
             if (this.renderTarget != null)
                 this.renderTarget.Dispose();
@@ -323,19 +323,19 @@ namespace CleverDock.Direct2D.Scenes
         {
             var description = new D3D10.Texture2DDescription();
             description.ArraySize = 1;
-            description.BindingOptions = D3D10.BindingOptions.RenderTarget | D3D10.BindingOptions.ShaderResource;
-            description.CpuAccessOptions = D3D10.CpuAccessOptions.None;
-            description.Format = DirectX.Graphics.Format.B8G8R8A8UNorm;
+            description.BindFlags = D3D10.BindFlags.RenderTarget | D3D10.BindFlags.ShaderResource;
+            description.CpuAccessFlags = D3D10.CpuAccessFlags.None;
+            description.Format = DXGI.Format.B8G8R8A8_UNorm;
             description.MipLevels = 1;
-            description.MiscellaneousResourceOptions = D3D10.MiscellaneousResourceOptions.Shared;
-            description.SampleDescription = new DirectX.Graphics.SampleDescription(1, 0);
-            description.Usage = D3D10.Usage.Default;
+            description.OptionFlags = D3D10.ResourceOptionFlags.Shared;
+            description.SampleDescription = new DXGI.SampleDescription(1, 0);
+            description.Usage = D3D10.ResourceUsage.Default;
 
-            description.Height = (uint)height;
-            description.Width = (uint)width;
+            description.Height = height;
+            description.Width = width;
 
             // Assign result to temporary variable in case CreateTexture2D throws
-            var texture = this.device.CreateTexture2D(description);
+            var texture = new D3D10.Texture2D(device, description);
             if (this.texture != null)
                 this.texture.Dispose();
             this.texture = texture;

@@ -25,10 +25,10 @@ namespace CleverDock.Direct2D.Interop
             GC.SuppressFinalize(this);
         }
 
-        public Direct3DTexture9 CreateTexture(uint Width, uint Height, uint Levels, int Usage, int Format, int Pool, ref IntPtr pSharedHandle)
+        public Direct3DTexture9 CreateTexture(int Width, int Height, int Levels, int Usage, int Format, int Pool, ref IntPtr pSharedHandle)
         {
             ComInterface.IDirect3DTexture9 obj = null;
-            int result = this.createTexture(this.comObject, Width, Height, Levels, Usage, Format, Pool, out obj, ref pSharedHandle);
+            int result = this.createTexture(this.comObject, (uint)Width, (uint)Height, (uint)Levels, Usage, Format, Pool, out obj, ref pSharedHandle);
             Marshal.ThrowExceptionForHR(result);
 
             return new Direct3DTexture9(obj);

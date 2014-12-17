@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Interop;
-using D3D10 = Microsoft.WindowsAPICodePack.DirectX.Direct3D10;
-using DirectX = Microsoft.WindowsAPICodePack.DirectX;
+using D3D10 = SharpDX.Direct3D10;
+using DXGI = SharpDX.DXGI;
 
 namespace CleverDock.Direct2D
 {
@@ -50,7 +50,7 @@ namespace CleverDock.Direct2D
         private static Interop.Direct3DTexture9 GetSharedSurface(Interop.Direct3DDevice9Ex device, D3D10.Texture2D texture)
         {
             // First get a shared handle to the D3D10 texture
-            using (var surface = texture.QueryInterface<DirectX.Graphics.Resource>())
+            using (var surface = texture.QueryInterface<DXGI.Resource>())
             {
                 IntPtr handle = surface.SharedHandle;
 
