@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CleverDock.Handlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,9 @@ namespace CleverDock.Graphics
     {
         private List<View> list;
         private View parent;
+
+        public event EventHandler<ViewEventArgs> Added;
+        public event EventHandler<ViewEventArgs> Removed;
 
         public ViewCollection(View parent)
         {
@@ -27,6 +31,8 @@ namespace CleverDock.Graphics
         {
             list.Add(view);
             SetSuperView(view);
+            if (Added != null)
+                Added(this, new ViewEventArgs(view));
         }
 
         public bool Remove(View view)
@@ -34,6 +40,8 @@ namespace CleverDock.Graphics
             var result = list.Remove(view);
             view.Superview = null;
             view.Scene = null;
+            if (Removed != null)
+                Removed(this, new ViewEventArgs(view));
             return result;
         }
 
@@ -46,6 +54,8 @@ namespace CleverDock.Graphics
         {
             list.Insert(index, view);
             SetSuperView(view);
+            if (Added != null)
+                Added(this, new ViewEventArgs(view));
         }
 
         public void RemoveAt(int index)
@@ -84,7 +94,7 @@ namespace CleverDock.Graphics
 
         public int Count
         {
-            get { return Count;  }
+            get { return list.Count;  }
         }
 
         public bool IsReadOnly

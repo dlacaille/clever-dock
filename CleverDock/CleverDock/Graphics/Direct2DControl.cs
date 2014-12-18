@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace CleverDock.Graphics.Controls
+namespace CleverDock.Graphics
 {
     /// <summary>Hosts a <see cref="Scene"/> instance.</summary>
     public sealed class Direct2DControl : FrameworkElement

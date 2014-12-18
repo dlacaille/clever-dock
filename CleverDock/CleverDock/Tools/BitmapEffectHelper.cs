@@ -34,6 +34,7 @@ namespace CleverDock.Tools
             var encoder = new WIC.PngBitmapEncoder(factory);
             encoder.Initialize(wicStream);
             var frameEncoder = new WIC.BitmapFrameEncode(encoder);
+            frameEncoder.Initialize();
             frameEncoder.SetSize(image.Size.Width, image.Size.Height);
             var format = WIC.PixelFormat.FormatDontCare;
             frameEncoder.SetPixelFormat(ref format);

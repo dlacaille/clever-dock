@@ -18,18 +18,20 @@ namespace CleverDock.Graphics.Views
 
         private DWrite.TextFormat textFormat;
         private DWrite.Factory writeFactory;
+        private D2D.SolidColorBrush blackBrush;
         private D2D.SolidColorBrush whiteBrush;
 
         public FPSCounterView(RectangleF bounds)
-            : base(bounds)
         {
             this.writeFactory = new DWrite.Factory();
             this.textFormat = new DWrite.TextFormat(writeFactory, "Arial", 12);
+            this.Bounds = bounds;
         }
 
         protected override void OnCreateResources()
         {
             this.whiteBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 1f, 1f));
+            this.blackBrush = new D2D.SolidColorBrush(RenderTarget, new Color(0f, 0f, 0f));
 
             // Start animation.
             base.OnCreateResources();
@@ -44,6 +46,11 @@ namespace CleverDock.Graphics.Views
             {
                 this.whiteBrush.Dispose();
                 this.whiteBrush = null;
+            }
+            if (this.blackBrush != null)
+            {
+                this.blackBrush.Dispose();
+                this.blackBrush = null;
             }
         }
 
@@ -75,6 +82,9 @@ namespace CleverDock.Graphics.Views
 
             // Draw a little FPS in the top left corner
             string text = string.Format("FPS {0}", this.fps);
+            var shadowFrame = Frame;
+            shadowFrame.Offset(1, 1);
+            this.RenderTarget.DrawText(text, this.textFormat, shadowFrame, this.blackBrush);
             this.RenderTarget.DrawText(text, this.textFormat, Frame, this.whiteBrush);
         }
     }

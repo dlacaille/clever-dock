@@ -198,8 +198,9 @@
     <Compile Include="Graphics\ViewCollection.cs" />
     <Compile Include="Graphics\Views\FPSCounterView.cs" />
     <Compile Include="Graphics\Views\ImageView.cs" />
+    <Compile Include="Handlers\ViewEventArgs.cs" />
     <Compile Include="Tools\BitmapHelper.cs" />
-    <Compile Include="Graphics\Controls\Direct2DControl.cs" />
+    <Compile Include="Graphics\Direct2DControl.cs" />
     <Compile Include="Graphics\Effects\BrightnessEffect.cs" />
     <Compile Include="Handlers\CursorPosEventArgs.cs" />
     <Compile Include="Handlers\ThemeEventArgs.cs" />
@@ -233,9 +234,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tools\IconHelper.cs" />
+    <Compile Include="Views\Decorators\DockWindowManagerDecorator.cs" />
     <Compile Include="Views\Dock.cs" />
     <Compile Include="Views\DockBackground.cs" />
     <Compile Include="Views\DockIcon.cs" />
+    <Compile Include="Views\WindowManagerDecorator.cs" />
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

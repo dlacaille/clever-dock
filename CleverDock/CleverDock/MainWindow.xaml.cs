@@ -33,6 +33,12 @@ namespace CleverDock
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             WindowManager.Manager.Start();
             Loaded += MainWindow_Loaded;
+            Closed += MainWindow_Closed;
+        }
+
+        void MainWindow_Closed(object sender, EventArgs e)
+        {
+            WindowManager.Manager.Stop();
         }
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)

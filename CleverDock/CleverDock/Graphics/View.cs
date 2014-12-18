@@ -65,15 +65,14 @@ namespace CleverDock.Graphics
             }
         }
 
-        public View(RectangleF bounds)
+        public View()
         {
             Subviews = new ViewCollection(this);
             Visible = true;
-            Bounds = bounds;
         }
 
         public View(Scene scene)
-            : this(new RectangleF())
+            : this()
         {
             Scene = scene;
         }
@@ -114,15 +113,15 @@ namespace CleverDock.Graphics
         public void CreateResources()
         {
             OnCreateResources();
-            foreach (var view in Subviews)
-                view.CreateResources();
+            for (int i = 0; i < Subviews.Count(); i++)
+                Subviews[i].CreateResources();
         }
 
         public void FreeResources()
         {
             OnFreeResources();
-            foreach (var view in Subviews)
-                view.FreeResources();
+            for (int i = 0; i < Subviews.Count(); i++)
+                Subviews[i].FreeResources();
         }
 
         /// <summary>
@@ -145,8 +144,8 @@ namespace CleverDock.Graphics
             if (!Visible)
                 return;
             OnRender();
-            foreach(var subView in Subviews)
-                subView.Render();
+            for (int i = 0; i < Subviews.Count(); i++)
+                Subviews[i].Render();
         }
     }
 }

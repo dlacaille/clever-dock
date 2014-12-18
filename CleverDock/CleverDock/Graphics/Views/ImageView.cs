@@ -12,25 +12,44 @@ namespace CleverDock.Graphics.Views
 {
     public class ImageView : View
     {
-        private WIC.BitmapSource bitmapSource { get; set; }
+        private WIC.BitmapSource bitmapSource;
+        public WIC.BitmapSource BitmapSource 
+        { 
+            get 
+            {
+                return bitmapSource;
+            }
+            set
+            {
+                bitmapSource = value;
+                CreateBitmapFromSource();
+            } 
+        }
         private D2D.Bitmap bitmap { get; set; }
         private float opacity { get; set; }
 
         public ImageView(RectangleF bounds, WIC.BitmapSource bitmapSource)
-            : base(bounds)
         {
+            this.Bounds = bounds;
             this.bitmapSource = bitmapSource;
             this.opacity = 1;
         }
 
         protected override void OnCreateResources()
         {
-            var converter = new SharpDX.WIC.FormatConverter(new WIC.ImagingFactory());
-            converter.Initialize(bitmapSource, WIC.PixelFormat.Format32bppPBGRA);
-            bitmap = D2D.Bitmap.FromWicBitmap(RenderTarget, converter);
+            CreateBitmapFromSource();
 
             // Start animation.
             base.OnCreateResources();
+        }
+
+        private void CreateBitmapFromSource()
+        {
+            if (RenderTarget == null || bitmapSource == null)
+                return;
+            var converter = new SharpDX.WIC.FormatConverter(new WIC.ImagingFactory());
+            converter.Initialize(bitmapSource, WIC.PixelFormat.Format32bppPBGRA);
+            bitmap = D2D.Bitmap.FromWicBitmap(RenderTarget, converter);
         }
 
         protected override void OnFreeResources()
@@ -48,7 +67,8 @@ namespace CleverDock.Graphics.Views
         protected override void OnRender()
         {
             base.OnRender();
-
+            if (bitmap == null)
+                return;
             RenderTarget.DrawBitmap(bitmap, Frame, opacity, D2D.BitmapInterpolationMode.Linear); 
         }
     }
