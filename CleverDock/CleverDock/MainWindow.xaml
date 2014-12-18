@@ -2,7 +2,7 @@
         x:Class="CleverDock.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:direct2d="clr-namespace:CleverDock.Direct2D.Controls"
+        xmlns:direct2d="clr-namespace:CleverDock.Graphics.Controls"
         Title="MainWindow" Height="300" Width="300"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent">
     <Grid>

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CleverDock.Direct2D.Tools;
+using CleverDock.Graphics.Tools;
 using SharpDX;
 using D2D = SharpDX.Direct2D1;
 using DXGI = SharpDX.DXGI;
 using WIC = SharpDX.WIC;
 
-namespace CleverDock.Direct2D.Views
+namespace CleverDock.Graphics.Views
 {
     public class ImageView : View
     {

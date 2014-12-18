@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Media.Effects;
 
-namespace CleverDock.Effects
+namespace CleverDock.Graphics.Effects
 {
     public class BrightnessEffect : ShaderEffect
     {

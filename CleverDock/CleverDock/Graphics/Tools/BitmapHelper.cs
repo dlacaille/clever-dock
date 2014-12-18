@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace CleverDock.Direct2D.Tools
+namespace CleverDock.Graphics.Tools
 {
     public class BitmapHelper
     {

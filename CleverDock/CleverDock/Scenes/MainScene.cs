@@ -1,7 +1,7 @@
-﻿using CleverDock.Direct2D;
-using CleverDock.Direct2D.Scenes;
-using CleverDock.Direct2D.Tools;
-using CleverDock.Direct2D.Views;
+﻿using CleverDock.Graphics;
+using CleverDock.Graphics.Scenes;
+using CleverDock.Graphics.Tools;
+using CleverDock.Graphics.Views;
 using CleverDock.Managers;
 using CleverDock.Tools;
 using SharpDX;
@@ -34,6 +34,9 @@ namespace CleverDock.Scenes
             View.Subviews.Add(fpsCounter);
             imgView = new ImageView(new RectangleF(100, 100, 48, 48), BitmapHelper.FromFile("chrome.png"));
             View.Subviews.Add(imgView);
+            RectangleF newBounds = imgView.Bounds;
+            newBounds.Offset(100, 0);
+            Animate(imgView, v => v.Bounds, newBounds, 3);
         }
 
 
@@ -63,12 +66,6 @@ namespace CleverDock.Scenes
 
         protected override void OnRender()
         {
-            // This is what we're going to draw. We'll animate the width of the
-            // elipse over a span of five seconds (ElapsedTime / 5).
-            this.widthRatio += this.ElapsedTime / 5;
-            if (this.widthRatio > 1) // Reset
-                this.widthRatio = 0;
-
             var size = this.RenderTarget.Size;
             float width = (float)((size.Width / 3.0) * this.widthRatio);
             var ellipse = new D2D.Ellipse(new Vector2(size.Width / 2.0f, size.Height / 2.0f), width, size.Height / 3.0f);

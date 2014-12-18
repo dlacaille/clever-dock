@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CleverDock.Direct2D.Interop
+namespace CleverDock.Graphics.Interop
 {
     // These structs are taken from the DirectX SDK
     // In the SDK unsigned int (uint in c#) is used, however, we're only going

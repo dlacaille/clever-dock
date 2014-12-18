@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CleverDock.Direct2D.Interop
+namespace CleverDock.Graphics.Interop
 {
     internal sealed class Direct3DDevice9Ex : IDisposable
     {

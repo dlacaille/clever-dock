@@ -1,11 +1,11 @@
-﻿using CleverDock.Direct2D.Views;
+﻿using CleverDock.Graphics.Views;
 using SharpDX;
 using System;
 using D2D = SharpDX.Direct2D1;
 using D3D10 = SharpDX.Direct3D10;
 using DXGI = SharpDX.DXGI;
 
-namespace CleverDock.Direct2D.Scenes
+namespace CleverDock.Graphics.Scenes
 {
     /// <summary>Represents a Direct2D drawing.</summary>
     public abstract class Scene : IDisposable
@@ -16,6 +16,8 @@ namespace CleverDock.Direct2D.Scenes
         private D3D10.Texture2D texture;
         public View View { get; set; }
         private bool disposed;
+
+        private object resourceLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the Scene class.
@@ -157,10 +159,13 @@ namespace CleverDock.Direct2D.Scenes
             this.ThrowIfDisposed();
             if (this.renderTarget == null)
                 throw new InvalidOperationException("Resize has not been called.");
-            this.RenderTarget.BeginDraw();
-            this.OnRender();
-            this.View.Render();
-            this.RenderTarget.EndDraw();
+            lock (resourceLock)
+            {
+                this.RenderTarget.BeginDraw();
+                this.OnRender();
+                this.View.Render();
+                this.RenderTarget.EndDraw();
+            }
             this.device.Flush();
             this.OnUpdated();
         }
@@ -190,11 +195,14 @@ namespace CleverDock.Direct2D.Scenes
             if (this.device == null)
                 throw new InvalidOperationException("CreateResources has not been called.");
 
-            // Recreate the render target
-            this.CreateTexture(width, height);
-            using (var surface = this.texture.QueryInterface<DXGI.Surface>())
+            lock (resourceLock)
             {
-                this.CreateRenderTarget(surface);
+                // Recreate the render target
+                this.CreateTexture(width, height);
+                using (var surface = this.texture.QueryInterface<DXGI.Surface>())
+                {
+                    this.CreateRenderTarget(surface);
+                }
             }
 
             // Resize our viewport

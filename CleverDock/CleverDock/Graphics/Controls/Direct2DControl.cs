@@ -1,11 +1,11 @@
-﻿using CleverDock.Direct2D.Scenes;
+﻿using CleverDock.Graphics.Scenes;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace CleverDock.Direct2D.Controls
+namespace CleverDock.Graphics.Controls
 {
     /// <summary>Hosts a <see cref="Scene"/> instance.</summary>
     public sealed class Direct2DControl : FrameworkElement
@@ -36,7 +36,7 @@ namespace CleverDock.Direct2D.Controls
             this.resizeTimer.Interval = ResizeInterval;
             this.resizeTimer.Tick += this.ResizeTimerTick;
 
-            this.imageSource = new Direct2D.D3D10Image();
+            this.imageSource = new D3D10Image();
             this.imageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
             this.image = new Image();

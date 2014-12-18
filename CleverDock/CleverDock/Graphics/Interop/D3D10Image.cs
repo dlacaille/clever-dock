@@ -3,7 +3,7 @@ using System.Windows.Interop;
 using D3D10 = SharpDX.Direct3D10;
 using DXGI = SharpDX.DXGI;
 
-namespace CleverDock.Direct2D
+namespace CleverDock.Graphics
 {
     /// <summary>
     /// A <see cref="D3DImage"/> class that displays Direct3D 10 content.

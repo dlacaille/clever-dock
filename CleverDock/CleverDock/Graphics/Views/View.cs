@@ -1,4 +1,4 @@
-﻿using CleverDock.Direct2D.Scenes;
+﻿using CleverDock.Graphics.Scenes;
 using SharpDX;
 using D2D = SharpDX.Direct2D1;
 using System;
@@ -6,38 +6,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
-namespace CleverDock.Direct2D.Views
+namespace CleverDock.Graphics.Views
 {
     public class View : IDisposable
     {
-
         /// <summary>
         /// Allows the view to be rendered.
         /// </summary>
         public bool Visible { get; set; }
 
-        private RectangleF bounds;
         /// <summary>
         /// Bounds of the view, relative to its parent.
         /// </summary>
-        public RectangleF Bounds
-        {
-            get
-            {
-                return bounds;
-            }
-            set
-            {
-                bounds = value;
-                RecalculateFrame();
-            }
-        }
+        public RectangleF Bounds { get; set; }
 
         /// <summary>
         /// Frame of the view, relative to the scene.
         /// </summary>
-        public RectangleF Frame { get; set; }
+        public RectangleF Frame
+        {
+            get
+            {
+                if (Superview != null)
+                    return new RectangleF(Superview.Frame.X + Bounds.X, Superview.Frame.Y + Bounds.Y, Bounds.Width, Bounds.Height);
+                return Bounds;
+            }
+        }
 
         /// <summary>
         /// Subviews of the view which will be rendered over the view.
@@ -101,22 +97,6 @@ namespace CleverDock.Direct2D.Views
             Subviews = null;
             Superview = null;
             Scene = null;
-        }
-
-        public void RecalculateFrame()
-        {
-            if (Superview != null)
-            {
-                Frame = new RectangleF(
-                    Bounds.Left + Superview.Frame.Left,
-                    Bounds.Top + Superview.Frame.Top,
-                    Bounds.Width,
-                    Bounds.Height);
-            }
-            else
-                Frame = Bounds;
-            foreach (var view in Subviews)
-                view.RecalculateFrame();
         }
 
         /// <summary>

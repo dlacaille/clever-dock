@@ -7,7 +7,7 @@ using SharpDX;
 using DWrite = SharpDX.DirectWrite;
 using D2D = SharpDX.Direct2D1;
 
-namespace CleverDock.Direct2D.Views
+namespace CleverDock.Graphics.Views
 {
     public class FPSCounterView : View
     {
