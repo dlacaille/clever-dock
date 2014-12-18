@@ -25,7 +25,7 @@ namespace CleverDock.Graphics
         /// <summary>
         /// Frame of the view, relative to the scene.
         /// </summary>
-        public RectangleF Frame
+        public virtual RectangleF Frame
         {
             get
             {
@@ -57,9 +57,11 @@ namespace CleverDock.Graphics
         {
             get
             {
-                if (Scene == null)
-                    return null;
-                return Scene.RenderTarget;
+                if (Superview != null)
+                    return Superview.RenderTarget;
+                if (Scene != null)
+                    return Scene.RenderTarget;
+                return null;
             }
         }
 

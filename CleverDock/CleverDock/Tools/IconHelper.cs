@@ -1,25 +1,33 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 using WI = CleverDock.Interop.WindowInterop;
 using II = CleverDock.Interop.IconInterop;
+using WIC = SharpDX.WIC;
 
 namespace CleverDock.Managers
 {
-    public class IconManager
+    public class IconHelper
     {
-        private static BitmapSource IconSource(IntPtr handle)
-        {
-            var result = Imaging.CreateBitmapSourceFromHIcon(handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            result.Freeze();
-            return result;
+        private static WIC.ImagingFactory _factory;
+        private static WIC.ImagingFactory factory { 
+            get
+            {
+                if (_factory == null)
+                    _factory = new WIC.ImagingFactory();
+                return _factory;
+            } 
         }
 
-        public static BitmapSource GetAppIcon(IntPtr hwnd)
+        private static WIC.BitmapSource IconSource(IntPtr handle)
+        {
+            var icon = System.Drawing.Icon.FromHandle(handle);
+            return new WIC.Bitmap(factory, icon);
+        }
+
+        public static WIC.BitmapSource GetAppIcon(IntPtr hwnd)
         {
             IntPtr hIcon = WI.GetClassLongPtr(hwnd, WI.ICON_SMALL);
             try
@@ -41,7 +49,7 @@ namespace CleverDock.Managers
             return bs;
         }
 
-        public static BitmapSource GetSmallIcon(string FileName, bool small)
+        public static WIC.BitmapSource GetSmallIcon(string FileName, bool small)
         {
             var shinfo = new II.SHFILEINFO();
             uint flags;
@@ -57,14 +65,12 @@ namespace CleverDock.Managers
                 throw (new FileNotFoundException());
 
             var bs = IconSource(shinfo.hIcon);
-
-            bs.Freeze(); // very important to avoid memory leak
             II.DestroyIcon(shinfo.hIcon);
 
             return bs;
         }
 
-        public static BitmapSource GetIcon(string path, int size)
+        public static WIC.BitmapSource GetIcon(string path, int size)
         {
             if (size <= 16)
                 return GetSmallIcon(path, true);
@@ -75,7 +81,7 @@ namespace CleverDock.Managers
             return GetLargeIcon(path, true);
         }
 
-        public static BitmapSource GetLargeIcon(string path, bool jumbo)
+        public static WIC.BitmapSource GetLargeIcon(string path, bool jumbo)
         {
             var shinfo = new II.SHFILEINFO();
             const uint SHGFI_SYSICONINDEX = 0x4000;
@@ -100,8 +106,6 @@ namespace CleverDock.Managers
             iml.GetIcon(iconIndex, ILD_TRANSPARENT, ref hIcon);
 
             var bs = IconSource(hIcon);
-
-            bs.Freeze(); // very important to avoid memory leak
             II.DestroyIcon(hIcon);
             II.SendMessage(hIcon, II.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 

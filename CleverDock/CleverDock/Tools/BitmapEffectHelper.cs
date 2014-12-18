@@ -8,45 +8,59 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Interop;
-using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
+using WIC = SharpDX.WIC;
 
 namespace CleverDock.Tools
 {
     public class BitmapEffectHelper
     {
-        public static BitmapImage GaussianBlur(BitmapSource image, float radius)
+        public static WIC.BitmapSource GaussianBlur(WIC.BitmapSource image, float radius)
         {
             GaussianBlurFilter filter = new GaussianBlurFilter(radius);
-            using(var kimage = BitmapSourceToKaliko(image))
+            var factory = new WIC.ImagingFactory();
+            using (var kimage = BitmapSourceToKaliko(factory, image))
             {
                 kimage.ApplyFilter(filter);
-                return KalikoToBitmap(kimage);
+                return KalikoToBitmap(factory, kimage);
             }
         }
 
-        private static KalikoImage BitmapSourceToKaliko(BitmapSource image)
+        private static KalikoImage BitmapSourceToKaliko(WIC.ImagingFactory factory, WIC.BitmapSource image)
         {
             var stream = new MemoryStream();
-            BitmapEncoder enc = new PngBitmapEncoder();
-            enc.Frames.Add(BitmapFrame.Create(image));
-            enc.Save(stream);
+
+            // Encode image using WIC in stream.
+            var wicStream = new WIC.WICStream(factory, stream);
+            var encoder = new WIC.PngBitmapEncoder(factory);
+            encoder.Initialize(wicStream);
+            var frameEncoder = new WIC.BitmapFrameEncode(encoder);
+            frameEncoder.SetSize(image.Size.Width, image.Size.Height);
+            var format = WIC.PixelFormat.FormatDontCare;
+            frameEncoder.SetPixelFormat(ref format);
+            frameEncoder.WriteSource(image);
+            frameEncoder.Commit();
+            encoder.Commit();
+
+            // Clean up
+            frameEncoder.Dispose();
+            encoder.Dispose();
+            wicStream.Dispose();
+
+            // Return kaliko image.
             stream.Position = 0;
             return new KalikoImage(stream);
         }
 
-        private static BitmapImage KalikoToBitmap(KalikoImage kimage)
+        private static WIC.BitmapSource KalikoToBitmap(WIC.ImagingFactory factory, KalikoImage kimage)
         {
+            // Save kaliko image to stream.
             var stream = new MemoryStream();
             kimage.SavePng(stream);
             stream.Position = 0;
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.StreamSource = stream;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            return bitmap;
+
+            // Decode BitmapSource from stream.
+            var decoder = new WIC.BitmapDecoder(factory, stream, WIC.DecodeOptions.CacheOnLoad);
+            return new WIC.BitmapSource(decoder.GetFrame(0).NativePointer);
         }
     }
 }

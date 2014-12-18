@@ -1,8 +1,8 @@
 ﻿using CleverDock.Graphics;
-using CleverDock.Graphics.Tools;
 using CleverDock.Graphics.Views;
 using CleverDock.Managers;
 using CleverDock.Tools;
+using CleverDock.Views;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -18,9 +18,8 @@ namespace CleverDock.Scenes
     class MainScene : AnimatedScene
     {
         private D2D.SolidColorBrush redBrush;
-        private double widthRatio;
         private FPSCounterView fpsCounter;
-        private ImageView imgView;
+        private Dock dock;
         private WindowManager manager;
 
         public MainScene()
@@ -28,14 +27,8 @@ namespace CleverDock.Scenes
         {
             manager = new WindowManager();
             manager.Start();
-
-            fpsCounter = new FPSCounterView(new Rectangle(0, 0, 60, 20));
-            View.Subviews.Add(fpsCounter);
-            imgView = new ImageView(new RectangleF(100, 100, 48, 48), BitmapHelper.FromFile("chrome.png"));
-            View.Subviews.Add(imgView);
-            RectangleF newBounds = imgView.Bounds;
-            newBounds.Offset(100, 0);
-            Animate(imgView, v => v.Bounds, newBounds, 3);
+            View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(0, 0, 60, 20)));
+            View.Subviews.Add(dock = new Dock());
         }
 
 
@@ -49,12 +42,12 @@ namespace CleverDock.Scenes
         {
             this.redBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 0f, 0f));
 
-            base.OnCreateResources(); // Call this last to start the animation
+            base.OnCreateResources();
         }
 
         protected override void OnFreeResources()
         {
-            base.OnFreeResources(); // Call this first to stop the animation
+            base.OnFreeResources();
 
             if (redBrush != null)
             {
@@ -65,13 +58,10 @@ namespace CleverDock.Scenes
 
         protected override void OnRender()
         {
-            var size = this.RenderTarget.Size;
-            float width = (float)((size.Width / 3.0) * this.widthRatio);
-            var ellipse = new D2D.Ellipse(new Vector2(size.Width / 2.0f, size.Height / 2.0f), width, size.Height / 3.0f);
-
-            // This draws the ellipse in red on a semi-transparent blue background
             this.RenderTarget.Clear(new Color(0, 0, 0, 0.0f));
-            this.RenderTarget.FillEllipse(ellipse, this.redBrush);
+            this.RenderTarget.DrawRectangle(View.Bounds, this.redBrush);
+
+            base.OnRender();
         }
     }
 }

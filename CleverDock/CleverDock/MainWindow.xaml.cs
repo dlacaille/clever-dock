@@ -1,4 +1,6 @@
-﻿using CleverDock.Scenes;
+﻿using CleverDock.Interop;
+using CleverDock.Managers;
+using CleverDock.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -24,17 +27,48 @@ namespace CleverDock
 
         public MainWindow()
         {
+            SetDimensions();
             InitializeComponent();
+            this.Direct2DControl.Scene = this.scene;
+            WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
+            WindowManager.Manager.Start();
+            Loaded += MainWindow_Loaded;
+        }
 
-            /*try
-            {*/
-                this.Direct2DControl.Scene = this.scene;
-            /*}
-            catch (Exception)
+        void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetTopmost();
+        }
+
+        void Manager_ActiveWindowChanged(object sender, EventArgs e)
+        {
+            SetTopmost();
+        }
+
+        public int ScreenWidth
+        {
+            get { return (int)System.Windows.SystemParameters.PrimaryScreenWidth; }
+        }
+
+        public int ScreenHeight
+        {
+            get { return (int)System.Windows.SystemParameters.PrimaryScreenHeight; }
+        }
+
+        public void SetTopmost()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show("Unable to create a Direct2D and/or Direct3D device.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                App.Current.Shutdown();
-            }*/
+                var hwnd = new WindowInteropHelper(Application.Current.MainWindow).Handle;
+                WindowInterop.SetWindowPos(hwnd, WindowInterop.HWND_TOPMOST, 0, 0, 0, 0, WindowInterop.SWP_NOMOVE | WindowInterop.SWP_NOSIZE);
+            });
+        }
+
+        public void SetDimensions()
+        {
+            WindowState = System.Windows.WindowState.Maximized;
+            Width = ScreenWidth;
+            Height = ScreenHeight;
         }
     }
 }

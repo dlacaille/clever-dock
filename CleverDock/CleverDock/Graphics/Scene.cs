@@ -77,6 +77,11 @@ namespace CleverDock.Graphics
         /// </summary>
         public void Dispose()
         {
+            if (this.View != null)
+            {
+                this.View.Dispose();
+                this.View = null;
+            }
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -123,11 +128,6 @@ namespace CleverDock.Graphics
         public void FreeResources()
         {
             this.OnFreeResources();
-            if (this.View != null)
-            {
-                this.View.Dispose();
-                this.View = null;
-            }
             if (this.texture != null)
             {
                 this.texture.Dispose();
@@ -216,7 +216,8 @@ namespace CleverDock.Graphics
             }
 
             // Resize main view.
-            View.Bounds = new Rectangle(0, 0, width, height);
+            if (View != null)
+                View.Bounds = new Rectangle(0, 0, width, height);
 
             // Destroy and recreate any dependent resources declared in a
             // derived class only (i.e don't destroy our resources).
@@ -243,7 +244,8 @@ namespace CleverDock.Graphics
         /// </summary>
         protected virtual void OnCreateResources()
         {
-            View.CreateResources();
+            if (View != null)
+                View.CreateResources();
         }
 
         /// <summary>
@@ -251,7 +253,8 @@ namespace CleverDock.Graphics
         /// </summary>
         protected virtual void OnFreeResources()
         {
-            View.FreeResources();
+            if (View != null)
+                View.FreeResources();
         }
 
         /// <summary>

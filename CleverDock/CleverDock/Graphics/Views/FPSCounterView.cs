@@ -49,8 +49,6 @@ namespace CleverDock.Graphics.Views
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose();
-
             if (writeFactory != null)
             {
                 writeFactory.Dispose();
@@ -61,6 +59,7 @@ namespace CleverDock.Graphics.Views
                 textFormat.Dispose();
                 textFormat = null;
             }
+            base.Dispose(disposing);
         }
 
         protected override void OnRender()

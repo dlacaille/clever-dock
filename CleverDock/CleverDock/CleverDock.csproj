@@ -181,11 +181,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Decorators\WindowManagerDecorator.cs" />
     <Compile Include="Graphics\Animations\Animation.cs" />
     <Compile Include="Graphics\Animations\EasingFunctions.cs" />
     <Compile Include="Graphics\Animations\EasingMode.cs" />
-    <Compile Include="Graphics\Scenes\AnimatedScene.cs" />
+    <Compile Include="Graphics\AnimatedScene.cs" />
     <Compile Include="Graphics\Interop\ComInterface.cs" />
     <Compile Include="Graphics\Interop\D3D10Image.cs" />
     <Compile Include="Graphics\Interop\Direct3D9Ex.cs" />
@@ -194,12 +193,12 @@
     <Compile Include="Graphics\Interop\Direct3DTexture9.cs" />
     <Compile Include="Graphics\Interop\NativeMethods.cs" />
     <Compile Include="Graphics\Interop\NativeStructs.cs" />
-    <Compile Include="Graphics\Scenes\Scene.cs" />
-    <Compile Include="Graphics\Views\View.cs" />
-    <Compile Include="Graphics\Views\ViewCollection.cs" />
+    <Compile Include="Graphics\Scene.cs" />
+    <Compile Include="Graphics\View.cs" />
+    <Compile Include="Graphics\ViewCollection.cs" />
     <Compile Include="Graphics\Views\FPSCounterView.cs" />
     <Compile Include="Graphics\Views\ImageView.cs" />
-    <Compile Include="Graphics\Tools\BitmapHelper.cs" />
+    <Compile Include="Tools\BitmapHelper.cs" />
     <Compile Include="Graphics\Controls\Direct2DControl.cs" />
     <Compile Include="Graphics\Effects\BrightnessEffect.cs" />
     <Compile Include="Handlers\CursorPosEventArgs.cs" />
@@ -224,11 +223,6 @@
     <Compile Include="Interop\WindowInterop.cs" />
     <Compile Include="Model\Theme.cs" />
     <Compile Include="Model\Window.cs" />
-    <Compile Include="Controls\DockIconContainer.cs" />
-    <Compile Include="Controls\DockIcon.xaml.cs">
-      <DependentUpon>DockIcon.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Decorators\IconDragDecorator.cs" />
     <Compile Include="Scenes\MainScene.cs" />
     <Compile Include="Tools\BitmapEffectHelper.cs" />
     <Compile Include="Tools\PathTools.cs" />
@@ -238,21 +232,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Decorators\FileDropDecorator.cs" />
     <Compile Include="Tools\IconHelper.cs" />
-    <Page Include="Controls\DockIcon.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Content Include="Themes\Dark.xaml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Compile Include="Views\Dock.cs" />
+    <Compile Include="Views\DockBackground.cs" />
+    <Compile Include="Views\DockIcon.cs" />
     <Page Include="MainWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Metal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -310,9 +294,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>echo "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Utilities\bin\x64\fxc.exe" /T ps_2_0 /E main /Fo "$(ProjectDir)Effects\BrightnessEffect.ps" "$(ProjectDir)Effects\BrightnessEffect.fx"</PreBuildEvent>
