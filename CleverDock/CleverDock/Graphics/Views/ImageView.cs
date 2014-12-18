@@ -29,18 +29,20 @@ namespace CleverDock.Graphics.Views
             var converter = new SharpDX.WIC.FormatConverter(new WIC.ImagingFactory());
             converter.Initialize(bitmapSource, WIC.PixelFormat.Format32bppPBGRA);
             bitmap = D2D.Bitmap.FromWicBitmap(RenderTarget, converter);
+
+            // Start animation.
             base.OnCreateResources();
         }
 
         protected override void OnFreeResources()
         {
+            base.OnFreeResources();
+
             if (bitmap != null)
             {
                 bitmap.Dispose();
                 bitmap = null;
             }
-
-            base.OnFreeResources();
         }
 
         protected override void OnRender()

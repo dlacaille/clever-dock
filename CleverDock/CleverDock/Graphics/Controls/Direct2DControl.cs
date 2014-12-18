@@ -1,4 +1,4 @@
-﻿using CleverDock.Graphics.Scenes;
+﻿using CleverDock.Graphics;
 using System;
 using System.Windows;
 using System.Windows.Controls;

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace CleverDock.Graphics.Scenes
+namespace CleverDock.Graphics
 {
     /// <summary>
     /// Allows drawing of a Scene at a specified Frame Per Second.
@@ -48,7 +48,10 @@ namespace CleverDock.Graphics.Scenes
                 for (int i = 0; i < animations.Count; i++)
                     if (animations[i].IsAnimating)
                         animations[i].Tick();
-                this.Render(); // Force an update.
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                this.Render();
+                // Sleep the thread for the time required to 
                 double elapsed = (DateTime.Now - start).TotalMilliseconds;
                 Thread.Sleep((int)Math.Max(msPerFrame - elapsed, 0));
             }
@@ -56,7 +59,6 @@ namespace CleverDock.Graphics.Scenes
 
         protected void StartAnimation()
         {
-            Console.WriteLine("Starting animation.");
             cancellationTokenSource = new CancellationTokenSource();
             cancellationToken = cancellationTokenSource.Token;
             renderLoopTask = Task.Factory.StartNew(RenderLoop, cancellationToken);
@@ -66,7 +68,6 @@ namespace CleverDock.Graphics.Scenes
         {
             if (renderLoopTask == null)
                 return;
-            Console.WriteLine("Stopping animation.");
             cancellationTokenSource.Cancel();
             renderLoopTask.Wait();
             renderLoopTask = null;
@@ -77,7 +78,9 @@ namespace CleverDock.Graphics.Scenes
         /// </summary>
         protected override void OnCreateResources()
         {
+            // Will create resources for subViews.
             base.OnCreateResources();
+            // Resources are created. Start animation.
             StartAnimation();
         }
 
@@ -86,8 +89,10 @@ namespace CleverDock.Graphics.Scenes
         /// </summary>
         protected override void OnFreeResources()
         {
-            base.OnFreeResources();
+            // Stop animation to prevent rendering while resources are freed.
             StopAnimation();
+            // Will create resources for subViews.
+            base.OnFreeResources();
         }
         
         public void Animate<TSource, TResult>(TSource obj, Expression<Func<TSource, TResult>> property, TResult toValue, double duration, EasingMode easing = EasingMode.QuadraticEaseInOut, EventHandler animationEnded = null)

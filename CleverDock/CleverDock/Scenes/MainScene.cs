@@ -1,5 +1,4 @@
 ﻿using CleverDock.Graphics;
-using CleverDock.Graphics.Scenes;
 using CleverDock.Graphics.Tools;
 using CleverDock.Graphics.Views;
 using CleverDock.Managers;

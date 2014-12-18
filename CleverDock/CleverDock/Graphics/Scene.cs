@@ -5,7 +5,7 @@ using D2D = SharpDX.Direct2D1;
 using D3D10 = SharpDX.Direct3D10;
 using DXGI = SharpDX.DXGI;
 
-namespace CleverDock.Graphics.Scenes
+namespace CleverDock.Graphics
 {
     /// <summary>Represents a Direct2D drawing.</summary>
     public abstract class Scene : IDisposable
@@ -17,7 +17,7 @@ namespace CleverDock.Graphics.Scenes
         public View View { get; set; }
         private bool disposed;
 
-        private object resourceLock = new object();
+        private object renderTargetLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the Scene class.
@@ -159,7 +159,7 @@ namespace CleverDock.Graphics.Scenes
             this.ThrowIfDisposed();
             if (this.renderTarget == null)
                 throw new InvalidOperationException("Resize has not been called.");
-            lock (resourceLock)
+            lock (renderTargetLock)
             {
                 this.RenderTarget.BeginDraw();
                 this.OnRender();
@@ -195,7 +195,7 @@ namespace CleverDock.Graphics.Scenes
             if (this.device == null)
                 throw new InvalidOperationException("CreateResources has not been called.");
 
-            lock (resourceLock)
+            lock (renderTargetLock)
             {
                 // Recreate the render target
                 this.CreateTexture(width, height);
@@ -203,24 +203,20 @@ namespace CleverDock.Graphics.Scenes
                 {
                     this.CreateRenderTarget(surface);
                 }
-            }
 
-            // Resize our viewport
-            var viewport = new Viewport();
-            viewport.Height = height;
-            viewport.MaxDepth = 1;
-            viewport.MinDepth = 0;
-            viewport.X = 0;
-            viewport.Y = 0;
-            viewport.Width = width;
-            this.device.Rasterizer.SetViewports(new Viewport[] { viewport });
+                // Resize our viewport
+                var viewport = new Viewport();
+                viewport.Height = height;
+                viewport.MaxDepth = 1;
+                viewport.MinDepth = 0;
+                viewport.X = 0;
+                viewport.Y = 0;
+                viewport.Width = width;
+                this.device.Rasterizer.SetViewports(new Viewport[] { viewport });
+            }
 
             // Resize main view.
             View.Bounds = new Rectangle(0, 0, width, height);
-
-            // Destroy and create resources in main View.
-            View.FreeResources();
-            View.CreateResources();
 
             // Destroy and recreate any dependent resources declared in a
             // derived class only (i.e don't destroy our resources).
@@ -245,12 +241,18 @@ namespace CleverDock.Graphics.Scenes
         /// <summary>
         /// When overriden in a derived class, creates device dependent resources.
         /// </summary>
-        protected virtual void OnCreateResources() { }
+        protected virtual void OnCreateResources()
+        {
+            View.CreateResources();
+        }
 
         /// <summary>
         /// When overriden in a deriven class, releases device dependent resources.
         /// </summary>
-        protected virtual void OnFreeResources() { }
+        protected virtual void OnFreeResources()
+        {
+            View.FreeResources();
+        }
 
         /// <summary>
         /// When overriden in a derived class, is called before rendering.

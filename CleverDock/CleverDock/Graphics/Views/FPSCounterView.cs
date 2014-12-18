@@ -31,18 +31,20 @@ namespace CleverDock.Graphics.Views
         {
             this.whiteBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 1f, 1f));
 
+            // Start animation.
             base.OnCreateResources();
         }
 
         protected override void OnFreeResources()
         {
+            // Stop animation to prevent rendering while the resources are freed.
+            base.OnFreeResources();
+
             if (this.whiteBrush != null)
             {
                 this.whiteBrush.Dispose();
                 this.whiteBrush = null;
             }
-
-            base.OnFreeResources();
         }
 
         protected override void Dispose(bool disposing)

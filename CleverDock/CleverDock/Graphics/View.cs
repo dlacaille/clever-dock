@@ -1,4 +1,4 @@
-﻿using CleverDock.Graphics.Scenes;
+﻿using CleverDock.Graphics;
 using SharpDX;
 using D2D = SharpDX.Direct2D1;
 using System;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 
-namespace CleverDock.Graphics.Views
+namespace CleverDock.Graphics
 {
     public class View : IDisposable
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CleverDock.Graphics.Views
+namespace CleverDock.Graphics
 {
     public class ViewCollection : IList<View>
     {
