@@ -12,6 +12,9 @@ namespace CleverDock.Graphics
 {
     public class View : IDisposable
     {
+        private bool isMouseOver;
+        public bool IsMouseOver { get { return isMouseOver; } }
+
         /// <summary>
         /// Allows the view to be rendered.
         /// </summary>
@@ -68,7 +71,24 @@ namespace CleverDock.Graphics
         public View()
         {
             Subviews = new ViewCollection(this);
+            Subviews.Added += Subviews_Added;
+            Subviews.Removed += Subviews_Removed;
             Visible = true;
+        }
+
+        void Subviews_Added(object sender, Handlers.ViewEventArgs e)
+        {
+            if (RenderTarget == null)
+                return;
+            e.View.FreeResources();
+            e.View.CreateResources();
+        }
+
+        void Subviews_Removed(object sender, Handlers.ViewEventArgs e)
+        {
+            if (RenderTarget == null)
+                return;
+            e.View.FreeResources();
         }
 
         public View(Scene scene)
@@ -99,6 +119,53 @@ namespace CleverDock.Graphics
             Superview = null;
             Scene = null;
         }
+
+        public void Click(Point mousePos)
+        {
+            var found = Subviews.LastOrDefault(s => s.Frame.Contains(mousePos));
+            if (found != null)
+                found.Click(mousePos);
+            OnClick(mousePos);
+        }
+
+        protected virtual void OnClick(Point mousePos) { }
+
+        public void MouseMove(Point mousePos)
+        {
+            // Find the view which has a mouse over it.
+            var found = Subviews.LastOrDefault(s => s.Frame.Contains(mousePos));
+            if (found != null)
+            {
+                found.MouseMove(mousePos);
+                found.isMouseOver = true;
+            }
+
+            // Set mouseOver to false for other views.
+            for (int i = 0; i < Subviews.Count; i++)
+            {
+                Subviews[i].MouseMove(mousePos);
+                if (Subviews[i].IsMouseOver && Subviews[i] != found)
+                    Subviews[i].isMouseOver = false;
+            }
+
+            OnMouseMove(mousePos);
+        }
+
+        protected virtual void OnMouseMove(Point mousePos) { }
+
+        public void MouseLeave()
+        {
+            for (int i = 0; i < Subviews.Count; i++)
+            {
+                Subviews[i].MouseLeave();
+                if (Subviews[i].IsMouseOver)
+                    Subviews[i].isMouseOver = false;
+            }
+
+            OnMouseLeave();
+        }
+
+        protected virtual void OnMouseLeave() { }
 
         /// <summary>
         /// Removes this view from its superview.

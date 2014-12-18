@@ -4,6 +4,7 @@ using CleverDock.Managers;
 using CleverDock.Model;
 using CleverDock.Tools;
 using SharpDX;
+using SharpDX.Direct2D1;
 using SharpDX.WIC;
 using System;
 using System.Collections.Generic;
@@ -64,12 +65,12 @@ namespace CleverDock.Views
 
         public IconInfo Info { get; set; }
         public string Text { get; set; }
-
         public ObservableCollection<Window> Windows = new ObservableCollection<Window>();
 
         private ImageView iconView;
         private ImageView blurredIconView;
         private ImageView childIconView;
+        private SolidColorBrush redBrush;
 
         public DockIcon()
         {
@@ -117,6 +118,33 @@ namespace CleverDock.Views
                 Icon = bitmap;
                 BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
             }
+        }
+        
+        protected override void OnCreateResources()
+        {
+            redBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 0, 0, 1f));
+
+            // Start animation.
+            base.OnCreateResources();
+        }
+
+        protected override void OnFreeResources()
+        {
+            // Stop animation.
+            base.OnFreeResources();
+
+            if (redBrush != null)
+            {
+                redBrush.Dispose();
+                redBrush = null;
+            }
+        }
+
+        protected override void OnRender()
+        {
+            base.OnRender();
+            if (IsMouseOver)
+                RenderTarget.DrawRectangle(Frame, redBrush);
         }
     }
 }

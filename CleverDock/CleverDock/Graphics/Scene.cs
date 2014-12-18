@@ -225,6 +225,30 @@ namespace CleverDock.Graphics
             this.OnCreateResources();
         }
 
+        public void Click(Point mousePos)
+        {
+            this.View.Click(mousePos);
+            OnClick(mousePos);
+        }
+
+        protected virtual void OnClick(Point mousePos) { }
+
+        public void MouseMove(Point mousePos)
+        {
+            this.View.MouseMove(mousePos);
+            OnMouseMove(mousePos);
+        }
+
+        protected virtual void OnMouseMove(Point mousePos) { }
+
+        public void MouseLeave()
+        {
+            this.View.MouseLeave();
+            OnMouseLeave();
+        }
+
+        protected virtual void OnMouseLeave() { }
+
         /// <summary>
         /// Immediately frees any system resources that the object might hold.
         /// </summary>

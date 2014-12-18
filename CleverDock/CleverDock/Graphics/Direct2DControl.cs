@@ -2,13 +2,14 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace CleverDock.Graphics
 {
     /// <summary>Hosts a <see cref="Scene"/> instance.</summary>
-    public sealed class Direct2DControl : FrameworkElement
+    public sealed class Direct2DControl : Control
     {
         /// <summary>
         /// Identifies the <see cref="Scene"/> dependency property.
@@ -44,9 +45,39 @@ namespace CleverDock.Graphics
             this.image.Source = this.imageSource;
             this.AddVisualChild(this.image);
 
+            MouseLeftButtonUp += Direct2DControl_MouseLeftButtonUp;
+            MouseMove += Direct2DControl_MouseMove;
+            MouseLeave += Direct2DControl_MouseLeave;
+
             // To greatly reduce flickering we're only going to AddDirtyRect
             // when WPF is rendering.
             CompositionTarget.Rendering += this.CompositionTargetRendering;
+        }
+
+        void Direct2DControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (Scene != null)
+            {
+                Scene.MouseLeave();
+            }
+        }
+
+        void Direct2DControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Scene != null)
+            {
+                var pos = Mouse.GetPosition(this);
+                Scene.MouseMove(new SharpDX.Point((int)pos.X, (int)pos.Y));
+            }
+        }
+
+        void Direct2DControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (Scene != null)
+            {
+                var pos = Mouse.GetPosition(this);
+                Scene.Click(new SharpDX.Point((int)pos.X, (int)pos.Y));
+            }
         }
 
         /// <summary>
@@ -145,7 +176,8 @@ namespace CleverDock.Graphics
             // Now subscribe to the events once all the resources have been created
             if (e.NewValue != null)
             {
-                ((Scene)e.NewValue).Updated += instance.SceneUpdated;
+                var scene = ((Scene)e.NewValue);
+                scene.Updated += instance.SceneUpdated;
             }
         }
 

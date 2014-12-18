@@ -35,14 +35,6 @@ namespace CleverDock.Graphics.Views
             this.opacity = 1;
         }
 
-        protected override void OnCreateResources()
-        {
-            CreateBitmapFromSource();
-
-            // Start animation.
-            base.OnCreateResources();
-        }
-
         private void CreateBitmapFromSource()
         {
             if (RenderTarget == null || bitmapSource == null)
@@ -50,6 +42,14 @@ namespace CleverDock.Graphics.Views
             var converter = new SharpDX.WIC.FormatConverter(new WIC.ImagingFactory());
             converter.Initialize(bitmapSource, WIC.PixelFormat.Format32bppPBGRA);
             bitmap = D2D.Bitmap.FromWicBitmap(RenderTarget, converter);
+        }
+
+        protected override void OnCreateResources()
+        {
+            CreateBitmapFromSource();
+
+            // Start animation.
+            base.OnCreateResources();
         }
 
         protected override void OnFreeResources()
