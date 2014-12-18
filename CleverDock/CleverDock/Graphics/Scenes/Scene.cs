@@ -218,14 +218,14 @@ namespace CleverDock.Graphics.Scenes
             // Resize main view.
             View.Bounds = new Rectangle(0, 0, width, height);
 
+            // Destroy and create resources in main View.
+            View.FreeResources();
+            View.CreateResources();
+
             // Destroy and recreate any dependent resources declared in a
             // derived class only (i.e don't destroy our resources).
             this.OnFreeResources();
             this.OnCreateResources();
-
-            // Destroy and create resources in main View.
-            View.FreeResources();
-            View.CreateResources();
         }
 
         /// <summary>
