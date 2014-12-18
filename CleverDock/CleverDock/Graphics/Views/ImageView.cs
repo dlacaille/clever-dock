@@ -26,9 +26,9 @@ namespace CleverDock.Graphics.Views
 
         protected override void OnCreateResources()
         {
-            var pf = new D2D.PixelFormat(DXGI.Format.B8G8R8A8_UNorm, D2D.AlphaMode.Premultiplied);
-            var properties = new D2D.BitmapProperties(pf, 96.0f, 96.0f);
-            bitmap = D2D.Bitmap.FromWicBitmap(RenderTarget, bitmapSource, properties);
+            var converter = new SharpDX.WIC.FormatConverter(new WIC.ImagingFactory());
+            converter.Initialize(bitmapSource, WIC.PixelFormat.Format32bppPBGRA);
+            bitmap = D2D.Bitmap.FromWicBitmap(RenderTarget, converter);
             base.OnCreateResources();
         }
 
