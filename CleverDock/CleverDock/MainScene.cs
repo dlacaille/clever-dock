@@ -13,7 +13,7 @@ using D2D = SharpDX.Direct2D1;
 using DWrite = SharpDX.DirectWrite;
 using WIC = SharpDX.WIC;
 
-namespace CleverDock.Scenes
+namespace CleverDock
 {
     class MainScene : AnimatedScene
     {
@@ -27,7 +27,7 @@ namespace CleverDock.Scenes
         {
             manager = new WindowManager();
             manager.Start();
-            View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(20, 20, 60, 20)));
+            View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(20, 60, 80, 20)));
             View.Subviews.Add(dock = new Dock());
         }
 
@@ -58,7 +58,7 @@ namespace CleverDock.Scenes
 
         protected override void OnRender()
         {
-            this.RenderTarget.Clear(new Color(0, 0, 0, 0.0f));
+            this.RenderTarget.Clear(new Color(0, 0, 0, 0f));
 
             base.OnRender();
         }

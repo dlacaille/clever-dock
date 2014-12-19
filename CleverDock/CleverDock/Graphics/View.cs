@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using SharpDX.Direct2D1;
 
 namespace CleverDock.Graphics
 {

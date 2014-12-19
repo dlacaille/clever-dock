@@ -21,14 +21,14 @@ namespace CleverDock.Views
                 if (Superview == null)
                     return new RectangleF();
                 var frame = Superview.Frame;
-                frame.Inflate(8, 8);
+                frame.Inflate(10, 8);
                 return frame;
             }
         }
 
         protected override void OnCreateResources()
         {
-            backgroundBrush = new SolidColorBrush(RenderTarget, new Color4(0.65f, 0.75f, 0.80f, 0.80f));
+            backgroundBrush = new SolidColorBrush(RenderTarget, new Color4(0.10f, 0.12f, 0.13f, 0.92f));
             borderBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.3f));
 
             // Start animation.

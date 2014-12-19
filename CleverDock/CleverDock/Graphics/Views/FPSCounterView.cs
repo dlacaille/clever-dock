@@ -24,7 +24,7 @@ namespace CleverDock.Graphics.Views
         public FPSCounterView(RectangleF bounds)
         {
             this.writeFactory = new DWrite.Factory();
-            this.textFormat = new DWrite.TextFormat(writeFactory, "Arial", 12);
+            this.textFormat = new DWrite.TextFormat(writeFactory, "Consolas", 16);
             this.Bounds = bounds;
         }
 

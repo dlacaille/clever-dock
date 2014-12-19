@@ -60,7 +60,7 @@ namespace CleverDock.Views
                     return new RectangleF();
                 var screenSize = Scene.View.Bounds.Size;
                 var iconSize = 48 + 8;
-                var dockSize = new Size2F(iconSize * Icons.Count(), 64);
+                var dockSize = new Size2F(iconSize * Icons.Count(), 70);
                 return new RectangleF(
                     (float)Math.Round((screenSize.Width - dockSize.Width) / 2),
                     screenSize.Height - dockSize.Height,

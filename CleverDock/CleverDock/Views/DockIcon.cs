@@ -5,14 +5,17 @@ using CleverDock.Model;
 using CleverDock.Tools;
 using SharpDX;
 using SharpDX.Direct2D1;
+using SharpDX.DirectWrite;
 using SharpDX.WIC;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CleverDock.Views
 {
@@ -70,7 +73,12 @@ namespace CleverDock.Views
         private ImageView iconView;
         private ImageView blurredIconView;
         private ImageView childIconView;
-        private SolidColorBrush redBrush;
+
+        private TextFormat textFormat;
+        private SharpDX.DirectWrite.Factory writeFactory;
+        private SolidColorBrush windowIndicatorBrush;
+        private SolidColorBrush textBrush;
+        private SolidColorBrush textShadowBrush;
 
         public DockIcon()
         {
@@ -98,6 +106,20 @@ namespace CleverDock.Views
             }
         }
 
+        protected override void OnClick(Point mousePos)
+        {
+            base.OnClick(mousePos);
+
+            if (Windows.Count > 0
+                && !Keyboard.IsKeyDown(Key.LeftShift)) // Always launch if left shift is pressed.
+                Windows[0].Toggle();
+            else if (Info != null && !string.IsNullOrEmpty(Info.Path) && File.Exists(Info.Path))
+            {
+                Process.Start(Info.Path);
+                //AnimateIconBounce();
+            }
+        }
+
         void Windows_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             bool hasWindows = Windows.Any();
@@ -122,7 +144,12 @@ namespace CleverDock.Views
         
         protected override void OnCreateResources()
         {
-            redBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 0, 0, 1f));
+            writeFactory = new SharpDX.DirectWrite.Factory();
+            textFormat = new TextFormat(writeFactory, "Arial", 14);
+            textFormat.TextAlignment = TextAlignment.Center;
+            textBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 1f));
+            textShadowBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.5f));
+            windowIndicatorBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 0.7f));
 
             // Start animation.
             base.OnCreateResources();
@@ -133,18 +160,53 @@ namespace CleverDock.Views
             // Stop animation.
             base.OnFreeResources();
 
-            if (redBrush != null)
+            if (textShadowBrush != null)
             {
-                redBrush.Dispose();
-                redBrush = null;
+                textShadowBrush.Dispose();
+                textShadowBrush = null;
+            }
+            if (textBrush != null)
+            {
+                textBrush.Dispose();
+                textBrush = null;
+            }
+            if (windowIndicatorBrush != null)
+            {
+                windowIndicatorBrush.Dispose();
+                windowIndicatorBrush = null;
+            }
+            if (textFormat != null)
+            {
+                textFormat.Dispose();
+                textFormat = null;
+            }
+            if (writeFactory != null)
+            {
+                writeFactory.Dispose();
+                writeFactory = null;
             }
         }
 
         protected override void OnRender()
         {
             base.OnRender();
+            if (Windows.Any())
+            {
+                var radius = 2;
+                var ellipseCenter = new Vector2(Frame.Left + Frame.Width / 2, Frame.Bottom + 8);
+                var ellipse = new Ellipse(ellipseCenter, radius, radius);
+                RenderTarget.FillEllipse(ellipse, windowIndicatorBrush);
+            }
+            // Draw label if mouse is hovering the icon.
             if (IsMouseOver)
-                RenderTarget.DrawRectangle(Frame, redBrush);
+            {
+                var maxWidth = 200;
+                var labelFrame = new RectangleF(Frame.Left - maxWidth / 2 + Frame.Width / 2, Frame.Top - 60, maxWidth, 20);
+                var shadowFrame = labelFrame;
+                shadowFrame.Offset(1, 1);
+                RenderTarget.DrawText(Text, textFormat, shadowFrame, textShadowBrush);
+                RenderTarget.DrawText(Text, textFormat, labelFrame, textBrush);
+            }
         }
     }
 }

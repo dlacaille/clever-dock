@@ -1,6 +1,5 @@
 ﻿using CleverDock.Interop;
 using CleverDock.Managers;
-using CleverDock.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
