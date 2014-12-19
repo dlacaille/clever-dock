@@ -28,7 +28,7 @@ namespace CleverDock.Views
 
         protected override void OnCreateResources()
         {
-            backgroundBrush = new SolidColorBrush(RenderTarget, new Color4(0.10f, 0.12f, 0.13f, 0.92f));
+            backgroundBrush = new SolidColorBrush(RenderTarget, new Color4(0.15f, 0.17f, 0.18f, 0.92f));
             borderBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.3f));
 
             // Start animation.

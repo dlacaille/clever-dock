@@ -40,6 +40,7 @@ namespace CleverDock.Managers
         private IntPtr dockHwnd;
         public Point CursorPosition;
         public Rect ActiveWindowRect;
+        private IntPtr mainWindowHandle;
 
         private static WindowManager manager;
         public static WindowManager Manager
@@ -65,9 +66,10 @@ namespace CleverDock.Managers
             dockHwnd = hwnd;
         }
 
-        public void Start()
+        public void Start(System.Windows.Window mainWindow)
         {
             Stop();
+            mainWindowHandle = new WindowInteropHelper(mainWindow).Handle;
             checkWindowsThread = new Thread(() =>
             {
                 while (true)
@@ -113,7 +115,8 @@ namespace CleverDock.Managers
 
         void WindowManager_ActiveWindowChanged(object sender, EventArgs e)
         {
-            ActiveWindow = (IntPtr)sender;
+            if ((IntPtr)sender != mainWindowHandle)
+                ActiveWindow = (IntPtr)sender;
         }
 
         void WindowManager_WindowListChanged(object sender, EventArgs e)

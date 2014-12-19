@@ -106,9 +106,9 @@ namespace CleverDock.Views
             }
         }
 
-        protected override void OnClick(Point mousePos)
+        protected override void OnMouseUp(Point mousePos)
         {
-            base.OnClick(mousePos);
+            base.OnMouseUp(mousePos);
 
             if (Windows.Count > 0
                 && !Keyboard.IsKeyDown(Key.LeftShift)) // Always launch if left shift is pressed.
@@ -147,6 +147,7 @@ namespace CleverDock.Views
             writeFactory = new SharpDX.DirectWrite.Factory();
             textFormat = new TextFormat(writeFactory, "Arial", 14);
             textFormat.TextAlignment = TextAlignment.Center;
+            textFormat.ParagraphAlignment = ParagraphAlignment.Center;
             textBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 1f));
             textShadowBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.5f));
             windowIndicatorBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 0.7f));
@@ -200,7 +201,7 @@ namespace CleverDock.Views
             // Draw label if mouse is hovering the icon.
             if (IsMouseOver)
             {
-                var maxWidth = 200;
+                var maxWidth = 240;
                 var labelFrame = new RectangleF(Frame.Left - maxWidth / 2 + Frame.Width / 2, Frame.Top - 60, maxWidth, 20);
                 var shadowFrame = labelFrame;
                 shadowFrame.Offset(1, 1);

@@ -225,13 +225,13 @@ namespace CleverDock.Graphics
             this.OnCreateResources();
         }
 
-        public void Click(Point mousePos)
+        public void MouseUp(Point mousePos)
         {
-            this.View.Click(mousePos);
-            OnClick(mousePos);
+            this.View.MouseUp(mousePos);
+            OnMouseUp(mousePos);
         }
 
-        protected virtual void OnClick(Point mousePos) { }
+        protected virtual void OnMouseUp(Point mousePos) { }
 
         public void MouseMove(Point mousePos)
         {

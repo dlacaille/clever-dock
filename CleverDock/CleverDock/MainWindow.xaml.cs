@@ -30,7 +30,7 @@ namespace CleverDock
             InitializeComponent();
             this.Direct2DControl.Scene = this.scene;
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
-            WindowManager.Manager.Start();
+            ShowInTaskbar = false;
             Loaded += MainWindow_Loaded;
             Closed += MainWindow_Closed;
         }
@@ -42,6 +42,7 @@ namespace CleverDock
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            WindowManager.Manager.Start(this);
             SetTopmost();
         }
 

@@ -21,7 +21,6 @@ namespace CleverDock.Views.Decorators
             Application.Current.Exit += Current_Exit;
             WindowManager.Manager.WindowAdded += Manager_WindowAdded;
             WindowManager.Manager.WindowRemoved += Manager_WindowRemoved;
-            WindowManager.Manager.Start();
             //TaskbarManager.SetTaskbarVisibility(false);
         }
 

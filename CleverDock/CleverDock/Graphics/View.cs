@@ -121,15 +121,15 @@ namespace CleverDock.Graphics
             Scene = null;
         }
 
-        public void Click(Point mousePos)
+        public void MouseUp(Point mousePos)
         {
             var found = Subviews.LastOrDefault(s => s.Frame.Contains(mousePos));
             if (found != null)
-                found.Click(mousePos);
-            OnClick(mousePos);
+                found.MouseUp(mousePos);
+            OnMouseUp(mousePos);
         }
 
-        protected virtual void OnClick(Point mousePos) { }
+        protected virtual void OnMouseUp(Point mousePos) { }
 
         public void MouseMove(Point mousePos)
         {

@@ -20,13 +20,10 @@ namespace CleverDock
         private D2D.SolidColorBrush redBrush;
         private FPSCounterView fpsCounter;
         private Dock dock;
-        private WindowManager manager;
 
         public MainScene()
             : base(120)
         {
-            manager = new WindowManager();
-            manager.Start();
             View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(20, 60, 80, 20)));
             View.Subviews.Add(dock = new Dock());
         }
@@ -34,7 +31,6 @@ namespace CleverDock
 
         protected override void Dispose(bool disposing)
         {
-            manager.Stop();
             base.Dispose(disposing);
         }
 

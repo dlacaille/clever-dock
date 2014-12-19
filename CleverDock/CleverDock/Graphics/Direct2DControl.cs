@@ -76,7 +76,7 @@ namespace CleverDock.Graphics
             if (Scene != null)
             {
                 var pos = Mouse.GetPosition(this);
-                Scene.Click(new SharpDX.Point((int)pos.X, (int)pos.Y));
+                Scene.MouseUp(new SharpDX.Point((int)pos.X, (int)pos.Y));
             }
         }
 
