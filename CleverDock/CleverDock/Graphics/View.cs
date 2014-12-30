@@ -8,12 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using SharpDX.Direct2D1;
+using System.Windows.Input;
 
 namespace CleverDock.Graphics
 {
     public class View : IDisposable
     {
+        #region Private Fields
+
         private bool isMouseOver;
+
+        #endregion
+        #region Properties
+
+        /// <summary>
+        /// Is true when the mouse is in the frame of the view.
+        /// </summary>
         public bool IsMouseOver { get { return isMouseOver; } }
 
         /// <summary>
@@ -69,33 +79,66 @@ namespace CleverDock.Graphics
             }
         }
 
+        #endregion
+        #region Events
+
+        /// <summary>
+        /// Event triggered when the left mouse button is released.
+        /// </summary>
+        public event EventHandler<MouseButtonEventArgs> MouseLeftButtonUp;
+
+        /// <summary>
+        /// Event triggered when the left mouse button is pressed.
+        /// </summary>
+        public event EventHandler<MouseButtonEventArgs> MouseLeftButtonDown;
+
+        /// <summary>
+        /// Event triggered when the mouse is moved within the frame of the view.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseMove;
+
+        /// <summary>
+        /// Event triggered when the mouse enters the frame of the view.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseEnter;
+
+        /// <summary>
+        /// Event triggered when the mouse leaves the frame of the view.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseLeave;
+
+        /// <summary>
+        /// Event triggered when the mouse stops being captured by the view.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> LostMouseCapture;
+
+        #endregion
+
+        #region Constructors and Deconstructors
+
         public View()
         {
             Subviews = new ViewCollection(this);
             Subviews.Added += Subviews_Added;
             Subviews.Removed += Subviews_Removed;
+            MouseLeftButtonDown += View_MouseLeftButtonDown;
+            MouseLeftButtonUp += View_MouseLeftButtonUp;
+            MouseMove += View_MouseMove;
+            MouseLeave += View_MouseLeave;
+            LostMouseCapture += View_LostMouseCapture;
             Visible = true;
-        }
-
-        void Subviews_Added(object sender, Handlers.ViewEventArgs e)
-        {
-            if (RenderTarget == null)
-                return;
-            e.View.FreeResources();
-            e.View.CreateResources();
-        }
-
-        void Subviews_Removed(object sender, Handlers.ViewEventArgs e)
-        {
-            if (RenderTarget == null)
-                return;
-            e.View.FreeResources();
         }
 
         public View(Scene scene)
             : this()
         {
             Scene = scene;
+            Scene.MouseLeftButtonDown += Scene_MouseLeftButtonDown;
+            Scene.MouseLeftButtonUp += Scene_MouseLeftButtonUp;
+            Scene.MouseMove += Scene_MouseMove;
+            Scene.MouseEnter += Scene_MouseEnter;
+            Scene.MouseLeave += Scene_MouseLeave;
+            Scene.LostMouseCapture += Scene_LostMouseCapture;
         }
 
         ~View()
@@ -111,7 +154,7 @@ namespace CleverDock.Graphics
 
         protected virtual void Dispose(bool disposing)
         {
-            if(Subviews != null)
+            if (Subviews != null)
             {
                 foreach (var subView in Subviews)
                     subView.Dispose(disposing);
@@ -121,52 +164,143 @@ namespace CleverDock.Graphics
             Scene = null;
         }
 
-        public void MouseUp(Point mousePos)
+        #endregion
+        #region Scene Mouse Events
+
+        void Scene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var found = Subviews.LastOrDefault(s => s.Frame.Contains(mousePos));
-            if (found != null)
-                found.MouseUp(mousePos);
-            OnMouseUp(mousePos);
+            if (MouseLeftButtonDown != null)
+                MouseLeftButtonDown(this, e);
         }
 
-        protected virtual void OnMouseUp(Point mousePos) { }
-
-        public void MouseMove(Point mousePos)
+        void Scene_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (MouseLeftButtonUp != null)
+                MouseLeftButtonUp(this, e);
+        }
+
+        void Scene_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (MouseMove != null)
+                MouseMove(this, e);
+        }
+
+        void Scene_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (MouseEnter != null)
+                MouseEnter(this, e);
+        }
+
+        void Scene_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (MouseLeave != null)
+                MouseLeave(this, e);
+        }
+
+        void Scene_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            if (LostMouseCapture != null)
+                LostMouseCapture(this, e);
+        }
+
+        #endregion
+        #region Mouse Events
+
+        void View_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Scene == null)
+                return;
             // Find the view which has a mouse over it.
-            var found = Subviews.LastOrDefault(s => s.Frame.Contains(mousePos));
+            var pos = e.MouseDevice.GetPosition(Scene.Window);
+            var point = new Point((int)pos.X, (int)pos.Y);
+            var found = Subviews.LastOrDefault(s => s.Frame.Contains(point));
             if (found != null)
             {
-                found.MouseMove(mousePos);
-                found.isMouseOver = true;
+                found.MouseMove(this, e);
+                if (!found.isMouseOver)
+                {
+                    found.isMouseOver = true;
+                    if (found.MouseEnter != null)
+                        found.MouseEnter(this, e);
+                }
             }
 
             // Set mouseOver to false for other views.
             for (int i = 0; i < Subviews.Count; i++)
             {
-                Subviews[i].MouseMove(mousePos);
+                Subviews[i].MouseMove(this, e);
                 if (Subviews[i].IsMouseOver && Subviews[i] != found)
+                {
                     Subviews[i].isMouseOver = false;
+                    if (Subviews[i].MouseLeave != null)
+                        Subviews[i].MouseLeave(this, e);
+                }
             }
-
-            OnMouseMove(mousePos);
         }
 
-        protected virtual void OnMouseMove(Point mousePos) { }
-
-        public void MouseLeave()
+        void View_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (Scene == null)
+                return;
+            var pos = e.MouseDevice.GetPosition(Scene.Window);
+            var point = new Point((int)pos.X, (int)pos.Y);
+            var found = Subviews.LastOrDefault(s => s.Frame.Contains(point));
+            if (found != null && found.MouseLeftButtonUp != null)
+                found.MouseLeftButtonUp(this, e);
+        }
+
+        void View_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Scene == null)
+                return;
+            var pos = e.MouseDevice.GetPosition(Scene.Window);
+            var point = new Point((int)pos.X, (int)pos.Y);
+            var found = Subviews.LastOrDefault(s => s.Frame.Contains(point));
+            if (found != null && found.MouseLeftButtonDown != null)
+                found.MouseLeftButtonDown(this, e);
+        }
+
+        void View_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // Set mouseOver to false for other views.
             for (int i = 0; i < Subviews.Count; i++)
             {
-                Subviews[i].MouseLeave();
+                Subviews[i].MouseMove(this, e);
                 if (Subviews[i].IsMouseOver)
+                {
                     Subviews[i].isMouseOver = false;
+                    if (Subviews[i].MouseLeave != null)
+                        Subviews[i].MouseLeave(this, e);
+                }
             }
-
-            OnMouseLeave();
         }
 
-        protected virtual void OnMouseLeave() { }
+        void View_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            for (int i = 0; i < Subviews.Count; i++)
+                if (Subviews[i].LostMouseCapture != null)
+                    Subviews[i].LostMouseCapture(this, e);
+        }
+
+        #endregion
+        #region Subview Management
+
+        void Subviews_Added(object sender, Handlers.ViewEventArgs e)
+        {
+            if (RenderTarget == null)
+                return;
+            e.View.Scene = Scene;
+            e.View.FreeResources();
+            e.View.CreateResources();
+        }
+
+        void Subviews_Removed(object sender, Handlers.ViewEventArgs e)
+        {
+            if (RenderTarget == null)
+                return;
+            e.View.Scene = null;
+            e.View.FreeResources();
+        }
 
         /// <summary>
         /// Removes this view from its superview.
@@ -177,7 +311,13 @@ namespace CleverDock.Graphics
                 return;
             Superview.Subviews.Remove(this);
         }
-        
+
+        #endregion
+        #region Resource Management
+
+        /// <summary>
+        /// Create device dependent resources.
+        /// </summary>
         public void CreateResources()
         {
             OnCreateResources();
@@ -185,12 +325,18 @@ namespace CleverDock.Graphics
                 Subviews[i].CreateResources();
         }
 
+        /// <summary>
+        /// Release device dependent resources.
+        /// </summary>
         public void FreeResources()
         {
             OnFreeResources();
             for (int i = 0; i < Subviews.Count(); i++)
                 Subviews[i].FreeResources();
         }
+
+        #endregion
+        #region Overridable Methods
 
         /// <summary>
         /// When overriden in a derived class, creates device dependent resources.
@@ -207,6 +353,12 @@ namespace CleverDock.Graphics
         /// </summary>
         protected virtual void OnRender() { }
 
+        #endregion
+        #region Rendering
+
+        /// <summary>
+        /// Calls OnRender and renders all subviews. This method will do nothing if Visible is set to false.
+        /// </summary>
         public void Render()
         {
             if (!Visible)
@@ -215,5 +367,7 @@ namespace CleverDock.Graphics
             for (int i = 0; i < Subviews.Count(); i++)
                 Subviews[i].Render();
         }
+
+        #endregion
     }
 }

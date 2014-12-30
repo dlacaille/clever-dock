@@ -84,6 +84,19 @@ namespace CleverDock.Views
         {
             Windows.CollectionChanged += Windows_CollectionChanged;
             Subviews.Add(iconView = new ImageView(new RectangleF(0, 0, 48, 48), Icon));
+            MouseLeftButtonUp += DockIcon_MouseLeftButtonUp;
+        }
+
+        void DockIcon_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (Windows.Count > 0
+                && !Keyboard.IsKeyDown(Key.LeftShift)) // Always launch if left shift is pressed.
+                Windows[0].Toggle();
+            else if (Info != null && !string.IsNullOrEmpty(Info.Path) && File.Exists(Info.Path))
+            {
+                Process.Start(Info.Path);
+                //AnimateIconBounce();
+            }
         }
 
         public DockIcon(IconInfo info)
@@ -103,20 +116,6 @@ namespace CleverDock.Views
                     BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
                 }
                 Text = info.Name;
-            }
-        }
-
-        protected override void OnMouseUp(Point mousePos)
-        {
-            base.OnMouseUp(mousePos);
-
-            if (Windows.Count > 0
-                && !Keyboard.IsKeyDown(Key.LeftShift)) // Always launch if left shift is pressed.
-                Windows[0].Toggle();
-            else if (Info != null && !string.IsNullOrEmpty(Info.Path) && File.Exists(Info.Path))
-            {
-                Process.Start(Info.Path);
-                //AnimateIconBounce();
             }
         }
 

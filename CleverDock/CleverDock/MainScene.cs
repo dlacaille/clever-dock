@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using D2D = SharpDX.Direct2D1;
 using DWrite = SharpDX.DirectWrite;
 using WIC = SharpDX.WIC;
@@ -21,8 +22,8 @@ namespace CleverDock
         private FPSCounterView fpsCounter;
         private Dock dock;
 
-        public MainScene()
-            : base(120)
+        public MainScene(Window window)
+            : base(window, 120)
         {
             View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(20, 60, 80, 20)));
             View.Subviews.Add(dock = new Dock());

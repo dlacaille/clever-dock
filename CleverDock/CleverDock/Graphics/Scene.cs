@@ -1,6 +1,8 @@
 ﻿using CleverDock.Graphics.Views;
 using SharpDX;
 using System;
+using System.Windows;
+using System.Windows.Input;
 using D2D = SharpDX.Direct2D1;
 using D3D10 = SharpDX.Direct3D10;
 using DXGI = SharpDX.DXGI;
@@ -10,37 +12,23 @@ namespace CleverDock.Graphics
     /// <summary>Represents a Direct2D drawing.</summary>
     public abstract class Scene : IDisposable
     {
+        #region Private Fields
+
         private readonly D2D.Factory factory;
         private D3D10.Device device;
         private D2D.RenderTarget renderTarget;
         private D3D10.Texture2D texture;
-        public View View { get; set; }
         private bool disposed;
-
         private object renderTargetLock = new object();
 
-        /// <summary>
-        /// Initializes a new instance of the Scene class.
-        /// </summary>
-        protected Scene()
-        {
-            // We'll create a multi-threaded one to make sure it plays nicely with WPF
-            this.factory = new D2D.Factory(D2D.FactoryType.MultiThreaded);
-            View = new View(this);
-        }
+        #endregion
+        #region Properties
 
-        /// <summary>
-        /// Finalizes an instance of the Scene class.
-        /// </summary>
-        ~Scene()
-        {
-            this.Dispose(false);
-        }
+        public View View { get; set; }
+        public Window Window { get; set; }
 
-        /// <summary>
-        /// Raised when the content of the Scene has changed.
-        /// </summary>
-        public event EventHandler Updated;
+        #endregion
+        #region DirectX Resources
 
         /// <summary>Gets the surface this instance draws to.</summary>
         /// <exception cref="ObjectDisposedException">
@@ -72,6 +60,73 @@ namespace CleverDock.Graphics
             get { return this.renderTarget; }
         }
 
+        #endregion
+        #region Events
+
+        /// <summary>
+        /// Event triggered when the left mouse button is released.
+        /// </summary>
+        public event EventHandler<MouseButtonEventArgs> MouseLeftButtonUp;
+
+        /// <summary>
+        /// Event triggered when the left mouse button is pressed.
+        /// </summary>
+        public event EventHandler<MouseButtonEventArgs> MouseLeftButtonDown;
+
+        /// <summary>
+        /// Event triggered when the mouse is moved within the frame of the scene.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseMove;
+
+        /// <summary>
+        /// Event triggered when the mouse enters the frame of the scene.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseEnter;
+
+        /// <summary>
+        /// Event triggered when the mouse leaves the frame of the scene.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseLeave;
+
+        /// <summary>
+        /// Event triggered when the mouse stops being captured by the scene.
+        /// </summary>
+        public event EventHandler<MouseEventArgs> LostMouseCapture;
+
+        /// <summary>
+        /// Raised when the content of the Scene has changed.
+        /// </summary>
+        public event EventHandler Updated;
+
+        #endregion
+
+        #region Constructors and Deconstructors
+
+        /// <summary>
+        /// Initializes a new instance of the Scene class.
+        /// </summary>
+        protected Scene(Window window)
+        {
+            // We'll create a multi-threaded one to make sure it plays nicely with WPF
+            this.factory = new D2D.Factory(D2D.FactoryType.MultiThreaded);
+            View = new View(this);
+            Window = window;
+            Window.MouseLeftButtonDown += Window_MouseLeftButtonDown;
+            Window.MouseLeftButtonUp += Window_MouseLeftButtonUp;
+            Window.MouseMove += Window_MouseMove;
+            Window.MouseEnter += Window_MouseEnter;
+            Window.MouseLeave += Window_MouseLeave;
+            Window.LostMouseCapture += Window_LostMouseCapture;
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the Scene class.
+        /// </summary>
+        ~Scene()
+        {
+            this.Dispose(false);
+        }
+
         /// <summary>
         /// Immediately frees any system resources that the object might hold.
         /// </summary>
@@ -85,6 +140,42 @@ namespace CleverDock.Graphics
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        #endregion
+        #region Mouse Events
+        
+        void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MouseLeftButtonDown(this, e);
+        }
+
+        void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MouseLeftButtonUp(this, e);
+        }
+
+        void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            MouseMove(this, e);
+        }
+
+        void Window_MouseEnter(object sender, MouseEventArgs e)
+        {
+            MouseEnter(this, e);
+        }
+
+        void Window_MouseLeave(object sender, MouseEventArgs e)
+        {
+            MouseLeave(this, e);
+        }
+
+        void Window_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            LostMouseCapture(this, e);
+        }
+
+        #endregion
+        #region Resource Management
 
         /// <summary>
         /// Creates a DirectX 10 device and related device specific resources.
@@ -145,6 +236,9 @@ namespace CleverDock.Graphics
             }
         }
 
+        #endregion
+        #region Rendering
+
         /// <summary>
         /// Causes the scene to redraw its contents.
         /// </summary>
@@ -169,6 +263,9 @@ namespace CleverDock.Graphics
             this.device.Flush();
             this.OnUpdated();
         }
+
+        #endregion
+        #region Resizing
 
         /// <summary>Resizes the scene.</summary>
         /// <param name="width">The new width for the scene.</param>
@@ -225,71 +322,8 @@ namespace CleverDock.Graphics
             this.OnCreateResources();
         }
 
-        public void MouseUp(Point mousePos)
-        {
-            this.View.MouseUp(mousePos);
-            OnMouseUp(mousePos);
-        }
-
-        protected virtual void OnMouseUp(Point mousePos) { }
-
-        public void MouseMove(Point mousePos)
-        {
-            this.View.MouseMove(mousePos);
-            OnMouseMove(mousePos);
-        }
-
-        protected virtual void OnMouseMove(Point mousePos) { }
-
-        public void MouseLeave()
-        {
-            this.View.MouseLeave();
-            OnMouseLeave();
-        }
-
-        protected virtual void OnMouseLeave() { }
-
-        /// <summary>
-        /// Immediately frees any system resources that the object might hold.
-        /// </summary>
-        /// <param name="disposing">
-        /// Set to true if called from an explicit disposer; otherwise, false.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            this.FreeResources();
-            if (disposing)
-                this.factory.Dispose();
-            this.disposed = true;
-        }
-
-        /// <summary>
-        /// When overriden in a derived class, creates device dependent resources.
-        /// </summary>
-        protected virtual void OnCreateResources()
-        {
-            if (View != null)
-                View.CreateResources();
-        }
-
-        /// <summary>
-        /// When overriden in a deriven class, releases device dependent resources.
-        /// </summary>
-        protected virtual void OnFreeResources()
-        {
-            if (View != null)
-                View.FreeResources();
-        }
-
-        /// <summary>
-        /// When overriden in a derived class, is called before rendering.
-        /// </summary>
-        protected virtual void OnBeforeRender() { }
-
-        /// <summary>
-        /// When overriden in a derived class, renders the Direct2D content.
-        /// </summary>
-        protected virtual void OnRender() { }
+        #endregion
+        #region Device Interface
 
         /// <summary>
         /// Throws an <see cref="ObjectDisposedException"/> if
@@ -306,6 +340,7 @@ namespace CleverDock.Graphics
             // We'll try to create the device that supports any of these feature levels
             D3D10.FeatureLevel[] levels =
             {
+                D3D10.FeatureLevel.Level_10_1,
                 D3D10.FeatureLevel.Level_10_0,
                 D3D10.FeatureLevel.Level_9_3,
                 D3D10.FeatureLevel.Level_9_2,
@@ -378,11 +413,58 @@ namespace CleverDock.Graphics
             this.texture = texture;
         }
 
+        #endregion
+        #region Overridable Methods
+
+        /// <summary>
+        /// Immediately frees any system resources that the object might hold.
+        /// </summary>
+        /// <param name="disposing">
+        /// Set to true if called from an explicit disposer; otherwise, false.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            this.FreeResources();
+            if (disposing)
+                this.factory.Dispose();
+            this.disposed = true;
+        }
+
+        /// <summary>
+        /// When overriden in a derived class, creates device dependent resources.
+        /// </summary>
+        protected virtual void OnCreateResources()
+        {
+            if (View != null)
+                View.CreateResources();
+        }
+
+        /// <summary>
+        /// When overriden in a deriven class, releases device dependent resources.
+        /// </summary>
+        protected virtual void OnFreeResources()
+        {
+            if (View != null)
+                View.FreeResources();
+        }
+
+        /// <summary>
+        /// When overriden in a derived class, is called before rendering.
+        /// </summary>
+        protected virtual void OnBeforeRender() { }
+
+        /// <summary>
+        /// When overriden in a derived class, renders the Direct2D content.
+        /// </summary>
+        protected virtual void OnRender() { }
+
         private void OnUpdated()
         {
             var callback = this.Updated;
             if (callback != null)
                 callback(this, EventArgs.Empty);
         }
+
+        #endregion
     }
 }

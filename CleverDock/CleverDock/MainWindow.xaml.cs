@@ -22,10 +22,11 @@ namespace CleverDock
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainScene scene = new MainScene();
+        private MainScene scene;
 
         public MainWindow()
         {
+            scene = new MainScene(this);
             SetDimensions();
             InitializeComponent();
             this.Direct2DControl.Scene = this.scene;

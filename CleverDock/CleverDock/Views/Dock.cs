@@ -38,7 +38,7 @@ namespace CleverDock.Views
             {
                 var icon = icons[i];
                 var iconSize = 48;
-                icon.Bounds = new RectangleF(i * (iconSize + 8), 0, iconSize, iconSize);
+                icon.Bounds = new RectangleF(i * (iconSize + 8) + 4, 0, iconSize, iconSize);
             }
         }
 
@@ -60,7 +60,7 @@ namespace CleverDock.Views
                     return new RectangleF();
                 var screenSize = Scene.View.Bounds.Size;
                 var iconSize = 48 + 8;
-                var dockSize = new Size2F(iconSize * Icons.Count(), 70);
+                var dockSize = new Size2F(iconSize * Icons.ToList().Count, 70);
                 return new RectangleF(
                     (float)Math.Round((screenSize.Width - dockSize.Width) / 2),
                     screenSize.Height - dockSize.Height,

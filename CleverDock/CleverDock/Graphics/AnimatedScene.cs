@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace CleverDock.Graphics
@@ -34,7 +35,8 @@ namespace CleverDock.Graphics
         /// <exception cref="ArgumentOutOfRangeException">
         /// desiredFps is less than or equal to zero.
         /// </exception>
-        protected AnimatedScene(int desiredFps)
+        protected AnimatedScene(Window window, int desiredFps)
+            : base(window)
         {
             msPerFrame = 1000.0 / desiredFps;
         }
