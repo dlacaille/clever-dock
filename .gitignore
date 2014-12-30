@@ -1,2 +1,5 @@
 CleverDock/CleverDock/obj/
 CleverDock/CleverDock/bin/
+*.psess
+*.vsp
+*.vspx
