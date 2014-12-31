@@ -20,12 +20,25 @@ namespace CleverDock.Graphics
         private D3D10.Texture2D texture;
         private bool disposed;
         private object renderTargetLock = new object();
+        private View capturedMouseView;
 
         #endregion
         #region Properties
 
         public View View { get; set; }
         public Window Window { get; set; }
+        public View CapturedMouseView 
+        { 
+            get
+            {
+                return capturedMouseView;
+            }
+            set
+            {
+                Mouse.Capture(value == null ? null : Window);
+                capturedMouseView = value;
+            }
+        }
 
         #endregion
         #region DirectX Resources
@@ -171,6 +184,7 @@ namespace CleverDock.Graphics
 
         void Window_LostMouseCapture(object sender, MouseEventArgs e)
         {
+            CapturedMouseView = null;
             LostMouseCapture(this, e);
         }
 
@@ -224,10 +238,13 @@ namespace CleverDock.Graphics
                 this.texture.Dispose();
                 this.texture = null;
             }
-            if (this.renderTarget != null)
+            lock (renderTargetLock)
             {
-                this.renderTarget.Dispose();
-                this.renderTarget = null;
+                if (this.renderTarget != null)
+                {
+                    this.renderTarget.Dispose();
+                    this.renderTarget = null;
+                }
             }
             if (this.device != null)
             {
@@ -255,10 +272,10 @@ namespace CleverDock.Graphics
                 throw new InvalidOperationException("Resize has not been called.");
             lock (renderTargetLock)
             {
-                this.RenderTarget.BeginDraw();
+                this.renderTarget.BeginDraw();
                 this.OnRender();
                 this.View.Render();
-                this.RenderTarget.EndDraw();
+                this.renderTarget.EndDraw();
             }
             this.device.Flush();
             this.OnUpdated();
@@ -386,9 +403,12 @@ namespace CleverDock.Graphics
             // Assign result to temporary variable in case CreateGraphicsSurfaceRenderTarget throws
             var target = new D2D.RenderTarget(factory, surface, properties);
 
-            if (this.renderTarget != null)
-                this.renderTarget.Dispose();
-            this.renderTarget = target;
+            lock (renderTargetLock)
+            {
+                if (this.renderTarget != null)
+                    this.renderTarget.Dispose();
+                this.renderTarget = target;
+            }
         }
 
         private void CreateTexture(int width, int height)

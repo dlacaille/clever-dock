@@ -103,14 +103,8 @@ namespace CleverDock.Graphics
             animation.Animate(obj, property, toValue, duration, easing);
             if (animationEnded != null)
                 animation.AnimationEnded += animationEnded;
-            animation.AnimationEnded += (s, e) =>
-            {
-                animations.Remove(s as Animation);
-                /*if (animations.Count == 0)
-                    IsAnimating = false;*/
-            };
+            animation.AnimationEnded += (s, e) => animations.Remove(s as Animation);
             animations.Add(animation);
-            //IsAnimating = true;
         }
     }
 }
