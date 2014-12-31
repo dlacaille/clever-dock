@@ -47,7 +47,7 @@ namespace CleverDock.Graphics
 
             // To greatly reduce flickering we're only going to AddDirtyRect
             // when WPF is rendering.
-            CompositionTarget.Rendering += this.CompositionTargetRendering;
+            CompositionTarget.Rendering += OnRendering;
         }
 
         /// <summary>
@@ -151,17 +151,14 @@ namespace CleverDock.Graphics
             }
         }
 
-        private void CompositionTargetRendering(object sender, EventArgs e)
+        private void OnRendering(object sender, EventArgs e)
         {
-            if (this.isDirty)
+            if (this.imageSource.IsFrontBufferAvailable)
             {
-                this.isDirty = false;
-                if (this.imageSource.IsFrontBufferAvailable)
-                {
-                    this.imageSource.Lock();
-                    this.imageSource.AddDirtyRect(new Int32Rect(0, 0, this.imageSource.PixelWidth, this.imageSource.PixelHeight));
-                    this.imageSource.Unlock();
-                }
+                this.imageSource.Lock();
+                this.Scene.Render();
+                this.imageSource.AddDirtyRect(new Int32Rect(0, 0, this.imageSource.PixelWidth, this.imageSource.PixelHeight));
+                this.imageSource.Unlock();
             }
         }
 

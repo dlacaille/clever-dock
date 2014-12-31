@@ -234,7 +234,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tools\IconHelper.cs" />
-    <Compile Include="Views\Decorators\DockIconDragDecorator.cs" />
     <Compile Include="Views\Decorators\DockWindowManagerDecorator.cs" />
     <Compile Include="Views\Dock.cs" />
     <Compile Include="Views\DockBackground.cs" />

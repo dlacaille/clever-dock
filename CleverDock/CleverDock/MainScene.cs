@@ -23,7 +23,7 @@ namespace CleverDock
         private Dock dock;
 
         public MainScene(Window window)
-            : base(window, 80)
+            : base(window)
         {
             View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(20, 60, 80, 20)));
             View.Subviews.Add(dock = new Dock());
