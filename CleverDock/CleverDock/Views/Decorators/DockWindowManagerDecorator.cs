@@ -37,7 +37,7 @@ namespace CleverDock.Views.Decorators
                 windowIcon = foundItems.First();
             if (!foundItems.Any() || (windowIcon != null && windowIcon.Windows.Count > 0))
             {
-                windowIcon = new DockIcon(new IconInfo()
+                windowIcon = new DockIcon(dock.Scene, new IconInfo()
                 {
                     Name = Path.GetFileName(e.Window.FileName),
                     Path = e.Window.FileName,

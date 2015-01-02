@@ -1,5 +1,6 @@
 ﻿using CleverDock.Graphics.Animations;
 using SharpDX;
+using SharpDX.Toolkit;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -17,14 +18,12 @@ namespace CleverDock.Graphics
     {
         private List<Animation> animations = new List<Animation>();
 
-        public AnimatedScene(Window window) : base(window) { }
-
-        protected override void OnBeforeRender()
+        protected override bool BeginDraw()
         {
-            base.OnBeforeRender();
             for (int i = 0; i < animations.Count; i++)
                 if (animations[i].IsAnimating)
                     animations[i].Tick();
+            return base.BeginDraw();
         }
         
         public void Animate<TSource, TResult>(TSource obj, Expression<Func<TSource, TResult>> property, TResult toValue, double duration, EasingMode easing = EasingMode.QuadraticEaseInOut, EventHandler animationEnded = null)

@@ -4,6 +4,8 @@ using CleverDock.Managers;
 using CleverDock.Tools;
 using CleverDock.Views;
 using SharpDX;
+using SharpDX.Toolkit;
+using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,48 +18,47 @@ using WIC = SharpDX.WIC;
 
 namespace CleverDock
 {
-    class MainScene : AnimatedScene
+    class MainScene : Scene
     {
-        private D2D.SolidColorBrush redBrush;
-        private FPSCounterView fpsCounter;
-        private Dock dock;
+        private PrimitiveBatch<VertexPositionColor> primitiveBatch;
+        private VertexPositionColor[] vertices;
+        private BasicEffect basicEffect;
 
-        public MainScene(Window window)
-            : base(window)
+        public MainScene()
         {
-            View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(20, 60, 80, 20)));
-            View.Subviews.Add(dock = new Dock());
+            //View.Subviews.Add(fpsCounter = new FPSCounterView(new Rectangle(20, 60, 80, 20)));
+            //View.Subviews.Add(dock = new Dock(this));
         }
 
-
-        protected override void Dispose(bool disposing)
+        protected override void LoadContent()
         {
-            base.Dispose(disposing);
+            base.LoadContent();
+            ToDisposeContent(primitiveBatch = new PrimitiveBatch<VertexPositionColor>(GraphicsDevice));
+            ToDisposeContent(basicEffect = new BasicEffect(GraphicsDevice)
+                {
+                    VertexColorEnabled = true,
+                    View = Matrix.Identity,
+                    Projection = Matrix.Identity,
+                    World = Matrix.Identity
+                });
+            vertices = new VertexPositionColor[] {
+                                                     new VertexPositionColor(new Vector3(-1,-1,0), Color.Red),
+                                                     new VertexPositionColor(new Vector3(-1,1,0), Color.Green),
+                                                     new VertexPositionColor(new Vector3(1,1,0), Color.Blue),
+                                                     new VertexPositionColor(new Vector3(1,-1,0), Color.Purple)
+                                                 };
         }
 
-        protected override void OnCreateResources()
+        protected override void Draw(SharpDX.Toolkit.GameTime gameTime)
         {
-            this.redBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 0f, 0f));
+            GraphicsDevice.Clear(Color.Transparent);
 
-            base.OnCreateResources();
-        }
+            basicEffect.CurrentTechnique.Passes[0].Apply();
+            primitiveBatch.Begin();
+            primitiveBatch.DrawQuad(vertices[0], vertices[1], vertices[2], vertices[3]);
+            primitiveBatch.End();
 
-        protected override void OnFreeResources()
-        {
-            base.OnFreeResources();
-
-            if (redBrush != null)
-            {
-                redBrush.Dispose();
-                redBrush = null;
-            }
-        }
-
-        protected override void OnRender()
-        {
-            this.RenderTarget.Clear(new Color(0, 0, 0, 0f));
-
-            base.OnRender();
+            base.Draw(gameTime);
         }
     }
 }

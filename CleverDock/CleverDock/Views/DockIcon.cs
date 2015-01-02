@@ -80,10 +80,11 @@ namespace CleverDock.Views
         private SolidColorBrush textBrush;
         private SolidColorBrush textShadowBrush;
 
-        public DockIcon()
+        public DockIcon(Scene scene)
+            : base(scene)
         {
             Windows.CollectionChanged += Windows_CollectionChanged;
-            Subviews.Add(iconView = new ImageView(new RectangleF(0, 0, 48, 48), Icon));
+            Subviews.Add(iconView = new ImageView(scene, new RectangleF(0, 0, 48, 48), Icon));
             MouseLeftButtonUp += DockIcon_MouseLeftButtonUp;
         }
 
@@ -99,8 +100,8 @@ namespace CleverDock.Views
             }
         }
 
-        public DockIcon(IconInfo info)
-            : this()
+        public DockIcon(Scene scene, IconInfo info)
+            : this(scene)
         {
             Info = info;
             if (!File.Exists(info.Path))
@@ -141,7 +142,7 @@ namespace CleverDock.Views
             }
         }
         
-        protected override void OnCreateResources()
+        /*protected override void OnCreateResources()
         {
             writeFactory = new SharpDX.DirectWrite.Factory();
             textFormat = new TextFormat(writeFactory, "Arial", 14);
@@ -207,6 +208,6 @@ namespace CleverDock.Views
                 RenderTarget.DrawText(Text, textFormat, shadowFrame, textShadowBrush);
                 RenderTarget.DrawText(Text, textFormat, labelFrame, textBrush);
             }
-        }
+        }*/
     }
 }

@@ -156,6 +156,9 @@
     <Reference Include="SharpDX.Toolkit">
       <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.Toolkit.Game">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Game.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX.Toolkit.Graphics">
       <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Graphics.dll</HintPath>
     </Reference>
@@ -200,7 +203,6 @@
     <Compile Include="Graphics\Views\ImageView.cs" />
     <Compile Include="Handlers\ViewEventArgs.cs" />
     <Compile Include="Tools\BitmapHelper.cs" />
-    <Compile Include="Graphics\Direct2DControl.cs" />
     <Compile Include="Graphics\Effects\BrightnessEffect.cs" />
     <Compile Include="Handlers\CursorPosEventArgs.cs" />
     <Compile Include="Handlers\ThemeEventArgs.cs" />

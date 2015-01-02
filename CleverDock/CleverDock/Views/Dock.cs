@@ -23,9 +23,10 @@ namespace CleverDock.Views
         }
         public DockBackground Background { get; set; }
 
-        public Dock()
+        public Dock(Scene scene)
+            : base(scene)
         {
-            this.Subviews.Add(Background = new DockBackground());
+            this.Subviews.Add(Background = new DockBackground(scene));
             this.Subviews.Added += Subviews_Added;
             this.Subviews.Removed += Subviews_Removed;
             new DockWindowManagerDecorator(this);

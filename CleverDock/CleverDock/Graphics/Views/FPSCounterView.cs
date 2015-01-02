@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SharpDX;
 using DWrite = SharpDX.DirectWrite;
 using D2D = SharpDX.Direct2D1;
+using SharpDX.Toolkit;
 
 namespace CleverDock.Graphics.Views
 {
@@ -21,56 +22,25 @@ namespace CleverDock.Graphics.Views
         private D2D.SolidColorBrush blackBrush;
         private D2D.SolidColorBrush whiteBrush;
 
-        public FPSCounterView(RectangleF bounds)
+        public FPSCounterView(Scene scene, RectangleF bounds)
+            : base(scene)
         {
-            this.writeFactory = new DWrite.Factory();
-            this.textFormat = new DWrite.TextFormat(writeFactory, "Consolas", 16);
+            //this.writeFactory = new DWrite.Factory();
+            //this.textFormat = new DWrite.TextFormat(writeFactory, "Consolas", 16);
             this.Bounds = bounds;
         }
 
-        protected override void OnCreateResources()
+        protected override void LoadContent()
         {
-            this.whiteBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 1f, 1f));
-            this.blackBrush = new D2D.SolidColorBrush(RenderTarget, new Color(0f, 0f, 0f));
+            //this.whiteBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 1f, 1f));
+            //this.blackBrush = new D2D.SolidColorBrush(RenderTarget, new Color(0f, 0f, 0f))
 
-            // Start animation.
-            base.OnCreateResources();
+            base.LoadContent();
         }
 
-        protected override void OnFreeResources()
+        public override void Draw(GameTime gameTime)
         {
-            // Stop animation to prevent rendering while the resources are freed.
-            base.OnFreeResources();
-
-            if (this.whiteBrush != null)
-            {
-                this.whiteBrush.Dispose();
-                this.whiteBrush = null;
-            }
-            if (this.blackBrush != null)
-            {
-                this.blackBrush.Dispose();
-                this.blackBrush = null;
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (writeFactory != null)
-            {
-                writeFactory.Dispose();
-                writeFactory = null;
-            }
-            if (textFormat != null)
-            {
-                textFormat.Dispose();
-                textFormat = null;
-            }
-            base.Dispose(disposing);
-        }
-
-        protected override void OnRender()
-        {
+            base.Draw(gameTime);
             // Calculate our actual frame rate
             this.frameCount++;
             if (DateTime.UtcNow.Subtract(this.time).TotalSeconds >= 1)
@@ -84,8 +54,8 @@ namespace CleverDock.Graphics.Views
             string text = string.Format("FPS {0}", this.fps);
             var shadowFrame = Frame;
             shadowFrame.Offset(1, 1);
-            this.RenderTarget.DrawText(text, this.textFormat, shadowFrame, this.blackBrush);
-            this.RenderTarget.DrawText(text, this.textFormat, Frame, this.whiteBrush);
+            //this.RenderTarget.DrawText(text, this.textFormat, shadowFrame, this.blackBrush);
+            //this.RenderTarget.DrawText(text, this.textFormat, Frame, this.whiteBrush);
         }
     }
 }

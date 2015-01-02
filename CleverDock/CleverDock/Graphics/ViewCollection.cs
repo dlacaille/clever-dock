@@ -24,7 +24,6 @@ namespace CleverDock.Graphics
         private void SetSuperView(View view)
         {
             view.Superview = parent;
-            view.Scene = parent.Scene;
         }
 
         public void Add(View view)
@@ -39,7 +38,6 @@ namespace CleverDock.Graphics
         {
             var result = list.Remove(view);
             view.Superview = null;
-            view.Scene = null;
             if (Removed != null)
                 Removed(this, new ViewEventArgs(view));
             return result;

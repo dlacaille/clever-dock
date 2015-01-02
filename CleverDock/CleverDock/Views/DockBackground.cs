@@ -1,6 +1,8 @@
 ﻿using CleverDock.Graphics;
 using SharpDX;
 using SharpDX.Direct2D1;
+using SharpDX.Toolkit;
+using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +13,11 @@ namespace CleverDock.Views
 {
     public class DockBackground : View
     {
-        private SolidColorBrush backgroundBrush { get; set; }
-        private SolidColorBrush borderBrush { get; set; }
+        public DockBackground(Scene scene)
+            : base(scene)
+        {
+
+        }
 
         public override RectangleF Frame
         {
@@ -26,42 +31,14 @@ namespace CleverDock.Views
             }
         }
 
-        protected override void OnCreateResources()
+        public override void Draw(GameTime gameTime)
         {
-            backgroundBrush = new SolidColorBrush(RenderTarget, new Color4(0.15f, 0.17f, 0.18f, 0.92f));
-            borderBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.3f));
-
-            // Start animation.
-            base.OnCreateResources();
-        }
-
-        protected override void OnFreeResources()
-        {
-            // Stop animation.
-            base.OnFreeResources();
-
-            if (backgroundBrush != null)
-            {
-                backgroundBrush.Dispose();
-                backgroundBrush = null;
-            }
-            if (borderBrush != null)
-            {
-                borderBrush.Dispose();
-                borderBrush = null;
-            }
-        }
-
-        protected override void OnRender()
-        {
-            base.OnRender();
-
             var rect = new RoundedRectangle();
             rect.Rect = Frame;
             rect.RadiusX = 5;
             rect.RadiusY = 5;
-            RenderTarget.DrawRoundedRectangle(rect, borderBrush, 1.0f);
-            RenderTarget.FillRoundedRectangle(rect, backgroundBrush);
+            /*RenderTarget.DrawRoundedRectangle(rect, borderBrush, 1.0f);
+            RenderTarget.FillRoundedRectangle(rect, backgroundBrush);*/
         }
     }
 }

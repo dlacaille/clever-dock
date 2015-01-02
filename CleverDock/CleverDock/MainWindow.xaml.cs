@@ -26,14 +26,16 @@ namespace CleverDock
 
         public MainWindow()
         {
-            scene = new MainScene(this);
             SetDimensions();
             InitializeComponent();
-            this.Direct2DControl.Scene = this.scene;
+
+            scene = new MainScene();
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             ShowInTaskbar = false;
             Loaded += MainWindow_Loaded;
             Closed += MainWindow_Closed;
+
+            scene.Run(surface);
         }
 
         void MainWindow_Closed(object sender, EventArgs e)
@@ -73,9 +75,8 @@ namespace CleverDock
 
         public void SetDimensions()
         {
-            WindowState = System.Windows.WindowState.Maximized;
             Width = ScreenWidth;
-            Height = ScreenHeight;
+            Height = 120;
         }
     }
 }
