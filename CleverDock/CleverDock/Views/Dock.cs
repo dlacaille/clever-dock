@@ -29,6 +29,7 @@ namespace CleverDock.Views
             this.Subviews.Added += Subviews_Added;
             this.Subviews.Removed += Subviews_Removed;
             new DockWindowManagerDecorator(this);
+            new DockIconDragDecorator(this);
         }
 
         private void LayoutIcons()
@@ -60,7 +61,8 @@ namespace CleverDock.Views
                     return new RectangleF();
                 var screenSize = Scene.View.Bounds.Size;
                 var iconSize = 48 + 8;
-                var dockSize = new Size2F(iconSize * Icons.ToList().Count, 70);
+                var icons = Icons.ToList();
+                var dockSize = new Size2F(iconSize * icons.Count, 70);
                 return new RectangleF(
                     (float)Math.Round((screenSize.Width - dockSize.Width) / 2),
                     screenSize.Height - dockSize.Height,
