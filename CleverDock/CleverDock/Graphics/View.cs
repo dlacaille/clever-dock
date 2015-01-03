@@ -20,7 +20,10 @@ namespace CleverDock.Graphics
         #region Private Fields
 
         private bool isMouseOver;
+        private bool isLoaded;
         private readonly DisposableContentCollector collector;
+        private readonly ViewCollection subviews;
+        private SolidColorBrush redbrush;
 
         #endregion
         #region Properties
@@ -66,7 +69,7 @@ namespace CleverDock.Graphics
         /// <summary>
         /// Subviews of the view which will be rendered over the view.
         /// </summary>
-        public ViewCollection Subviews { get; private set; }
+        public ViewCollection Subviews { get { return subviews; } }
 
         /// <summary>
         /// View which contains this view.
@@ -134,7 +137,7 @@ namespace CleverDock.Graphics
         {
             IsVisible = true;
             collector = new DisposableContentCollector();
-            Subviews = new ViewCollection(this);
+            subviews = new ViewCollection(this);
             Subviews.Added += Subviews_Added;
             Subviews.Removed += Subviews_Removed;
             MouseLeftButtonDown += View_MouseLeftButtonDown;
@@ -169,12 +172,15 @@ namespace CleverDock.Graphics
 
         protected virtual void Dispose(bool disposing)
         {
-            if (Subviews != null)
+            lock (subviews)
             {
-                foreach (var subView in Subviews)
-                    subView.Dispose(disposing);
+                if (subviews != null)
+                {
+                    foreach (var subView in Subviews)
+                        subView.Dispose(disposing);
+                }
             }
-            Subviews = null;
+            Subviews.Clear();
             Superview = null;
             Scene = null;
         }
@@ -326,8 +332,8 @@ namespace CleverDock.Graphics
             if (RenderTarget == null)
                 return;
             e.View.Scene = Scene;
-            e.View.Initialize();
-            e.View.LoadContent();
+            (e.View as IComponent).Initialize();
+            (e.View as IContentable).LoadContent();
         }
 
         void Subviews_Removed(object sender, Handlers.ViewEventArgs e)
@@ -335,7 +341,7 @@ namespace CleverDock.Graphics
             if (RenderTarget == null)
                 return;
             e.View.Scene = null;
-            e.View.UnloadContent();
+            (e.View as IContentable).UnloadContent();
         }
 
         /// <summary>
@@ -359,8 +365,12 @@ namespace CleverDock.Graphics
 
         void IContentable.LoadContent()
         {
+            if (isLoaded)
+                return;
+            isLoaded = true;
+            ToDispose(redbrush = new SolidColorBrush(RenderTarget, new Color4(1, 0, 0, 1))); 
             LoadContent();
-            lock (Subviews)
+            lock (subviews)
             {
                 foreach (IContentable view in Subviews)
                     view.LoadContent();
@@ -374,6 +384,9 @@ namespace CleverDock.Graphics
 
         void IContentable.UnloadContent()
         {
+            if (!isLoaded)
+                return;
+            isLoaded = false;
             collector.DisposeContent();
             UnloadContent();
             lock (Subviews)
@@ -410,11 +423,12 @@ namespace CleverDock.Graphics
                 Draw();
                 EndDraw();
             }
-            lock (Subviews)
+            lock (subviews)
             {
                 foreach (IDrawable view in Subviews)
                     view.Draw();
             }
+            RenderTarget.DrawRectangle(new RectangleF(Frame.X, Frame.Y, Frame.Width, Frame.Height), redbrush);
         }
 
         public virtual void Draw() { }
