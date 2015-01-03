@@ -35,16 +35,16 @@ namespace CleverDock
             base.Dispose(disposing);
         }
 
-        protected override void OnCreateResources()
+        protected override void LoadContent()
         {
             this.redBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 0f, 0f));
 
-            base.OnCreateResources();
+            base.LoadContent();
         }
 
-        protected override void OnFreeResources()
+        protected override void UnloadContent()
         {
-            base.OnFreeResources();
+            base.UnloadContent();
 
             if (redBrush != null)
             {
@@ -53,11 +53,11 @@ namespace CleverDock
             }
         }
 
-        protected override void OnRender()
+        public override void Draw()
         {
             this.RenderTarget.Clear(new Color(0, 0, 0, 0f));
 
-            base.OnRender();
+            base.Draw();
         }
     }
 }

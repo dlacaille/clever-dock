@@ -141,55 +141,25 @@ namespace CleverDock.Views
             }
         }
         
-        protected override void OnCreateResources()
+        protected override void LoadContent()
         {
-            writeFactory = new SharpDX.DirectWrite.Factory();
-            textFormat = new TextFormat(writeFactory, "Arial", 14);
-            textFormat.TextAlignment = TextAlignment.Center;
-            textFormat.ParagraphAlignment = ParagraphAlignment.Center;
-            textBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 1f));
-            textShadowBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.5f));
-            windowIndicatorBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 0.7f));
+            ToDispose(writeFactory = new SharpDX.DirectWrite.Factory());
+            ToDispose(textFormat = new TextFormat(writeFactory, "Arial", 14)
+                {
+                    TextAlignment = TextAlignment.Center,
+                    ParagraphAlignment = ParagraphAlignment.Center
+                });
+            ToDispose(textBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 1f)));
+            ToDispose(textShadowBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.5f)));
+            ToDispose(windowIndicatorBrush = new SolidColorBrush(RenderTarget, new Color4(1f, 1f, 1f, 0.7f)));
 
             // Start animation.
-            base.OnCreateResources();
+            base.LoadContent();
         }
 
-        protected override void OnFreeResources()
+        public override void Draw()
         {
-            // Stop animation.
-            base.OnFreeResources();
-
-            if (textShadowBrush != null)
-            {
-                textShadowBrush.Dispose();
-                textShadowBrush = null;
-            }
-            if (textBrush != null)
-            {
-                textBrush.Dispose();
-                textBrush = null;
-            }
-            if (windowIndicatorBrush != null)
-            {
-                windowIndicatorBrush.Dispose();
-                windowIndicatorBrush = null;
-            }
-            if (textFormat != null)
-            {
-                textFormat.Dispose();
-                textFormat = null;
-            }
-            if (writeFactory != null)
-            {
-                writeFactory.Dispose();
-                writeFactory = null;
-            }
-        }
-
-        protected override void OnRender()
-        {
-            base.OnRender();
+            base.Draw();
             if (Windows.Any())
             {
                 var radius = 2;

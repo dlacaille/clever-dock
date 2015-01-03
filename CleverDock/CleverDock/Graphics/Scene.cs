@@ -1,4 +1,6 @@
-﻿using CleverDock.Graphics.Views;
+﻿using CleverDock.Graphics.Interfaces;
+using CleverDock.Graphics.Views;
+using CleverDock.Managers;
 using SharpDX;
 using System;
 using System.Windows;
@@ -10,11 +12,12 @@ using DXGI = SharpDX.DXGI;
 namespace CleverDock.Graphics
 {
     /// <summary>Represents a Direct2D drawing.</summary>
-    public abstract class Scene : IDisposable
+    public abstract class Scene : IDisposable, IDrawable, IContentable
     {
         #region Private Fields
 
         private readonly D2D.Factory factory;
+        private readonly DisposableContentCollector collector;
         private D3D10.Device device;
         private D2D.RenderTarget renderTarget;
         private D3D10.Texture2D texture;
@@ -39,6 +42,7 @@ namespace CleverDock.Graphics
                 capturedMouseView = value;
             }
         }
+        public bool IsVisible { get; set; }
 
         #endregion
         #region DirectX Resources
@@ -112,6 +116,14 @@ namespace CleverDock.Graphics
         public event EventHandler Updated;
 
         #endregion
+        #region ToDispose
+
+        protected void ToDispose(IDisposable disposableContent)
+        {
+            collector.Add(disposableContent);
+        }
+
+        #endregion
 
         #region Constructors and Deconstructors
 
@@ -121,7 +133,8 @@ namespace CleverDock.Graphics
         protected Scene(Window window)
         {
             // We'll create a multi-threaded one to make sure it plays nicely with WPF
-            this.factory = new D2D.Factory(D2D.FactoryType.MultiThreaded);
+            factory = new D2D.Factory(D2D.FactoryType.MultiThreaded);
+            collector = new DisposableContentCollector();
             View = new View(this);
             Window = window;
             Window.MouseLeftButtonDown += Window_MouseLeftButtonDown;
@@ -130,6 +143,7 @@ namespace CleverDock.Graphics
             Window.MouseEnter += Window_MouseEnter;
             Window.MouseLeave += Window_MouseLeave;
             Window.LostMouseCapture += Window_LostMouseCapture;
+            IsVisible = true;
         }
 
         /// <summary>
@@ -137,7 +151,7 @@ namespace CleverDock.Graphics
         /// </summary>
         ~Scene()
         {
-            this.Dispose(false);
+            Dispose(false);
         }
 
         /// <summary>
@@ -145,13 +159,27 @@ namespace CleverDock.Graphics
         /// </summary>
         public void Dispose()
         {
-            if (this.View != null)
+            if (View != null)
             {
-                this.View.Dispose();
-                this.View = null;
+                View.Dispose();
+                View = null;
             }
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Immediately frees any system resources that the object might hold.
+        /// </summary>
+        /// <param name="disposing">
+        /// Set to true if called from an explicit disposer; otherwise, false.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            FreeDevice();
+            if (disposing)
+                factory.Dispose();
+            disposed = true;
         }
 
         #endregion
@@ -189,99 +217,6 @@ namespace CleverDock.Graphics
         }
 
         #endregion
-        #region Resource Management
-
-        /// <summary>
-        /// Creates a DirectX 10 device and related device specific resources.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        /// A previous call to CreateResources has not been followed by a call to
-        /// <see cref="FreeResources"/>.
-        /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <see cref="Dispose()"/> has been called on this instance.
-        /// </exception>
-        /// <exception cref="DirectX.DirectXException">
-        /// Unable to create a DirectX 10 device or an error occured creating
-        /// device dependent resources.
-        /// </exception>
-        public void CreateResources()
-        {
-            this.ThrowIfDisposed();
-            if (this.device != null)
-                throw new InvalidOperationException("A previous call to CreateResources has not been followed by a call to FreeResources.");
-
-            // Try to create a hardware device first and fall back to a
-            // software (WARP doens't let us share resources)
-            var device1 = TryCreateDevice1(D3D10.DriverType.Hardware);
-            if (device1 == null)
-            {
-                device1 = TryCreateDevice1(D3D10.DriverType.Software);
-                if (device1 == null)
-                    throw new SharpDXException("Unable to create a DirectX 10 device.");
-            }
-            this.device = device1.QueryInterface<D3D10.Device>();
-            device1.Dispose();
-        }
-
-        /// <summary>
-        /// Releases the DirectX device and any device dependent resources.
-        /// </summary>
-        /// <remarks>
-        /// This method is safe to be called even if the instance has been disposed.
-        /// </remarks>
-        public void FreeResources()
-        {
-            this.OnFreeResources();
-            if (this.texture != null)
-            {
-                this.texture.Dispose();
-                this.texture = null;
-            }
-            lock (renderTargetLock)
-            {
-                if (this.renderTarget != null)
-                {
-                    this.renderTarget.Dispose();
-                    this.renderTarget = null;
-                }
-            }
-            if (this.device != null)
-            {
-                this.device.Dispose();
-                this.device = null;
-            }
-        }
-
-        #endregion
-        #region Rendering
-
-        /// <summary>
-        /// Causes the scene to redraw its contents.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        /// <see cref="Resize"/> has not been called.
-        /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <see cref="Dispose()"/> has been called on this instance.
-        /// </exception>
-        public void Render()
-        {
-            this.ThrowIfDisposed();
-            if (this.renderTarget == null)
-                throw new InvalidOperationException("Resize has not been called.");
-            lock (renderTargetLock)
-            {
-                this.renderTarget.BeginDraw();
-                this.OnRender();
-                this.View.Render();
-                this.renderTarget.EndDraw();
-            }
-            this.device.Flush();
-            this.OnUpdated();
-        }
-
-        #endregion
         #region Resizing
 
         /// <summary>Resizes the scene.</summary>
@@ -291,7 +226,7 @@ namespace CleverDock.Graphics
         /// width/height is less than zero.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// <see cref="CreateResources"/> has not been called.
+        /// <see cref="LoadContent"/> has not been called.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <see cref="Dispose()"/> has been called on this instance.
@@ -335,8 +270,15 @@ namespace CleverDock.Graphics
 
             // Destroy and recreate any dependent resources declared in a
             // derived class only (i.e don't destroy our resources).
-            this.OnFreeResources();
-            this.OnCreateResources();
+            (this as IContentable).UnloadContent();
+            (this as IContentable).LoadContent();
+        }
+        
+        private void OnUpdated()
+        {
+            var callback = this.Updated;
+            if (callback != null)
+                callback(this, EventArgs.Empty);
         }
 
         #endregion
@@ -434,56 +376,117 @@ namespace CleverDock.Graphics
         }
 
         #endregion
-        #region Overridable Methods
 
-        /// <summary>
-        /// Immediately frees any system resources that the object might hold.
-        /// </summary>
-        /// <param name="disposing">
-        /// Set to true if called from an explicit disposer; otherwise, false.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
+        #region IDrawable Members
+
+        void IDrawable.Draw()
         {
-            this.FreeResources();
-            if (disposing)
-                this.factory.Dispose();
-            this.disposed = true;
+            if (!IsVisible)
+                return;
+            ThrowIfDisposed();
+            if (this.renderTarget == null)
+                throw new InvalidOperationException("Resize has not been called.");
+            lock (renderTargetLock)
+            {
+                if (BeginDraw())
+                {
+                    renderTarget.BeginDraw();
+                    Draw();
+                    var drawableView = View as IDrawable;
+                    if (drawableView.BeginDraw())
+                    {
+                        drawableView.Draw();
+                        drawableView.EndDraw();
+                    }
+                    renderTarget.EndDraw();
+                    EndDraw();
+                }
+            }
+            device.Flush();
+            OnUpdated();
         }
 
-        /// <summary>
-        /// When overriden in a derived class, creates device dependent resources.
-        /// </summary>
-        protected virtual void OnCreateResources()
+        public virtual bool BeginDraw() 
         {
+            return true;
+        }
+
+        public virtual void Draw() { }
+
+        public virtual void EndDraw() { }
+
+        #endregion
+        #region IContentable Members
+
+        public void CreateDevice()
+        {
+            this.ThrowIfDisposed();
+            if (this.device != null)
+                throw new InvalidOperationException("A previous call to CreateDevice has not been followed by a call to FreeDevice.");
+
+            // Try to create a hardware device first and fall back to a
+            // software (WARP doens't let us share resources)
+            var device1 = TryCreateDevice1(D3D10.DriverType.Hardware);
+            if (device1 == null)
+            {
+                device1 = TryCreateDevice1(D3D10.DriverType.Software);
+                if (device1 == null)
+                    throw new SharpDXException("Unable to create a DirectX 10 device.");
+            }
+            this.device = device1.QueryInterface<D3D10.Device>();
+            device1.Dispose();
+        }
+
+        public void FreeDevice()
+        {
+            UnloadContent();
+            if (this.texture != null)
+            {
+                this.texture.Dispose();
+                this.texture = null;
+            }
+            lock (renderTargetLock)
+            {
+                if (this.renderTarget != null)
+                {
+                    this.renderTarget.Dispose();
+                    this.renderTarget = null;
+                }
+            }
+            if (this.device != null)
+            {
+                this.device.Dispose();
+                this.device = null;
+            }
+        }
+
+        void IContentable.LoadContent()
+        {
+            LoadContent();
             if (View != null)
-                View.CreateResources();
+                (View as IContentable).LoadContent();
+        }
+
+        protected virtual void LoadContent() { }
+
+        /// <summary>
+        /// Releases the DirectX device and any device dependent resources.
+        /// </summary>
+        /// <remarks>
+        /// This method is safe to be called even if the instance has been disposed.
+        /// </remarks>
+        void IContentable.UnloadContent()
+        {
+            collector.DisposeContent();
+            UnloadContent();
+            if (View != null)
+                (View as IContentable).UnloadContent();
         }
 
         /// <summary>
         /// When overriden in a deriven class, releases device dependent resources.
         /// </summary>
-        protected virtual void OnFreeResources()
-        {
-            if (View != null)
-                View.FreeResources();
-        }
-
-        /// <summary>
-        /// When overriden in a derived class, is called before rendering.
-        /// </summary>
-        protected virtual void OnBeforeRender() { }
-
-        /// <summary>
-        /// When overriden in a derived class, renders the Direct2D content.
-        /// </summary>
-        protected virtual void OnRender() { }
-
-        private void OnUpdated()
-        {
-            var callback = this.Updated;
-            if (callback != null)
-                callback(this, EventArgs.Empty);
-        }
+        protected virtual void UnloadContent() { }
 
         #endregion
     }

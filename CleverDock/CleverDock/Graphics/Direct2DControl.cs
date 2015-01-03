@@ -1,4 +1,5 @@
 ﻿using CleverDock.Graphics;
+using CleverDock.Graphics.Interfaces;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,34 +17,21 @@ namespace CleverDock.Graphics
         /// </summary>
         public static readonly DependencyProperty SceneProperty = DependencyProperty.Register("Scene", typeof(Scene), typeof(Direct2DControl), new UIPropertyMetadata(SceneChangedCallback));
 
-        // To prevent lots or resizing, we're going to use a timer to resize the
-        // image after a set interval. We can then reset the timer if we recieve
-        // another request to resize, helping performance. When resizing, the
-        // Image control will scale the old contents for us, which will be blurry
-        // but it's only for a little time so should be unnoticeable.
-        private static readonly TimeSpan ResizeInterval = TimeSpan.FromMilliseconds(100);
-        private DispatcherTimer resizeTimer;
-
         private Image image;
         private D3D10Image imageSource;
-        private bool isDirty;
 
         /// <summary>
         /// Initializes a new instance of the Direct2DControl class.
         /// </summary>
         public Direct2DControl()
         {
-            this.resizeTimer = new DispatcherTimer();
-            this.resizeTimer.Interval = ResizeInterval;
-            this.resizeTimer.Tick += this.ResizeTimerTick;
+            imageSource = new D3D10Image();
+            imageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
-            this.imageSource = new D3D10Image();
-            this.imageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
-
-            this.image = new Image();
-            this.image.Stretch = Stretch.Fill; // We set this because our resizing isn't immediate
-            this.image.Source = this.imageSource;
-            this.AddVisualChild(this.image);
+            image = new Image();
+            image.Stretch = Stretch.Fill; // We set this because our resizing isn't immediate
+            image.Source = imageSource;
+            AddVisualChild(image);
 
             // To greatly reduce flickering we're only going to AddDirtyRect
             // when WPF is rendering.
@@ -59,8 +47,8 @@ namespace CleverDock.Graphics
         /// </remarks>
         public Scene Scene
         {
-            get { return (Scene)this.GetValue(SceneProperty); }
-            set { this.SetValue(SceneProperty, value); }
+            get { return (Scene)GetValue(SceneProperty); }
+            set { SetValue(SceneProperty, value); }
         }
 
         /// <summary>
@@ -96,10 +84,8 @@ namespace CleverDock.Graphics
         protected override Visual GetVisualChild(int index)
         {
             if (index != 0)
-            {
                 throw new ArgumentOutOfRangeException("index");
-            }
-            return this.image;
+            return image;
         }
 
         /// <summary>
@@ -109,8 +95,8 @@ namespace CleverDock.Graphics
         /// <returns>The child Image's desired size.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            this.image.Measure(availableSize);
-            return this.image.DesiredSize;
+            image.Measure(availableSize);
+            return image.DesiredSize;
         }
 
         /// <summary>
@@ -123,109 +109,75 @@ namespace CleverDock.Graphics
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-
-            if (this.Scene != null)
+            if (Scene != null)
             {
-                // Signal to resize
-                this.resizeTimer.Start();
+                // Check we don't resize too small
+                int width = Math.Max(1, (int)ActualWidth);
+                int height = Math.Max(1, (int)ActualHeight);
+                Scene.Resize(width, height);
+
+                imageSource.Lock();
+                imageSource.SetBackBuffer(Scene.Texture);
+                imageSource.Unlock();
+
+                (Scene as IDrawable).Draw();
             }
         }
 
         private static void SceneChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var instance = (Direct2DControl)d;
-
-            // Unsubscribe from the old scene first
-            if (e.OldValue != null)
-            {
-                ((Scene)e.OldValue).Updated -= instance.SceneUpdated;
-            }
-
             instance.OnSceneChanged();
-
-            // Now subscribe to the events once all the resources have been created
-            if (e.NewValue != null)
-            {
-                var scene = ((Scene)e.NewValue);
-                scene.Updated += instance.SceneUpdated;
-            }
         }
 
         private void OnRendering(object sender, EventArgs e)
         {
             if (this.imageSource.IsFrontBufferAvailable)
             {
-                this.imageSource.Lock();
-                this.Scene.Render();
-                this.imageSource.AddDirtyRect(new Int32Rect(0, 0, this.imageSource.PixelWidth, this.imageSource.PixelHeight));
-                this.imageSource.Unlock();
+                imageSource.Lock();
+                (Scene as IDrawable).Draw();
+                imageSource.AddDirtyRect(new Int32Rect(0, 0, imageSource.PixelWidth, imageSource.PixelHeight));
+                imageSource.Unlock();
             }
         }
 
         private void OnIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (this.Scene != null)
+            if (Scene != null)
             {
-                if (this.imageSource.IsFrontBufferAvailable)
-                {
-                    this.OnSceneChanged(); // Recreate the resources
-                }
+                if (imageSource.IsFrontBufferAvailable)
+                    OnSceneChanged(); // Recreate the resources
                 else
-                {
-                    this.Scene.FreeResources();
-                }
+                    Scene.FreeDevice();
             }
         }
 
         private void OnSceneChanged()
         {
-            this.imageSource.Lock();
+            imageSource.Lock();
             try
             {
-                if (this.Scene != null)
+                if (Scene != null)
                 {
-                    this.Scene.CreateResources();
+                    Scene.CreateDevice();
 
                     // Resize to the size of this control, if we have a size
-                    int width = Math.Max(1, (int)this.ActualWidth);
-                    int height = Math.Max(1, (int)this.ActualHeight);
-                    this.Scene.Resize(width, height);
+                    int width = Math.Max(1, (int)ActualWidth);
+                    int height = Math.Max(1, (int)ActualHeight);
+                    Scene.Resize(width, height);
 
-                    this.imageSource.SetBackBuffer(this.Scene.Texture);
-                    this.Scene.Render();
+                    imageSource.SetBackBuffer(Scene.Texture);
+                    (Scene as IDrawable).Draw();
                 }
                 else
                 {
-                    this.imageSource.SetBackBuffer(null);
+                    imageSource.SetBackBuffer(null);
                 }
             }
             finally
             {
-                this.imageSource.Unlock();
+                imageSource.Unlock();
             }
-        }
-
-        private void ResizeTimerTick(object sender, EventArgs e)
-        {
-            this.resizeTimer.Stop(); // Only call this method once
-            if (this.Scene != null)
-            {
-                // Check we don't resize too small
-                int width = Math.Max(1, (int)this.ActualWidth);
-                int height = Math.Max(1, (int)this.ActualHeight);
-                this.Scene.Resize(width, height);
-
-                this.imageSource.Lock();
-                this.imageSource.SetBackBuffer(this.Scene.Texture);
-                this.imageSource.Unlock();
-
-                this.Scene.Render();
-            }
-        }
-
-        private void SceneUpdated(object sender, EventArgs e)
-        {
-            this.isDirty = true;
         }
     }
 }

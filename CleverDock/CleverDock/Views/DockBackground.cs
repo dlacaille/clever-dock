@@ -26,35 +26,18 @@ namespace CleverDock.Views
             }
         }
 
-        protected override void OnCreateResources()
+        protected override void LoadContent()
         {
-            backgroundBrush = new SolidColorBrush(RenderTarget, new Color4(0.15f, 0.17f, 0.18f, 0.92f));
-            borderBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.3f));
+            ToDispose(backgroundBrush = new SolidColorBrush(RenderTarget, new Color4(0.15f, 0.17f, 0.18f, 0.92f)));
+            ToDispose(borderBrush = new SolidColorBrush(RenderTarget, new Color4(0f, 0f, 0f, 0.3f)));
 
             // Start animation.
-            base.OnCreateResources();
+            base.LoadContent();
         }
 
-        protected override void OnFreeResources()
+        public override void Draw()
         {
-            // Stop animation.
-            base.OnFreeResources();
-
-            if (backgroundBrush != null)
-            {
-                backgroundBrush.Dispose();
-                backgroundBrush = null;
-            }
-            if (borderBrush != null)
-            {
-                borderBrush.Dispose();
-                borderBrush = null;
-            }
-        }
-
-        protected override void OnRender()
-        {
-            base.OnRender();
+            base.Draw();
 
             var rect = new RoundedRectangle();
             rect.Rect = Frame;

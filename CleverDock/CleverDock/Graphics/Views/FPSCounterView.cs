@@ -28,19 +28,19 @@ namespace CleverDock.Graphics.Views
             this.Bounds = bounds;
         }
 
-        protected override void OnCreateResources()
+        protected override void LoadContent()
         {
             this.whiteBrush = new D2D.SolidColorBrush(RenderTarget, new Color(1f, 1f, 1f));
             this.blackBrush = new D2D.SolidColorBrush(RenderTarget, new Color(0f, 0f, 0f));
 
             // Start animation.
-            base.OnCreateResources();
+            base.LoadContent();
         }
 
-        protected override void OnFreeResources()
+        protected override void UnloadContent()
         {
             // Stop animation to prevent rendering while the resources are freed.
-            base.OnFreeResources();
+            base.UnloadContent();
 
             if (this.whiteBrush != null)
             {
@@ -69,7 +69,7 @@ namespace CleverDock.Graphics.Views
             base.Dispose(disposing);
         }
 
-        protected override void OnRender()
+        public override void Draw()
         {
             // Calculate our actual frame rate
             this.frameCount++;

@@ -9,14 +9,18 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using SharpDX.Direct2D1;
 using System.Windows.Input;
+using CleverDock.Graphics.Interfaces;
+using IComponent = CleverDock.Graphics.Interfaces.IComponent;
+using CleverDock.Managers;
 
 namespace CleverDock.Graphics
 {
-    public class View : IDisposable
+    public class View : IDisposable, IDrawable, IContentable, IComponent
     {
         #region Private Fields
 
         private bool isMouseOver;
+        private readonly DisposableContentCollector collector;
 
         #endregion
         #region Properties
@@ -34,7 +38,12 @@ namespace CleverDock.Graphics
         /// <summary>
         /// Allows the view to be rendered.
         /// </summary>
-        public bool Visible { get; set; }
+        public bool IsVisible { get; set; }
+
+        /// <summary>
+        /// Name of the view.
+        /// </summary>
+        public virtual string Name { get; set; }
 
         /// <summary>
         /// Bounds of the view, relative to its parent.
@@ -123,6 +132,8 @@ namespace CleverDock.Graphics
 
         public View()
         {
+            IsVisible = true;
+            collector = new DisposableContentCollector();
             Subviews = new ViewCollection(this);
             Subviews.Added += Subviews_Added;
             Subviews.Removed += Subviews_Removed;
@@ -131,7 +142,6 @@ namespace CleverDock.Graphics
             MouseMove += View_MouseMove;
             MouseLeave += View_MouseLeave;
             LostMouseCapture += View_LostMouseCapture;
-            Visible = true;
         }
 
         public View(Scene scene)
@@ -301,6 +311,14 @@ namespace CleverDock.Graphics
         }
 
         #endregion
+        #region ToDispose
+
+        protected void ToDispose(IDisposable disposableContent)
+        {
+            collector.Add(disposableContent);
+        }
+
+        #endregion
         #region Subview Management
 
         void Subviews_Added(object sender, Handlers.ViewEventArgs e)
@@ -308,8 +326,8 @@ namespace CleverDock.Graphics
             if (RenderTarget == null)
                 return;
             e.View.Scene = Scene;
-            e.View.FreeResources();
-            e.View.CreateResources();
+            e.View.Initialize();
+            e.View.LoadContent();
         }
 
         void Subviews_Removed(object sender, Handlers.ViewEventArgs e)
@@ -317,7 +335,7 @@ namespace CleverDock.Graphics
             if (RenderTarget == null)
                 return;
             e.View.Scene = null;
-            e.View.FreeResources();
+            e.View.UnloadContent();
         }
 
         /// <summary>
@@ -331,60 +349,75 @@ namespace CleverDock.Graphics
         }
 
         #endregion
-        #region Resource Management
 
-        /// <summary>
-        /// Create device dependent resources.
-        /// </summary>
-        public void CreateResources()
-        {
-            OnCreateResources();
-            for (int i = 0; i < Subviews.Count(); i++)
-                Subviews[i].CreateResources();
-        }
+        #region IComponent Members
 
-        /// <summary>
-        /// Release device dependent resources.
-        /// </summary>
-        public void FreeResources()
-        {
-            OnFreeResources();
-            for (int i = 0; i < Subviews.Count(); i++)
-                Subviews[i].FreeResources();
-        }
+        public virtual void Initialize() { }
 
         #endregion
-        #region Overridable Methods
+        #region IContentable Members
+
+        void IContentable.LoadContent()
+        {
+            LoadContent();
+            lock (Subviews)
+            {
+                foreach (IContentable view in Subviews)
+                    view.LoadContent();
+            }
+        }
 
         /// <summary>
         /// When overriden in a derived class, creates device dependent resources.
         /// </summary>
-        protected virtual void OnCreateResources() { }
+        protected virtual void LoadContent() { }
+
+        void IContentable.UnloadContent()
+        {
+            collector.DisposeContent();
+            UnloadContent();
+            lock (Subviews)
+            {
+                foreach (IContentable view in Subviews)
+                    view.UnloadContent();
+            }
+        }
 
         /// <summary>
         /// When overriden in a deriven class, releases device dependent resources.
         /// </summary>
-        protected virtual void OnFreeResources() { }
-
-        /// <summary>
-        /// When overriden in a derived class, renders the Direct2D content.
-        /// </summary>
-        protected virtual void OnRender() { }
+        protected virtual void UnloadContent() { }
 
         #endregion
-        #region Rendering
+        #region IDrawable Members
+
+        public virtual bool BeginDraw() 
+        { 
+            return true; 
+        }
+
+        public virtual void EndDraw() { }
 
         /// <summary>
         /// Calls OnRender and renders all subviews. This method will do nothing if Visible is set to false.
         /// </summary>
-        public void Render()
+        void IDrawable.Draw()
         {
-            if (!Visible)
+            if (!IsVisible)
                 return;
-            OnRender();
-            for (int i = 0; i < Subviews.Count(); i++)
-                Subviews[i].Render();
+            if (BeginDraw())
+            {
+                Draw();
+                EndDraw();
+            }
+            lock (Subviews)
+            {
+                foreach (IDrawable view in Subviews)
+                    view.Draw();
+            }
         }
+
+        public virtual void Draw() { }
 
         #endregion
     }

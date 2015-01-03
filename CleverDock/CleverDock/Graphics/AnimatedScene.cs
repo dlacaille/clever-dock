@@ -19,12 +19,12 @@ namespace CleverDock.Graphics
 
         public AnimatedScene(Window window) : base(window) { }
 
-        protected override void OnBeforeRender()
+        public override bool BeginDraw()
         {
-            base.OnBeforeRender();
             for (int i = 0; i < animations.Count; i++)
                 if (animations[i].IsAnimating)
                     animations[i].Tick();
+            return base.BeginDraw();
         }
         
         public void Animate<TSource, TResult>(TSource obj, Expression<Func<TSource, TResult>> property, TResult toValue, double duration, EasingMode easing = EasingMode.QuadraticEaseInOut, EventHandler animationEnded = null)

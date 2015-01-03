@@ -44,18 +44,18 @@ namespace CleverDock.Graphics.Views
             bitmap = D2D.Bitmap.FromWicBitmap(RenderTarget, converter);
         }
 
-        protected override void OnCreateResources()
+        protected override void LoadContent()
         {
             CreateBitmapFromSource();
 
             // Start animation.
-            base.OnCreateResources();
+            base.LoadContent();
         }
 
-        protected override void OnFreeResources()
+        protected override void UnloadContent()
         {
             // Stop animation.
-            base.OnFreeResources();
+            base.UnloadContent();
 
             if (bitmap != null)
             {
@@ -64,9 +64,9 @@ namespace CleverDock.Graphics.Views
             }
         }
 
-        protected override void OnRender()
+        public override void Draw()
         {
-            base.OnRender();
+            base.Draw();
             if (bitmap == null)
                 return;
             RenderTarget.DrawBitmap(bitmap, Frame, opacity, D2D.BitmapInterpolationMode.Linear); 
