@@ -1,0 +1,8 @@
+﻿<Window x:Class="CleverDock.IconDragWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="IconDragWindow" Height="48" Width="48">
+    <Grid>
+        <Image Name="IconImage" Width="48" Height="48"/>
+    </Grid>
+</Window>

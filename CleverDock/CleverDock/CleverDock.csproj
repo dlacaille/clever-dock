@@ -202,6 +202,9 @@
     <Compile Include="Graphics\Views\FPSCounterView.cs" />
     <Compile Include="Graphics\Views\ImageView.cs" />
     <Compile Include="Handlers\ViewEventArgs.cs" />
+    <Compile Include="IconDragWindow.xaml.cs">
+      <DependentUpon>IconDragWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Managers\DisposableContentCollector.cs" />
     <Compile Include="Tools\BitmapHelper.cs" />
     <Compile Include="Graphics\Direct2DControl.cs" />
@@ -243,6 +246,10 @@
     <Compile Include="Views\Dock.cs" />
     <Compile Include="Views\DockBackground.cs" />
     <Compile Include="Views\DockIcon.cs" />
+    <Page Include="IconDragWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

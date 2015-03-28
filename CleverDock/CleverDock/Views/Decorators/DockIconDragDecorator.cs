@@ -88,7 +88,6 @@ namespace CleverDock.Views
             if (icon.Windows.Any())
             {
                 icon.RemoveFromSuperview();
-                dock.Subviews.Insert(dragStartIndex, icon);
             }
             // Remove dragged state.
             draggedIcon = null;
