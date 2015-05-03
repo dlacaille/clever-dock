@@ -16,6 +16,7 @@ namespace CleverDock.Decorators
         private bool IsDragging;
         private bool MouseDown;
         private DockIconContainer container;
+        private DraggedIconWindow draggedIconWindow;
 
         private DockIcon draggedIcon;
         private int lastCount = -1;
@@ -52,10 +53,25 @@ namespace CleverDock.Decorators
             lastCount = container.CountIconsBefore(index);
             placeholder = new Separator {Width = SettingsManager.Settings.OuterIconWidth, Visibility = Visibility.Hidden};
             container.Children.Insert(index, placeholder);
+
+            if (draggedIconWindow == null)
+                draggedIconWindow = new DraggedIconWindow();
+            draggedIconWindow.Width = 
+                draggedIconWindow.IconImage.Width = 
+                draggedIconWindow.Height = 
+                draggedIconWindow.IconImage.Height = 
+                    SettingsManager.Settings.IconSize;
+            draggedIconWindow.Topmost = true;
+            draggedIconWindow.IconImage.Source = draggedIcon.IconImage.Source;
+            draggedIconWindow.Show();
         }
 
         private void MoveDraggedIcon(Point pos)
         {
+            var iconSize = SettingsManager.Settings.IconSize;
+            var mainWindow = Application.Current.MainWindow;
+            draggedIconWindow.Left = pos.X + mainWindow.Left - iconSize / 2;
+            draggedIconWindow.Top = pos.Y + mainWindow.Top - iconSize / 2;
         }
 
         private void PlaceDraggedIcon()
@@ -67,6 +83,8 @@ namespace CleverDock.Decorators
             foreach(var w in windows)
                 draggedIcon.Windows.Add(w);
             container.Children.Insert(index, draggedIcon);
+            draggedIconWindow.Close();
+            draggedIconWindow = null;
         }
 
         private void Dispose()

@@ -160,6 +160,9 @@
     <Compile Include="Tools\PathTools.cs" />
     <Compile Include="Tools\StringUtils.cs" />
     <Compile Include="Tools\XamlHelper.cs" />
+    <Compile Include="DraggedIconWindow.xaml.cs">
+      <DependentUpon>DraggedIconWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -183,6 +186,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Page Include="Themes\Metal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DraggedIconWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
