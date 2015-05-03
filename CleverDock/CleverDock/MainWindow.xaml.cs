@@ -21,9 +21,9 @@ namespace CleverDock
     {
         public static MainWindow Window;
 
-        public double TopPadding = 80;
+        public double TopPadding = 50;
         public double SidePadding = 150;
-        public double Distance = 10;
+        public double Distance = 0;
         public double HotspotHeight = 10;
         public bool DockIsVisible = true;
 
@@ -227,7 +227,7 @@ namespace CleverDock
 
         public void SetDimensions()
         {
-            Width = Math.Max(DockIcons.ActualWidth + SidePadding * 2, ScreenWidth);
+            Width = Math.Min(DockIcons.ActualWidth + SidePadding * 2, ScreenWidth);
             Height = DockIcons.ActualHeight + Distance + TopPadding;
             Left = DockLeft;
             Top = DockTop;
@@ -240,7 +240,7 @@ namespace CleverDock
 
         public double DockLeft
         {
-            get { return Math.Round(ScreenWidth / 2 - DockIcons.ActualWidth / 2); }
+            get { return Math.Round(ScreenWidth / 2 - DockIcons.ActualWidth / 2 - SidePadding); }
         }
 
         public double DockTop
