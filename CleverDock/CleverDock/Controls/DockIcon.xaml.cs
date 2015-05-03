@@ -79,6 +79,8 @@ namespace CleverDock.Controls
         {
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             Windows.CollectionChanged += Windows_CollectionChanged;
+            ContextMenuOpening += DockIcon_ContextMenuOpening;
+            ContextMenuClosing += DockIcon_ContextMenuClosing;
             InitializeComponent();
             IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;
             MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = Windows.Any();
@@ -91,6 +93,16 @@ namespace CleverDock.Controls
             SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
             ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
             ThemeManager.Manager.ThemeListChanged += Manager_ThemeListChanged;
+        }
+
+        void DockIcon_ContextMenuClosing(object sender, ContextMenuEventArgs e)
+        {
+            MainWindow.Window.ContextMenuOpened = false;
+        }
+
+        void DockIcon_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            MainWindow.Window.ContextMenuOpened = true;
         }
 
         void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

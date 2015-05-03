@@ -26,6 +26,7 @@ namespace CleverDock
         public double Distance = 0;
         public double HotspotHeight = 10;
         public bool DockIsVisible = true;
+        public bool ContextMenuOpened = false;
 
         private Timer dockShowTimer = null;
         private Timer dockHideTimer = null;
@@ -126,7 +127,8 @@ namespace CleverDock
                 return WindowManager.Manager.ActiveWindowRect.IntersectsWith(Rect) // Dock intersects with foreground window
                     && DockIsVisible
                     && !MouseHotspot.Contains(WindowManager.Manager.CursorPosition) // Mouse is not in hotspot 
-                    && !DockIcons.IsMouseOver; // Mouse is not over the dock icons.
+                    && !DockIcons.IsMouseOver // Mouse is not over the dock icons.
+                    && !ContextMenuOpened;
             }
         }
 
