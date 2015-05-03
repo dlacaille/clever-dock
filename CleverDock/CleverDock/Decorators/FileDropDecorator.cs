@@ -52,7 +52,7 @@ namespace CleverDock.Decorators
                         Path = files[0],
                         Name = Path.GetFileNameWithoutExtension(files[0])
                 });
-                dragIndex = container.GetDropIndex(e.GetPosition(container).X - SettingsManager.Settings.OuterIconSize/2);
+                dragIndex = container.GetDropIndex(e.GetPosition(container).X - SettingsManager.Settings.OuterIconWidth / 2);
                 container.Children.Insert(dragIndex, dragItem);
             }
         }
@@ -75,11 +75,11 @@ namespace CleverDock.Decorators
             e.Effects = DragDropEffects.Copy;
             e.Handled = false;
             if (dragIndex !=
-                container.GetDropIndex(e.GetPosition(container).X - SettingsManager.Settings.OuterIconSize/2))
+                container.GetDropIndex(e.GetPosition(container).X - SettingsManager.Settings.OuterIconWidth / 2))
             {
                 if (dragIndex >= 0)
                     container.Children.Remove(dragItem);
-                int index = container.GetDropIndex(e.GetPosition(container).X - SettingsManager.Settings.OuterIconSize/2);
+                int index = container.GetDropIndex(e.GetPosition(container).X - SettingsManager.Settings.OuterIconWidth / 2);
                 container.Children.Insert(index, dragItem);
                 dragItem.InvalidateArrange();
                 dragIndex = index;

@@ -22,7 +22,7 @@ namespace CleverDock
         public static MainWindow Window;
 
         public double TopPadding = 50;
-        public double SidePadding = 150;
+        public double SidePadding = 200;
         public double Distance = 0;
         public double HotspotHeight = 10;
         public bool DockIsVisible = true;
@@ -231,8 +231,8 @@ namespace CleverDock
             Height = DockIcons.ActualHeight + Distance + TopPadding;
             Left = DockLeft;
             Top = DockTop;
-            DockIcons.Height = SettingsManager.Settings.OuterIconSize;
-            DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconSize + 4;
+            DockIcons.Height = SettingsManager.Settings.OuterIconHeight;
+            DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconHeight + 4;
             int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopPadding : 0);
             WorkAreaManager.SetWorkingArea(0, 0, ScreenWidth, ScreenHeight - reservedSpace);
             PlaceDock();
