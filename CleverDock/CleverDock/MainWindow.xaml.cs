@@ -47,7 +47,7 @@ namespace CleverDock
             ThemeManager.Manager.ThemeWindow(this);
             Console.WriteLine("Render Capability is Tier " + (RenderCapability.Tier >> 16));
             Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline),
-               new FrameworkPropertyMetadata { DefaultValue = 30 });
+               new FrameworkPropertyMetadata { DefaultValue = 60 });
             dockHideTimer = new Timer(SettingsManager.Settings.DockHideDelay);
             dockHideTimer.Elapsed += dockHideTimer_Elapsed;
             dockHideTimer.AutoReset = false;
