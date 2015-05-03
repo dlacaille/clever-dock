@@ -31,6 +31,7 @@ namespace CleverDock.Decorators
             _container.MouseMove += DockIconContainer_MouseMove;
             _container.MouseLeftButtonUp += DockIconContainer_MouseUp;
             _container.LostMouseCapture += DockIconContainer_LostMouseCapture;
+            WindowManager.Manager.CursorPositionChanged += Manager_CursorPositionChanged;
         }
 
         private Canvas canvas
@@ -64,14 +65,6 @@ namespace CleverDock.Decorators
             draggedIconWindow.Topmost = true;
             draggedIconWindow.IconImage.Source = draggedIcon.IconImage.Source;
             draggedIconWindow.Show();
-        }
-
-        private void MoveDraggedIcon(Point pos)
-        {
-            var iconSize = SettingsManager.Settings.IconSize;
-            var mainWindow = Application.Current.MainWindow;
-            draggedIconWindow.Left = pos.X + mainWindow.Left - iconSize / 2;
-            draggedIconWindow.Top = pos.Y + mainWindow.Top - iconSize / 2;
         }
 
         private void PlaceDraggedIcon()
@@ -130,6 +123,19 @@ namespace CleverDock.Decorators
                 container.CaptureMouse();
         }
 
+        void Manager_CursorPositionChanged(object sender, Handlers.CursorPosEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (IsDragging)
+                {
+                    var iconSize = SettingsManager.Settings.IconSize;
+                    draggedIconWindow.Left = e.CursorPosition.X - iconSize / 2;
+                    draggedIconWindow.Top = e.CursorPosition.Y - iconSize / 2;
+                }
+            });
+        }
+
         private void DockIconContainer_MouseMove(object sender, MouseEventArgs e)
         {
             if (draggedIcon == null)
@@ -146,7 +152,6 @@ namespace CleverDock.Decorators
             }
             if (IsDragging)
             {
-                MoveDraggedIcon(pos);
                 if (container.IsPositionWithinBounds(cpos))
                 {
                     int dropIndex = container.GetDropIndex(cpos.X);
