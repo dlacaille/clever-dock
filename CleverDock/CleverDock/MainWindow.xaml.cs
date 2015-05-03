@@ -136,7 +136,8 @@ namespace CleverDock
             {
                 double hotspotWidth = Math.Max(DockIcons.ActualWidth, ScreenWidth / 2);
                 double hotspotLeft = (ScreenWidth - hotspotWidth) / 2;
-                return new Rect(hotspotLeft, ScreenHeight - HotspotHeight, hotspotWidth, HotspotHeight); 
+                double hotspotHeight = DockIsVisible ? DockIcons.Height : HotspotHeight;
+                return new Rect(hotspotLeft, ScreenHeight - hotspotHeight, hotspotWidth, hotspotHeight); 
             }
         }
 
