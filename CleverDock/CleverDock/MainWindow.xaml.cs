@@ -21,8 +21,9 @@ namespace CleverDock
     {
         public static MainWindow Window;
 
-        public double Distance = 0;
-        public double TopMargin = 20;
+        public double TopPadding = 80;
+        public double SidePadding = 150;
+        public double Distance = 10;
         public double HotspotHeight = 10;
         public bool DockIsVisible = true;
 
@@ -33,7 +34,6 @@ namespace CleverDock
         {
             Window = this;
             InitializeComponent();
-            SetDimensions();
             SourceInitialized += MainWindow_SourceInitialized;
             Loaded += MainWindow_Loaded;
             DockIcons.SizeChanged += DockIcons_SizeChanged;
@@ -170,6 +170,7 @@ namespace CleverDock
 
         void MainWindow_SourceInitialized(object sender, EventArgs e)
         {
+            SetDimensions();
             WindowManager.Manager.SetDockHwnd(new WindowInteropHelper(this).Handle); 
         }
 
@@ -185,7 +186,7 @@ namespace CleverDock
 
         private void DockIcons_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            PlaceDock();
+            SetDimensions();
         }
 
         public void SetTopmost()
@@ -201,8 +202,8 @@ namespace CleverDock
         {
             if (!DockIsVisible)
                 return;
-            double dockHeight = DockIcons.ActualHeight + Distance + TopMargin;
-            AnimationTools.TranslateY(SettingsManager.Settings.DockHideDuration, DockTop + dockHeight, Canvas.TopProperty, DockIcons);
+            double dockHeight = DockIcons.ActualHeight + Distance + TopPadding;
+            AnimationTools.TranslateY(SettingsManager.Settings.DockHideDuration, dockHeight, Canvas.TopProperty, DockIcons);
             DockIsVisible = false;
         }
 
@@ -210,7 +211,7 @@ namespace CleverDock
         {
             if (DockIsVisible)
                 return;
-            AnimationTools.TranslateY(SettingsManager.Settings.DockShowDuration, DockTop, Canvas.TopProperty, DockIcons);
+            AnimationTools.TranslateY(SettingsManager.Settings.DockShowDuration, TopPadding, Canvas.TopProperty, DockIcons);
             DockIsVisible = true;
         }
 
@@ -226,12 +227,13 @@ namespace CleverDock
 
         public void SetDimensions()
         {
-            WindowState = System.Windows.WindowState.Maximized;
-            Width = ScreenWidth;
-            Height = ScreenHeight;
+            Width = Math.Max(DockIcons.ActualWidth + SidePadding * 2, ScreenWidth);
+            Height = DockIcons.ActualHeight + Distance + TopPadding;
+            Left = DockLeft;
+            Top = DockTop;
             DockIcons.Height = SettingsManager.Settings.OuterIconSize;
             DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconSize + 4;
-            int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopMargin : 0);
+            int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopPadding : 0);
             WorkAreaManager.SetWorkingArea(0, 0, ScreenWidth, ScreenHeight - reservedSpace);
             PlaceDock();
         }
@@ -243,7 +245,7 @@ namespace CleverDock
 
         public double DockTop
         {
-            get { return Math.Round(ScreenHeight - DockIcons.Height - Distance); }
+            get { return Math.Round(ScreenHeight - DockIcons.Height - Distance - TopPadding); }
         }
 
         public Rect Rect
@@ -253,8 +255,8 @@ namespace CleverDock
 
         public void PlaceDock()
         {
-            DockIcons.SetValue(Canvas.TopProperty, DockTop);
-            DockIcons.SetValue(Canvas.LeftProperty, DockLeft);
+            DockIcons.SetValue(Canvas.TopProperty, TopPadding);
+            DockIcons.SetValue(Canvas.LeftProperty, SidePadding);
         }
     }
 }
