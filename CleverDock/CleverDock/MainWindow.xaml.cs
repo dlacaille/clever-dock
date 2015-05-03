@@ -250,7 +250,7 @@ namespace CleverDock
 
         public Rect Rect
         {
-            get { return new Rect(DockLeft, DockTop, DockIcons.ActualWidth, DockIcons.Height); }
+            get { return new Rect(DockLeft, DockTop + TopPadding, DockIcons.ActualWidth, DockIcons.Height); }
         }
 
         public void PlaceDock()
