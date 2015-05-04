@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Linq;
 using CleverDock.Managers;
 using CleverDock.Interop;
 using System.IO;
