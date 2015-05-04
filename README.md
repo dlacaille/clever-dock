@@ -8,6 +8,13 @@ This software is still an early alpha and may contain bugs.
 
 ![alt tag](https://raw.githubusercontent.com/ldom66/clever-dock/master/screenshot-0.2.0.jpg)
 
+What's new in 0.4.0
+-------------------
+- Major optimization of the window: the dock is now running at 60FPS!
+- Windows demanding attention now bounce on the dock, even when hidden.
+- Added settings for tweaking X and Y padding of icons.
+- Dock does hide anymore when the mouse is between icons, or in a context menu.
+
 What's new in 0.3.0
 -------------------
 - Optimized overall dock performance for smoother animations.
