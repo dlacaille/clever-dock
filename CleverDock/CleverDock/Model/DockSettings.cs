@@ -7,7 +7,7 @@ namespace CleverDock.Model
 {
     public class DockSettings : INotifyPropertyChanged
     {
-        public const string SETTINGS_VERSION = "0.3.0";
+        public const string SETTINGS_VERSION = "0.4.0";
 
         protected void OnPropertyChanged(PropertyChangedEventArgs e)
         {
