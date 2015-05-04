@@ -38,6 +38,9 @@ What's new in 0.2.0
 
 Download
 --------
+Version 0.4.0 Standalone - Vista/7/8/8.1:<br />
+[CleverDock-v0.4.0.zip](https://github.com/ldom66/clever-dock/releases/download/v0.4.0/CleverDock-v0.4.0.zip)
+
 Version 0.3.0 Standalone - Vista/7/8/8.1:<br />
 [CleverDock-v0.3.0.zip](https://github.com/ldom66/clever-dock/releases/download/v0.3.0/CleverDock-v0.3.0.zip)
 
