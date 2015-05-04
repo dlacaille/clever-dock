@@ -29,7 +29,7 @@ namespace CleverDock.Model
             CollapseDuration = 0.2,
             DockHideDuration = 0.5,
             DockShowDuration = 0.3,
-            DockHideDelay = 300,
+            DockHideDelay = 800,
             DockShowDelay = 50,
             AutoHide = true,
             SaveAutomatically = true,
