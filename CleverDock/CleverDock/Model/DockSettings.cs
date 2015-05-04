@@ -7,7 +7,7 @@ namespace CleverDock.Model
 {
     public class DockSettings : INotifyPropertyChanged
     {
-        public const string SETTINGS_VERSION = "0.3.0";
+        public const string SETTINGS_VERSION = "0.4.0";
 
         protected void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -24,11 +24,12 @@ namespace CleverDock.Model
         public static DockSettings DefaultDockSettings = new DockSettings
         {
             IconSize = 48,
-            IconPadding = 20,
+            IconPaddingX = 15,
+            IconPaddingY = 20,
             CollapseDuration = 0.2,
             DockHideDuration = 0.5,
             DockShowDuration = 0.3,
-            DockHideDelay = 300,
+            DockHideDelay = 800,
             DockShowDelay = 50,
             AutoHide = true,
             SaveAutomatically = true,
@@ -71,11 +72,18 @@ namespace CleverDock.Model
             set { _dockShowDelay = value; OnPropertyChanged(); }
         }
 
-        private int _iconPadding;
-        public int IconPadding
+        private int _iconPaddingX;
+        public int IconPaddingX
         {
-            get { return _iconPadding; }
-            set { _iconPadding = value; OnPropertyChanged(); }
+            get { return _iconPaddingX; }
+            set { _iconPaddingX = value; OnPropertyChanged(); }
+        }
+
+        private int _iconPaddingY;
+        public int IconPaddingY
+        {
+            get { return _iconPaddingY; }
+            set { _iconPaddingY = value; OnPropertyChanged(); }
         }
 
         private int _iconSize;
@@ -120,9 +128,14 @@ namespace CleverDock.Model
             set { _autoHide = value; OnPropertyChanged(); }
         }
 
-        public int OuterIconSize
+        public int OuterIconWidth
         {
-            get { return IconSize + IconPadding; }
+            get { return IconSize + IconPaddingX; }
+        }
+
+        public int OuterIconHeight
+        {
+            get { return IconSize + IconPaddingY; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -79,6 +79,8 @@ namespace CleverDock.Controls
         {
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             Windows.CollectionChanged += Windows_CollectionChanged;
+            ContextMenuOpening += DockIcon_ContextMenuOpening;
+            ContextMenuClosing += DockIcon_ContextMenuClosing;
             InitializeComponent();
             IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;
             MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = Windows.Any();
@@ -91,6 +93,16 @@ namespace CleverDock.Controls
             SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
             ThemeManager.Manager.ThemeChanged += Manager_ThemeChanged;
             ThemeManager.Manager.ThemeListChanged += Manager_ThemeListChanged;
+        }
+
+        void DockIcon_ContextMenuClosing(object sender, ContextMenuEventArgs e)
+        {
+            MainWindow.Window.ContextMenuOpened = false;
+        }
+
+        void DockIcon_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            MainWindow.Window.ContextMenuOpened = true;
         }
 
         void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -170,7 +182,7 @@ namespace CleverDock.Controls
             if (hasWindows)
             {
                 Window window = Windows.First();
-                Text = StringUtils.LimitCharacters(window.Title, 50, 60);
+                Text = StringUtils.LimitCharacters(window.Title, 40, 50);
                 var bitmap = IconManager.GetIcon(window.FileName, SettingsManager.Settings.IconSize);
                 Icon = bitmap;
                 BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
@@ -196,7 +208,8 @@ namespace CleverDock.Controls
 
         public void SetDimensions()
         {
-            Width = Height = SettingsManager.Settings.OuterIconSize;
+            Width = SettingsManager.Settings.OuterIconWidth;
+            Height = SettingsManager.Settings.OuterIconHeight;
             IconImage.Width = IconImage.Height = SettingsManager.Settings.IconSize;
         }
 
@@ -212,12 +225,12 @@ namespace CleverDock.Controls
             }
         }
 
-        private void AnimateIconBounce()
+        public void AnimateIconBounce()
         {
             var translation = new DoubleAnimation
             {
                     From = 0,
-                    To = -20,
+                    To = -30,
                     Duration = TimeSpan.FromSeconds(0.5),
                     AutoReverse = true
             };

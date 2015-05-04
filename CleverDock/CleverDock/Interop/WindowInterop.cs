@@ -6,7 +6,50 @@ namespace CleverDock.Interop
 {
     public class WindowInterop
     {
+        #region WindowManager constants
+
+        /// <summary>
+        /// The WM_CLOSE message is sent as a signal that a window or an application should terminate.
+        /// </summary>
         public static int WM_CLOSE = 0x10;
+
+        /// <summary>
+        /// Sent to a window to retrieve a handle to the large or small icon associated with a window. The system displays the large icon in the ALT+TAB dialog, and the small icon in the window caption.
+        /// </summary>
+        public const int WM_GETICON = 0x7F;
+
+        #endregion
+
+        #region Structs
+
+        /// <summary>
+        /// Rectangle used in the GetWindowRect method.
+        /// </summary>
+        public struct Rect
+        {
+            public int Left, Top, Right, Bottom;
+
+            public static implicit operator System.Windows.Rect(Rect r)
+            {
+                return new System.Windows.Rect(r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top);
+            }
+        }
+
+        /// <summary>
+        /// Point structure used in GetCursorPos.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Point
+        {
+            public int X, Y;
+
+            public static implicit operator System.Windows.Point(Point point)
+            {
+                return new System.Windows.Point(point.X, point.Y);
+            }
+        }
+
+        #endregion
 
         #region ShowStyle enum
 
@@ -80,6 +123,7 @@ namespace CleverDock.Interop
 
         #endregion
 
+        #region SetWindowPosition constants
         /// <summary>
         ///   Retains the current size (ignores the cx and cy parameters).
         /// </summary>
@@ -89,6 +133,14 @@ namespace CleverDock.Interop
         ///   Retains the current position (ignores the x and y parameters).
         /// </summary>
         public const int SWP_NOMOVE = 0x2;
+
+        /// <summary>
+        ///   Places the window above all non-topmost windows. The window maintains its topmost position even when it is deactivated.
+        /// </summary>
+        public static IntPtr HWND_TOPMOST = (IntPtr)(-1);
+        #endregion
+
+        #region GetWindow constants
 
         /// <summary>
         ///   The retrieved handle identifies the window of the same type that is highest in the Z order.
@@ -129,6 +181,10 @@ namespace CleverDock.Interop
         /// </summary>
         public const int GW_ENABLEDPOPUP = 6;
 
+        #endregion
+
+        #region GetWindowLong constants
+
         /// <summary>
         ///   Retrieves the extended window styles.
         /// </summary>
@@ -164,11 +220,101 @@ namespace CleverDock.Interop
         /// </summary>
         public const int GWLP_WNDPROC = -4;
 
-        /// <summary>
-        ///   Places the window above all non-topmost windows. The window maintains its topmost position even when it is deactivated.
-        /// </summary>
-        public static IntPtr HWND_TOPMOST = (IntPtr) (-1);
+        #endregion
 
+        #region AnimateWindow constants
+        /// <summary>
+        /// Activates the window. Do not use this value with AW_HIDE.
+        /// </summary>
+        public const int AW_ACTIVATE = 0x00020000;
+
+        /// <summary>
+        /// Uses a fade effect. This flag can be used only if hwnd is a top-level window.
+        /// </summary>
+        public const int AW_BLEND = 0x00080000;
+
+        /// <summary>
+        /// Makes the window appear to collapse inward if AW_HIDE is used or expand outward if the AW_HIDE is not used. The various direction flags have no effect.
+        /// </summary>
+        public const int AW_CENTER = 0x00000010;
+
+        /// <summary>
+        /// Hides the window. By default, the window is shown.
+        /// </summary>
+        public const int AW_HIDE = 0x00010000;
+
+        /// <summary>
+        /// Animates the window from left to right. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
+        /// </summary>
+        public const int AW_HOR_POSITIVE = 0x00000001;
+
+        /// <summary>
+        /// Animates the window from right to left. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
+        /// </summary>
+        public const int AW_HOR_NEGATIVE = 0x00000002;
+
+        /// <summary>
+        /// Uses slide animation. By default, roll animation is used. This flag is ignored when used with AW_CENTER.
+        /// </summary>
+        public const int AW_SLIDE = 0x00040000;
+
+        /// <summary>
+        /// Animates the window from top to bottom. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
+        /// </summary>
+        public const int AW_VER_POSITIVE = 0x00000004;
+
+        /// <summary>
+        /// Animates the window from bottom to top. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
+        /// </summary>
+        public const int AW_VER_NEGATIVE = 0x00000008;
+        #endregion
+
+        #region ExtendedWindowStyle constants
+
+        /// <summary>
+        /// The window is intended to be used as a floating toolbar. 
+        /// A tool window does not appear in the taskbar or in the dialog that appears when the user presses ALT+TAB.
+        /// </summary>
+        public const uint WS_EX_TOOLWINDOW = 0x00000080;
+
+        #endregion
+
+        #region Icon constants
+
+        /// <summary>
+        /// Retrieve the small icon for the window.
+        /// </summary>
+        public const int ICON_SMALL = 0;
+        /// <summary>
+        /// Retrieve the large icon for the window.
+        /// </summary>
+        public const int ICON_BIG = 1;
+        /// <summary>
+        /// Retrieves the small icon provided by the application. If the application does not provide one, the system uses the system-generated icon for that window.
+        /// </summary>
+        public const int ICON_SMALL2 = 2;
+
+        #endregion
+
+        #region GetClassLong constants
+        
+        /// <summary>
+        /// Retrieves a handle to the small icon associated with the class.
+        /// </summary>
+        public const int GCL_HICONSM = -34;
+
+        /// <summary>
+        /// Retrieves a handle to the icon associated with the class.
+        /// </summary>
+        public const int GCL_HICON = -14;
+
+        #endregion
+
+        #region RegisterShellHookWindow constants
+        public const int HSHELL_FLASH = 0x8006;
+        #endregion
+
+        #region Methods
         /// <summary>
         ///   Retrieves a handle to the top-level window whose class name and window name match the specified strings. This function does not search child windows. This function does not perform a case-sensitive search.
         /// </summary>
@@ -245,6 +391,14 @@ namespace CleverDock.Interop
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
+        /// Defines a new window message that is guaranteed to be unique throughout the system. The message value can be used when sending or posting messages.
+        /// </summary>
+        /// <param name="lpString">The message to be registered.</param>
+        /// <returns>If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.</returns>
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern uint RegisterWindowMessage(string lpString);
+
+        /// <summary>
         ///   Retrieves the identifier of the thread that created the specified window and, optionally, the identifier of the process that created the window.
         /// </summary>
         /// <param name="hWnd"> A handle to the window. </param>
@@ -278,18 +432,14 @@ namespace CleverDock.Interop
         public static extern int SetWindowPos(IntPtr hwnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int wFlags);
 
         /// <summary>
-        /// Rectangle used in the GetWindowRect method.
+        /// Registers a specified Shell window to receive certain messages for events or notifications that are useful to Shell applications.
+        /// MSDN: http://msdn.microsoft.com/en-us/library/ms644989%28VS.85%29.aspx
         /// </summary>
-        public struct Rect
-        {
-            public int Left, Top, Right, Bottom;
-
-            public static implicit operator System.Windows.Rect(Rect r)
-            {
-                return new System.Windows.Rect(r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top);
-            }
-        }
-
+        /// <param name="hWnd">A handle to the window to register for Shell hook messages.</param>
+        /// <returns>TRUE if the function succeeds; otherwise, FALSE.</returns>
+        [DllImport("user32.dll")]
+        public static extern bool RegisterShellHookWindow(IntPtr hWnd);
+        
         /// <summary>
         /// Retrieves the dimensions of the bounding rectangle of the specified window. The dimensions are given in screen coordinates that are relative to the upper-left corner of the screen.
         /// </summary>
@@ -298,20 +448,6 @@ namespace CleverDock.Interop
         /// <returns>Returns nonzero if successful or zero otherwise. To get extended error information, call GetLastError.</returns>
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
-
-        /// <summary>
-        /// Point structure used in GetCursorPos.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Point
-        {
-            public int X, Y;
-
-            public static implicit operator System.Windows.Point(Point point)
-            {
-                return new System.Windows.Point(point.X, point.Y);
-            }
-        }
 
         /// <summary>
         /// Retrieves the position of the mouse cursor, in screen coordinates.
@@ -376,51 +512,6 @@ namespace CleverDock.Interop
         public static extern IntPtr GetForegroundWindow();
 
         /// <summary>
-        /// Activates the window. Do not use this value with AW_HIDE.
-        /// </summary>
-        public const int AW_ACTIVATE = 0x00020000;
-
-        /// <summary>
-        /// Uses a fade effect. This flag can be used only if hwnd is a top-level window.
-        /// </summary>
-        public const int AW_BLEND = 0x00080000;
-
-        /// <summary>
-        /// Makes the window appear to collapse inward if AW_HIDE is used or expand outward if the AW_HIDE is not used. The various direction flags have no effect.
-        /// </summary>
-        public const int AW_CENTER = 0x00000010;
-
-        /// <summary>
-        /// Hides the window. By default, the window is shown.
-        /// </summary>
-        public const int AW_HIDE = 0x00010000;
-
-        /// <summary>
-        /// Animates the window from left to right. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
-        /// </summary>
-        public const int AW_HOR_POSITIVE = 0x00000001;
-
-        /// <summary>
-        /// Animates the window from right to left. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
-        /// </summary>
-        public const int AW_HOR_NEGATIVE = 0x00000002;
-
-        /// <summary>
-        /// Uses slide animation. By default, roll animation is used. This flag is ignored when used with AW_CENTER.
-        /// </summary>
-        public const int AW_SLIDE = 0x00040000;
-
-        /// <summary>
-        /// Animates the window from top to bottom. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
-        /// </summary>
-        public const int AW_VER_POSITIVE = 0x00000004;
-
-        /// <summary>
-        /// Animates the window from bottom to top. This flag can be used with roll or slide animation. It is ignored when used with AW_CENTER or AW_BLEND.
-        /// </summary>
-        public const int AW_VER_NEGATIVE = 0x00000008;
-
-        /// <summary>
         /// Enables you to produce special effects when showing or hiding windows. There are four types of animation: roll, slide, collapse or expand, and alpha-blended fade.
         /// </summary>
         /// <param name="hwnd">A handle to the window to animate. The calling thread must own this window.</param>
@@ -436,8 +527,29 @@ namespace CleverDock.Interop
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
         private static extern long GetWindowLongPtr64(IntPtr hWnd, int nIndex);
 
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern long SetWindowLongPtr32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern long SetWindowLongPtr64(IntPtr hWnd, int nIndex, int dwNewLong);
+
         /// <summary>
-        ///   Retrieves information about the specified window. The function also retrieves the value at a specified offset into the extra window memory.
+        /// Changes an attribute of the specified window. The function also sets the 32-bit (long) value at the specified offset into the extra window memory.
+        /// </summary>
+        /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs..</param>
+        /// <param name="nIndex">The zero-based offset to the value to be set. Valid values are in the range zero through the number of bytes of extra window memory, minus the size of an integer. To set any other value, specify one of the following values: GWL_EXSTYLE, GWL_HINSTANCE, GWL_ID, GWL_STYLE, GWL_USERDATA, GWL_WNDPROC </param>
+        /// <param name="dwNewLong">The replacement value.</param>
+        /// <returns>If the function succeeds, the return value is the previous value of the specified 32-bit integer. 
+        /// If the function fails, the return value is zero. To get extended error information, call GetLastError. </returns>
+        public static long SetWindowLongPtr(IntPtr hWnd, int nIndex, int dwNewLong)
+        {
+            if (IntPtr.Size == 8)
+                return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
+            return SetWindowLongPtr32(hWnd, nIndex, dwNewLong);
+        }
+
+        /// <summary>
+        /// Retrieves information about the specified window. The function also retrieves the value at a specified offset into the extra window memory.
         /// </summary>
         /// <param name="hWnd"> A handle to the window and, indirectly, the class to which the window belongs. </param>
         /// <param name="nIndex"> The zero-based offset to the value to be retrieved. Valid values are in the range zero through the number of bytes of extra window memory, minus the size of an integer. To retrieve any other value, specify one of the following values. </param>
@@ -448,46 +560,6 @@ namespace CleverDock.Interop
                 return GetWindowLongPtr64(hWnd, nIndex);
             return GetWindowLongPtr32(hWnd, nIndex);
         }
-
-        #region Nested type: EnumWindowsCallback
-
-        /// <summary>
-        ///   An application-defined callback function used with the EnumWindows or EnumDesktopWindows function. It receives top-level window handles. The WNDENUMPROC type defines a pointer to this callback function. EnumWindowsProc is a placeholder for the application-defined function name.
-        /// </summary>
-        /// <param name="hwnd"> A handle to a top-level window. </param>
-        /// <param name="lParam"> The application-defined value given in EnumWindows or EnumDesktopWindows. </param>
-        /// <returns> </returns>
-        public delegate bool EnumWindowsCallback(IntPtr hwnd, int lParam);
-
-        #endregion
-
-        /// <summary>
-        /// Retrieves a handle to the small icon associated with the class.
-        /// </summary>
-        public const int GCL_HICONSM = -34;
-
-        /// <summary>
-        /// Retrieves a handle to the icon associated with the class.
-        /// </summary>
-        public const int GCL_HICON = -14;
-
-        /// <summary>
-        /// Retrieve the small icon for the window.
-        /// </summary>
-        public const int ICON_SMALL = 0;
-        /// <summary>
-        /// Retrieve the large icon for the window.
-        /// </summary>
-        public const int ICON_BIG = 1;
-        /// <summary>
-        /// Retrieves the small icon provided by the application. If the application does not provide one, the system uses the system-generated icon for that window.
-        /// </summary>
-        public const int ICON_SMALL2 = 2;
-
-        /// <summary>
-        /// Sent to a window to retrieve a handle to the large or small icon associated with a window. The system displays the large icon in the ALT+TAB dialog, and the small icon in the window caption.
-        /// </summary>
-        public const int WM_GETICON = 0x7F;
 
         /// <summary>
         /// Retrieves the specified 32-bit (DWORD) value from the WNDCLASSEX structure associated with the specified window.
@@ -518,5 +590,18 @@ namespace CleverDock.Interop
         /// <returns>The return value specifies the result of the message processing; it depends on the message sent.</returns>
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        #endregion
+
+        #region Nested type: EnumWindowsCallback
+
+        /// <summary>
+        ///   An application-defined callback function used with the EnumWindows or EnumDesktopWindows function. It receives top-level window handles. The WNDENUMPROC type defines a pointer to this callback function. EnumWindowsProc is a placeholder for the application-defined function name.
+        /// </summary>
+        /// <param name="hwnd"> A handle to a top-level window. </param>
+        /// <param name="lParam"> The application-defined value given in EnumWindows or EnumDesktopWindows. </param>
+        /// <returns> </returns>
+        public delegate bool EnumWindowsCallback(IntPtr hwnd, int lParam);
+
+        #endregion
     }
 }
