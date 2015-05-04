@@ -225,12 +225,12 @@ namespace CleverDock.Controls
             }
         }
 
-        private void AnimateIconBounce()
+        public void AnimateIconBounce()
         {
             var translation = new DoubleAnimation
             {
                     From = 0,
-                    To = -20,
+                    To = -30,
                     Duration = TimeSpan.FromSeconds(0.5),
                     AutoReverse = true
             };

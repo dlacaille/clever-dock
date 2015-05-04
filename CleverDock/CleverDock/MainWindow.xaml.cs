@@ -11,6 +11,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media;
 using CleverDock.Tools;
 using System.Timers;
+using CleverDock.Controls;
 
 namespace CleverDock
 {
@@ -55,6 +56,18 @@ namespace CleverDock
             dockShowTimer = new Timer(SettingsManager.Settings.DockShowDelay);
             dockShowTimer.Elapsed += dockShowTimer_Elapsed;
             dockShowTimer.AutoReset = false;
+        }
+        
+        public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            Console.WriteLine(wParam);
+            if (wParam.ToInt32() == WindowInterop.HSHELL_FLASH)
+            {
+                foreach (DockIcon icon in DockIcons.Children)
+                    if (icon.Windows.Any(w => w.Hwnd == lParam))
+                        icon.AnimateIconBounce();
+            }
+            return IntPtr.Zero;
         }
 
         void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -169,6 +182,10 @@ namespace CleverDock
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             SetTopmost();
+            HwndSource source = PresentationSource.FromVisual(MainWindow.Window) as HwndSource;
+            source.AddHook(MainWindow.Window.WndProc);
+            WindowInterop.RegisterShellHookWindow(new WindowInteropHelper(this).Handle);
+            var msg = (int)WindowInterop.RegisterWindowMessage("SHELLHOOK");
         }
 
         void MainWindow_SourceInitialized(object sender, EventArgs e)

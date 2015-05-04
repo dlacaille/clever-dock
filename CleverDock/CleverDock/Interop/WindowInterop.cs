@@ -310,6 +310,10 @@ namespace CleverDock.Interop
 
         #endregion
 
+        #region RegisterShellHookWindow constants
+        public const int HSHELL_FLASH = 0x8006;
+        #endregion
+
         #region Methods
         /// <summary>
         ///   Retrieves a handle to the top-level window whose class name and window name match the specified strings. This function does not search child windows. This function does not perform a case-sensitive search.
@@ -387,6 +391,14 @@ namespace CleverDock.Interop
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
+        /// Defines a new window message that is guaranteed to be unique throughout the system. The message value can be used when sending or posting messages.
+        /// </summary>
+        /// <param name="lpString">The message to be registered.</param>
+        /// <returns>If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.</returns>
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern uint RegisterWindowMessage(string lpString);
+
+        /// <summary>
         ///   Retrieves the identifier of the thread that created the specified window and, optionally, the identifier of the process that created the window.
         /// </summary>
         /// <param name="hWnd"> A handle to the window. </param>
@@ -418,6 +430,15 @@ namespace CleverDock.Interop
         /// <returns> If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError. </returns>
         [DllImport("user32.dll")]
         public static extern int SetWindowPos(IntPtr hwnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int wFlags);
+
+        /// <summary>
+        /// Registers a specified Shell window to receive certain messages for events or notifications that are useful to Shell applications.
+        /// MSDN: http://msdn.microsoft.com/en-us/library/ms644989%28VS.85%29.aspx
+        /// </summary>
+        /// <param name="hWnd">A handle to the window to register for Shell hook messages.</param>
+        /// <returns>TRUE if the function succeeds; otherwise, FALSE.</returns>
+        [DllImport("user32.dll")]
+        public static extern bool RegisterShellHookWindow(IntPtr hWnd);
         
         /// <summary>
         /// Retrieves the dimensions of the bounding rectangle of the specified window. The dimensions are given in screen coordinates that are relative to the upper-left corner of the screen.
