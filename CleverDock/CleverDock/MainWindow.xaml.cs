@@ -13,6 +13,7 @@ using System.Windows.Media;
 using CleverDock.Tools;
 using System.Timers;
 using CleverDock.Controls;
+using CleverDock.Helpers;
 
 namespace CleverDock
 {
@@ -26,12 +27,7 @@ namespace CleverDock
         public double TopPadding = 50;
         public double SidePadding = 200;
         public double Distance = 0;
-        public double HotspotHeight = 10;
-        public bool DockIsVisible = true;
         public bool ContextMenuOpened = false;
-
-        private Timer dockShowTimer = null;
-        private Timer dockHideTimer = null;
 
         public MainWindow()
         {
@@ -42,21 +38,13 @@ namespace CleverDock
             DockIcons.SizeChanged += DockIcons_SizeChanged;
             DockIcons.LoadSettings();
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
-            WindowManager.Manager.ActiveWindowRectChanged += Manager_ActiveWindowRectChanged;
-            WindowManager.Manager.CursorPositionChanged += Manager_CursorPositionChanged;
             Application.Current.Exit += Application_Exit;
-            SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
             ShowInTaskbar = false;
+            new AutoHideDecorator(this);
             ThemeManager.Manager.ThemeWindow(this);
             Console.WriteLine("Render Capability is Tier " + (RenderCapability.Tier >> 16));
             Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline),
                new FrameworkPropertyMetadata { DefaultValue = 60 });
-            dockHideTimer = new Timer(SettingsManager.Settings.DockHideDelay);
-            dockHideTimer.Elapsed += dockHideTimer_Elapsed;
-            dockHideTimer.AutoReset = false;
-            dockShowTimer = new Timer(SettingsManager.Settings.DockShowDelay);
-            dockShowTimer.Elapsed += dockShowTimer_Elapsed;
-            dockShowTimer.AutoReset = false;
         }
         
         public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -69,110 +57,6 @@ namespace CleverDock
                         icon.AnimateIconBounce();
             }
             return IntPtr.Zero;
-        }
-
-        void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "AutoHide")
-            {
-                if (!SettingsManager.Settings.AutoHide && !DockIsVisible)
-                    ShowDock();
-            }
-        }
-
-        void Manager_CursorPositionChanged(object sender, Handlers.CursorPosEventArgs e)
-        {
-            if (!SettingsManager.Settings.AutoHide)
-                return;
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (!DockIsVisible && !ShouldShowDock)
-                {
-                    dockShowTimer.Stop();
-                    dockShowTimer.Start();
-                }
-                else if (DockIsVisible && !ShouldHideDock)
-                {
-                    dockHideTimer.Stop();
-                    dockHideTimer.Start();
-                }
-            });
-        }
-
-        void dockHideTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (ShouldHideDock)
-                    HideDock();
-            });
-        }
-
-        void dockShowTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (ShouldShowDock)
-                    ShowDock();
-            });
-        }
-
-        bool ShouldShowDock
-        {
-            get
-            {
-                if (DockIsVisible)
-                    return false;
-                bool hover = DockIcons.IsMouseOver;
-                bool isInHotspot = MouseHotspot.Contains(WindowManager.Manager.CursorPosition);
-                return !DockIsVisible && isInHotspot;
-            }
-        }
-
-        bool ShouldHideDock
-        {
-            get
-            {
-                if (!DockIsVisible)
-                    return false;
-                var window = new Model.Window(WindowManager.Manager.ActiveWindow);
-                if (window.FileName.EndsWith("explorer.exe") && window.Title == "")
-                    return false; // Explorer.exe with no title should be the Desktop in most cases.
-                return WindowManager.Manager.ActiveWindowRect.IntersectsWith(Rect) // Dock intersects with foreground window
-                    && DockIsVisible
-                    && !MouseHotspot.Contains(WindowManager.Manager.CursorPosition) // Mouse is not in hotspot 
-                    && !DockIcons.IsMouseOver // Mouse is not over the dock icons.
-                    && !ContextMenuOpened;
-            }
-        }
-
-        Rect MouseHotspot
-        {
-            get 
-            {
-                double hotspotWidth = Math.Max(DockIcons.ActualWidth, ScreenWidth / 2);
-                double hotspotLeft = (ScreenWidth - hotspotWidth) / 2;
-                double hotspotHeight = DockIsVisible ? DockIcons.Height : HotspotHeight;
-                return new Rect(hotspotLeft, ScreenHeight - hotspotHeight, hotspotWidth, hotspotHeight); 
-            }
-        }
-
-        void Manager_ActiveWindowRectChanged(object sender, Handlers.WindowRectEventArgs e)
-        {
-            if (!SettingsManager.Settings.AutoHide)
-                return;
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Rect rect = e.Rect; // Implicit conversion to Windows.Rect
-                bool intersects = rect.IntersectsWith(Rect); // Check if the active window is intersecting with the dock.
-                bool hover = DockIcons.IsMouseOver;
-                var window = new Model.Window(WindowManager.Manager.ActiveWindow);
-                bool isDesktop = window.FileName.EndsWith("explorer.exe") && window.Title == "";
-                if (intersects && !hover && !isDesktop)
-                    HideDock();
-                else
-                    ShowDock();
-            });
         }
 
         void Manager_ActiveWindowChanged(object sender, EventArgs e)
@@ -219,59 +103,27 @@ namespace CleverDock
             });
         }
 
-        public void HideDock()
-        {
-            if (!DockIsVisible)
-                return;
-            double dockHeight = DockIcons.ActualHeight + Distance + TopPadding;
-            AnimationTools.TranslateY(SettingsManager.Settings.DockHideDuration, dockHeight, Canvas.TopProperty, DockIcons);
-            DockIsVisible = false;
-        }
-
-        public void ShowDock()
-        {
-            if (DockIsVisible)
-                return;
-            AnimationTools.TranslateY(SettingsManager.Settings.DockShowDuration, TopPadding, Canvas.TopProperty, DockIcons);
-            DockIsVisible = true;
-        }
-
-        public int ScreenWidth
-        {
-            get { return (int)System.Windows.SystemParameters.PrimaryScreenWidth; }
-        }
-
-        public int ScreenHeight
-        {
-            get { return (int)System.Windows.SystemParameters.PrimaryScreenHeight; }
-        }
-
         public void SetDimensions()
         {
-            Width = Math.Min(DockIcons.ActualWidth + SidePadding * 2, ScreenWidth);
+            Width = Math.Min(DockIcons.ActualWidth + SidePadding * 2, ScreenHelper.ScreenWidth);
             Height = DockIcons.ActualHeight + Distance + TopPadding;
             Left = DockLeft;
             Top = DockTop;
             DockIcons.Height = SettingsManager.Settings.OuterIconHeight;
             DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconHeight + 4;
             int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopPadding : 0);
-            WorkAreaManager.SetWorkingArea(0, 0, ScreenWidth, ScreenHeight - reservedSpace);
+            WorkAreaManager.SetWorkingArea(0, 0, ScreenHelper.ScreenWidth, ScreenHelper.ScreenHeight - reservedSpace);
             PlaceDock();
         }
 
         public double DockLeft
         {
-            get { return Math.Round(ScreenWidth / 2 - DockIcons.ActualWidth / 2 - SidePadding); }
+            get { return Math.Round(ScreenHelper.ScreenWidth / 2 - DockIcons.ActualWidth / 2 - SidePadding); }
         }
 
         public double DockTop
         {
-            get { return Math.Round(ScreenHeight - DockIcons.Height - Distance - TopPadding); }
-        }
-
-        public Rect Rect
-        {
-            get { return new Rect(DockLeft, DockTop + TopPadding, DockIcons.ActualWidth, DockIcons.Height); }
+            get { return Math.Round(ScreenHelper.ScreenHeight - DockIcons.Height - Distance - TopPadding); }
         }
 
         public void PlaceDock()

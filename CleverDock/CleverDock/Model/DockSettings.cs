@@ -27,6 +27,8 @@ namespace CleverDock.Model
             IconPaddingX = 15,
             IconPaddingY = 20,
             CollapseDuration = 0.2,
+            HotspotHeight = 20,
+            DockEdgeSpacing = 20,
             DockHideDuration = 0.5,
             DockShowDuration = 0.3,
             DockHideDelay = 800,
@@ -84,6 +86,20 @@ namespace CleverDock.Model
         {
             get { return _iconPaddingY; }
             set { _iconPaddingY = value; OnPropertyChanged(); }
+        }
+
+        private int _hotspotHeight;
+        public int HotspotHeight
+        {
+            get { return _hotspotHeight; }
+            set { _hotspotHeight = value; OnPropertyChanged(); }
+        }
+
+        private int _dockEdgeSpacing;
+        public int DockEdgeSpacing
+        {
+            get { return _dockEdgeSpacing; }
+            set { _dockEdgeSpacing = value; OnPropertyChanged(); }
         }
 
         private int _iconSize;

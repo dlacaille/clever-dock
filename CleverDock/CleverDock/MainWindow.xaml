@@ -24,6 +24,6 @@
                     Canvas.Left="{Binding ElementName=DockIcons, Path=(Canvas.Left) }"
                     Canvas.Top="{Binding ElementName=DockIcons, Path=(Canvas.Top) }"
                     Style="{DynamicResource DockBackgroundStrokeStyle}"/>
-        <Controls:DockIconContainer x:Name="DockIcons" Height="64" SnapsToDevicePixels="True" MinWidth="64" Style="{DynamicResource DockIconContainerStyle}"/>
+        <Controls:DockIconContainer x:Name="DockIcons" x:FieldModifier="public" Height="64" SnapsToDevicePixels="True" MinWidth="64" Style="{DynamicResource DockIconContainerStyle}"/>
     </Canvas>
 </Window>

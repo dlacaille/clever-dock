@@ -129,12 +129,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Decorators\AutoHideDecorator.cs" />
     <Compile Include="Decorators\WindowManagerDecorator.cs" />
     <Compile Include="Effects\BrightnessEffect.cs" />
     <Compile Include="Handlers\CursorPosEventArgs.cs" />
     <Compile Include="Handlers\ThemeEventArgs.cs" />
     <Compile Include="Handlers\WindowEventArgs.cs" />
     <Compile Include="Handlers\WindowRectEventArgs.cs" />
+    <Compile Include="Helpers\ScreenHelper.cs" />
     <Compile Include="Interop\DwmInterop.cs" />
     <Compile Include="Interop\ProcessInterop.cs" />
     <Compile Include="Interop\SystemInterop.cs" />
