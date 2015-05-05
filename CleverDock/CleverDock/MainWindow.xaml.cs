@@ -42,6 +42,8 @@ namespace CleverDock
             Loaded += MainWindow_Loaded;
             DockIcons.SizeChanged += DockIcons_SizeChanged;
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
+            WindowManager.Manager.WorkingAreaChanged += Manager_WorkingAreaChanged;
+            SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
             Application.Current.Exit += Application_Exit;
             // Decorate the window.
             new AutoHideDecorator(this);
@@ -52,6 +54,25 @@ namespace CleverDock
             // Change framerate to 60fps.
             Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline),
                new FrameworkPropertyMetadata { DefaultValue = 60 });
+        }
+
+        void Manager_WorkingAreaChanged(object sender, EventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SetDimensions();
+            });
+        }
+
+        void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "ReserveScreenSpace":
+                case "RemoveTaskbar":
+                    SetDimensions();
+                    break;
+            }
         }
         
         public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -123,8 +144,11 @@ namespace CleverDock
             Top = DockTop;
             DockIcons.Height = SettingsManager.Settings.OuterIconHeight;
             DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconHeight + 4;
-            int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopPadding : 0);
-            WorkAreaManager.SetWorkingArea(0, 0, ScreenHelper.ScreenWidth, ScreenHelper.ScreenHeight - reservedSpace);
+            if (SettingsManager.Settings.ReserveScreenSpace || SettingsManager.Settings.RemoveTaskbar)
+            {
+                int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopPadding : 0);
+                WorkAreaManager.SetWorkingArea(0, 0, ScreenHelper.ScreenWidth, ScreenHelper.ScreenHeight - reservedSpace);
+            }
             PlaceDock();
         }
 

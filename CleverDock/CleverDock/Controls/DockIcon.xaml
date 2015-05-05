@@ -16,6 +16,7 @@
                 <MenuItem Name="SelectTheme" Header="Select Theme"/>
                 <MenuItem Name="ReserveScreen" Header="Reserve screen edge"/>
                 <MenuItem Name="AutoHide" Header="AutoHide"/>
+                <MenuItem Name="RemoveTaskbar" Header="Remove Windows taskbar"/>
                 <MenuItem Header="Exit CleverDock" Click="MenuCloseDock_Click"/>
             </ContextMenu>
         </Grid.ContextMenu>

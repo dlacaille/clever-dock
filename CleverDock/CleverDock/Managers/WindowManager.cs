@@ -30,6 +30,8 @@ namespace CleverDock.Managers
         private const long WS_EX_OVERLAPPEDWINDOW = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
 
         private Thread checkWindowsThread;
+        private Thread checkWorkingAreaThread;
+        public event EventHandler WorkingAreaChanged;
         public event EventHandler WindowListChanged;
         public event EventHandler<WindowEventArgs> WindowAdded;
         public event EventHandler<WindowEventArgs> WindowRemoved;
@@ -68,6 +70,25 @@ namespace CleverDock.Managers
         public void Start()
         {
             Stop();
+            checkWorkingAreaThread = new Thread(() =>
+            {
+                SystemInterop.RECT rect = WorkAreaManager.GetWorkingArea();
+                while (true)
+                {
+                    var newRect = WorkAreaManager.GetWorkingArea();
+                    if (rect.Bottom != newRect.Bottom
+                        || rect.Top != newRect.Top
+                        || rect.Left != newRect.Left
+                        || rect.Right != newRect.Right)
+                    {
+                        if (WorkingAreaChanged != null)
+                            WorkingAreaChanged(this, new EventArgs());
+                        rect = newRect;
+                    }
+                    Thread.Sleep(100); // ~10ips
+                }
+            });
+            checkWorkingAreaThread.Start();
             checkWindowsThread = new Thread(() =>
             {
                 while (true)
@@ -107,6 +128,8 @@ namespace CleverDock.Managers
 
         public void Stop()
         {
+            if (checkWorkingAreaThread != null)
+                checkWorkingAreaThread.Abort();
             if (checkWindowsThread != null)
                 checkWindowsThread.Abort();
         }

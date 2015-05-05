@@ -21,12 +21,25 @@ namespace CleverDock.Decorators
             WindowManager.Manager.WindowAdded += Manager_WindowAdded;
             WindowManager.Manager.WindowRemoved += Manager_WindowRemoved;
             WindowManager.Manager.Start();
-            TaskbarManager.SetTaskbarVisibility(false);
+            SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
+            if (SettingsManager.Settings.RemoveTaskbar)
+                TaskbarManager.SetTaskbarVisibility(false);
+        }
+
+        void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "RemoveTaskbar":
+                    TaskbarManager.SetTaskbarVisibility(!SettingsManager.Settings.RemoveTaskbar);
+                    break;
+            }
         }
 
         void Current_Exit(object sender, ExitEventArgs e)
         {
-            TaskbarManager.SetTaskbarVisibility(true);
+            if (SettingsManager.Settings.RemoveTaskbar)
+                TaskbarManager.SetTaskbarVisibility(true);
             WindowManager.Manager.Stop();
         }
 

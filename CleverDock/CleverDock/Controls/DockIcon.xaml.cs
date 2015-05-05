@@ -84,8 +84,10 @@ namespace CleverDock.Controls
             InitializeComponent();
             IconLight.Visibility = Windows.Any() ? Visibility.Visible : Visibility.Hidden;
             MenuMinimize.IsEnabled = MenuRestore.IsEnabled = MenuClose.IsEnabled = Windows.Any();
-            ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
+            ReserveScreen.IsChecked = SettingsManager.Settings.RemoveTaskbar && SettingsManager.Settings.ReserveScreenSpace;
             ReserveScreen.Click += ReserveScreen_Click;
+            RemoveTaskbar.IsChecked = SettingsManager.Settings.RemoveTaskbar;
+            RemoveTaskbar.Click += RemoveTaskbar_Click;
             AutoHide.IsChecked = SettingsManager.Settings.AutoHide;
             AutoHide.Click += AutoHide_Click;
             SetDimensions();
@@ -115,6 +117,9 @@ namespace CleverDock.Controls
                 case "AutoHide":
                     AutoHide.IsChecked = SettingsManager.Settings.AutoHide;
                     break;
+                case "RemoveTaskbar":
+                    RemoveTaskbar.IsChecked = SettingsManager.Settings.RemoveTaskbar;
+                    break;
             }
         }
 
@@ -133,7 +138,12 @@ namespace CleverDock.Controls
         {
             SettingsManager.Settings.ReserveScreenSpace = !SettingsManager.Settings.ReserveScreenSpace;
             ReserveScreen.IsChecked = SettingsManager.Settings.ReserveScreenSpace;
-            MainWindow.Window.SetDimensions();
+        }
+
+        void RemoveTaskbar_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsManager.Settings.RemoveTaskbar = !SettingsManager.Settings.RemoveTaskbar;
+            RemoveTaskbar.IsChecked = SettingsManager.Settings.RemoveTaskbar;
         }
 
         void Manager_ThemeChanged(object sender, Handlers.ThemeEventArgs e)

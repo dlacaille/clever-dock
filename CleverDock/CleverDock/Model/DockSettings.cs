@@ -7,7 +7,7 @@ namespace CleverDock.Model
 {
     public class DockSettings : INotifyPropertyChanged
     {
-        public const string SETTINGS_VERSION = "0.4.0";
+        public const string SETTINGS_VERSION = "0.4.1";
 
         protected void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -35,6 +35,7 @@ namespace CleverDock.Model
             DockShowDelay = 50,
             AutoHide = true,
             SaveAutomatically = true,
+            RemoveTaskbar = true,
             ReserveScreenSpace = false,
             Icons = new List<SerializableIconInfo>(),
             Theme = ThemeManager.DefaultTheme
@@ -135,6 +136,13 @@ namespace CleverDock.Model
         {
             get { return _reserveScreenSpace; }
             set {  _reserveScreenSpace = value; OnPropertyChanged(); }
+        }
+
+        private bool _removeTaskbar;
+        public bool RemoveTaskbar
+        {
+            get { return _removeTaskbar; }
+            set { _removeTaskbar = value; OnPropertyChanged(); }
         }
 
         private bool _autoHide;
