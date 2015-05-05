@@ -375,6 +375,16 @@ namespace CleverDock.Interop
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         /// <summary>
+        /// Retrieves the name of the class to which the specified window belongs.
+        /// </summary>
+        /// <param name="hWnd">A handle to the window and, indirectly, the class to which the window belongs.</param>
+        /// <param name="lpClassName">The class name string.</param>
+        /// <param name="nMaxCount">The length of the lpClassName buffer, in characters. The buffer must be large enough to include the terminating null character; otherwise, the class name string is truncated to nMaxCount-1 characters.</param>
+        /// <returns>If the function succeeds, the return value is the number of characters copied to the buffer, not including the terminating null character.</returns>
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
+        /// <summary>
         ///   Determines whether the specified window is minimized (iconic).
         /// </summary>
         /// <param name="hWnd"> A handle to the window to be tested. </param>

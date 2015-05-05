@@ -11,6 +11,7 @@ namespace CleverDock.Model
     {
         public IntPtr Hwnd;
         public string Title;
+        public string ClassName;
         public int ProcId;
         public string FileName;
 
@@ -21,6 +22,7 @@ namespace CleverDock.Model
         {
             Hwnd = _hwnd;
             Title = GetTitle();
+            ClassName = GetClassName();
             titleThread = new Thread(() =>
             {
                 string title = GetTitle();
@@ -96,6 +98,13 @@ namespace CleverDock.Model
         {
             StringBuilder builder = new StringBuilder(200);
             WindowInterop.GetWindowText(Hwnd, builder, builder.Capacity);
+            return builder.ToString();
+        }
+
+        private string GetClassName()
+        {
+            StringBuilder builder = new StringBuilder(200);
+            WindowInterop.GetClassName(Hwnd, builder, builder.Capacity);
             return builder.ToString();
         }
     }
