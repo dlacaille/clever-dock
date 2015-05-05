@@ -27,7 +27,6 @@ namespace CleverDock
 
         public double TopPadding = 50;
         public double SidePadding = 200;
-        public double Distance = 0;
         public bool ContextMenuOpened = false;
 
         public MainWindow()
@@ -70,6 +69,7 @@ namespace CleverDock
             {
                 case "ReserveScreenSpace":
                 case "RemoveTaskbar":
+                case "DockEdgeSpacing":
                     SetDimensions();
                     break;
             }
@@ -139,14 +139,14 @@ namespace CleverDock
         public void SetDimensions()
         {
             Width = Math.Min(DockIcons.ActualWidth + SidePadding * 2, ScreenHelper.ScreenWidth);
-            Height = DockIcons.ActualHeight + Distance + TopPadding;
+            Height = DockIcons.ActualHeight + SettingsManager.Settings.DockEdgeSpacing + TopPadding;
             Left = DockLeft;
             Top = DockTop;
             DockIcons.Height = SettingsManager.Settings.OuterIconHeight;
             DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconHeight + 4;
             if (SettingsManager.Settings.ReserveScreenSpace || SettingsManager.Settings.RemoveTaskbar)
             {
-                int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + Distance + TopPadding : 0);
+                int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockPanelBackground.Height + SettingsManager.Settings.DockEdgeSpacing + TopPadding : 0);
                 WorkAreaManager.SetWorkingArea(0, 0, ScreenHelper.ScreenWidth, ScreenHelper.ScreenHeight - reservedSpace);
             }
             PlaceDock();
@@ -159,7 +159,7 @@ namespace CleverDock
 
         public double DockTop
         {
-            get { return Math.Round(ScreenHelper.ScreenHeight - DockIcons.Height - Distance - TopPadding); }
+            get { return Math.Round(ScreenHelper.ScreenHeight - DockIcons.Height - SettingsManager.Settings.DockEdgeSpacing - TopPadding); }
         }
 
         public void PlaceDock()

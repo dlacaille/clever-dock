@@ -150,7 +150,7 @@ namespace CleverDock.Decorators
         {
             if (!DockIsVisible)
                 return;
-            double dockHeight = window.DockIcons.ActualHeight + window.Distance + window.TopPadding;
+            double dockHeight = window.DockIcons.ActualHeight + SettingsManager.Settings.DockEdgeSpacing + window.TopPadding;
             AnimationTools.TranslateY(SettingsManager.Settings.DockHideDuration, dockHeight, Canvas.TopProperty, window.DockIcons);
             DockIsVisible = false;
         }
