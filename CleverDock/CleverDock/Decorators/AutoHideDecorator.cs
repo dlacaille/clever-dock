@@ -39,10 +39,14 @@ namespace CleverDock.Decorators
 
         void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "AutoHide")
+            switch(e.PropertyName)
             {
-                if (!SettingsManager.Settings.AutoHide && !DockIsVisible)
-                    ShowDock();
+                case "AutoHide":
+                    if (!SettingsManager.Settings.AutoHide && !DockIsVisible)
+                        ShowDock();
+                    dockHideTimer.Stop();
+                    dockShowTimer.Stop();
+                    break;
             }
         }
 
