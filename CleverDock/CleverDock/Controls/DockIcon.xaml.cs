@@ -241,8 +241,9 @@ namespace CleverDock.Controls
             {
                     From = 0,
                     To = -30,
-                    Duration = TimeSpan.FromSeconds(0.5),
-                    AutoReverse = true
+                    Duration = TimeSpan.FromSeconds(0.6),
+                    AutoReverse = true,
+                    
             };
             translation.EasingFunction = new BounceEase
             {
