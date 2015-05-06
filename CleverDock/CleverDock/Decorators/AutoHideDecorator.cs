@@ -29,12 +29,18 @@ namespace CleverDock.Decorators
             WindowManager.Manager.CursorPositionChanged += Manager_CursorPositionChanged;
             SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
 
-            dockHideTimer = new Timer(SettingsManager.Settings.DockHideDelay);
-            dockHideTimer.Elapsed += dockHideTimer_Elapsed;
-            dockHideTimer.AutoReset = false;
-            dockShowTimer = new Timer(SettingsManager.Settings.DockShowDelay);
-            dockShowTimer.Elapsed += dockShowTimer_Elapsed;
-            dockShowTimer.AutoReset = false;
+            if (SettingsManager.Settings.DockHideDelay > 0)
+            {
+                dockHideTimer = new Timer(SettingsManager.Settings.DockHideDelay);
+                dockHideTimer.Elapsed += dockHideTimer_Elapsed;
+                dockHideTimer.AutoReset = false;
+            }
+            if (SettingsManager.Settings.DockShowDelay > 0)
+            {
+                dockShowTimer = new Timer(SettingsManager.Settings.DockShowDelay);
+                dockShowTimer.Elapsed += dockShowTimer_Elapsed;
+                dockShowTimer.AutoReset = false;
+            }
         }
 
         void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -56,15 +62,31 @@ namespace CleverDock.Decorators
                 return;
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (!DockIsVisible && !ShouldShowDock)
+                if (!DockIsVisible)
                 {
-                    dockShowTimer.Stop();
-                    dockShowTimer.Start();
+                    if (dockShowTimer == null)
+                    {
+                        if (ShouldShowDock)
+                            ShowDock();
+                    }
+                    else
+                    {
+                        dockShowTimer.Stop();
+                        dockShowTimer.Start();
+                    }
                 }
-                else if (DockIsVisible && !ShouldHideDock)
+                else if (DockIsVisible)
                 {
-                    dockHideTimer.Stop();
-                    dockHideTimer.Start();
+                    if (dockHideTimer == null)
+                    {
+                        if (ShouldHideDock)
+                            HideDock();
+                    }
+                    else
+                    {
+                        dockHideTimer.Stop();
+                        dockHideTimer.Start();
+                    }
                 }
             });
         }
@@ -105,14 +127,26 @@ namespace CleverDock.Decorators
             {
                 if (!DockIsVisible)
                     return false;
-                var activeWindow = new Model.Window(WindowManager.Manager.ActiveWindow);
-                if (activeWindow.FileName.EndsWith("explorer.exe") && activeWindow.Title == "")
-                    return false; // Explorer.exe with no title should be the Desktop in most cases.
-                return WindowManager.Manager.ActiveWindowRect.IntersectsWith(Rect) // Dock intersects with foreground window
+                return DockOccluded
                     && DockIsVisible
                     && !MouseHotspot.Contains(WindowManager.Manager.CursorPosition) // Mouse is not in hotspot 
                     && !window.DockIcons.IsMouseOver // Mouse is not over the dock icons.
                     && !window.ContextMenuOpened;
+            }
+        }
+
+        private bool DockOccluded
+        {
+            get
+            {
+                if (!DockIsVisible)
+                    return false;
+                var activeWindow = new Model.Window(WindowManager.Manager.ActiveWindow);
+                if (activeWindow.FileName.EndsWith("explorer.exe") && activeWindow.Title == "")
+                    return false; // Explorer.exe with no title should be the Desktop in most cases.
+                if (activeWindow.ProcId == 0)
+                    return false; // If the process is null, ignore the window.
+                return WindowManager.Manager.ActiveWindowRect.IntersectsWith(Rect); // Dock intersects with foreground window
             }
         }
 
