@@ -64,7 +64,6 @@ namespace CleverDock.Decorators
                     SettingsManager.Settings.IconSize;
             draggedIconWindow.Topmost = true;
             draggedIconWindow.IconImage.Source = draggedIcon.IconImage.Source;
-            draggedIconWindow.Show();
         }
 
         private void PlaceDraggedIcon()
@@ -76,13 +75,23 @@ namespace CleverDock.Decorators
             foreach(var w in windows)
                 draggedIcon.Windows.Add(w);
             container.Children.Insert(index, draggedIcon);
-            RemoveDraggedIcon();
+            RemoveDraggedIcon(false);
         }
 
-        private void RemoveDraggedIcon()
+        private void RemoveDraggedIcon(bool animated)
         {
-            draggedIconWindow.Close();
-            draggedIconWindow = null;
+            if (animated)
+            {
+                AnimationTools.CollapseX(0.1, draggedIconWindow.IconImage, () =>
+                {
+                    RemoveDraggedIcon(false);
+                });
+            }
+            else
+            {
+                draggedIconWindow.Close();
+                draggedIconWindow = null;
+            }
         }
 
         private void Dispose()
@@ -137,6 +146,8 @@ namespace CleverDock.Decorators
                     var iconSize = SettingsManager.Settings.IconSize;
                     draggedIconWindow.Left = e.CursorPosition.X - iconSize / 2;
                     draggedIconWindow.Top = e.CursorPosition.Y - iconSize / 2;
+                    if (!draggedIconWindow.IsActive)
+                        draggedIconWindow.Show();
                 }
             });
         }
@@ -201,7 +212,7 @@ namespace CleverDock.Decorators
                 }
                 else
                 {
-                    RemoveDraggedIcon();
+                    RemoveDraggedIcon(true);
                     if(draggedIcon.Windows.Any())
                     {
                         DockIcon icon = new DockIcon(draggedIcon.Info);

@@ -4,7 +4,7 @@
         Title="Window1" Height="100" Width="100"
         WindowStyle="None" AllowsTransparency="True" HorizontalAlignment="Center" VerticalAlignment="Center"
         Background="Transparent">
-    <Canvas>
-        <Image Name="IconImage" Width="100" Height="100" />
-    </Canvas>
+    <Grid>
+        <Image x:FieldModifier="public" Name="IconImage" Width="100" Height="100" />
+    </Grid>
 </Window>
