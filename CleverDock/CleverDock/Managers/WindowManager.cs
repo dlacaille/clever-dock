@@ -29,6 +29,7 @@ namespace CleverDock.Managers
         private const long WS_EX_DLGMODALFRAME = 0x00000001L;
         private const long WS_EX_OVERLAPPEDWINDOW = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
 
+        private Thread checkMouseThread;
         private Thread checkWindowsThread;
         private Thread checkWorkingAreaThread;
         public event EventHandler WorkingAreaChanged;
@@ -89,6 +90,19 @@ namespace CleverDock.Managers
                 }
             });
             checkWorkingAreaThread.Start();
+            checkMouseThread = new Thread(() =>
+            {
+                WindowInterop.Point cPos;
+                while (true)
+                {
+                    // Check current cursor position
+                    WindowInterop.GetCursorPos(out cPos);
+                    if (CursorPosition != cPos && CursorPositionChanged != null)
+                        CursorPositionChanged(this, new CursorPosEventArgs(CursorPosition = cPos));
+                    Thread.Sleep(15); // ~66ips
+                }
+            });
+            checkMouseThread.Start();
             checkWindowsThread = new Thread(() =>
             {
                 while (true)
@@ -115,12 +129,7 @@ namespace CleverDock.Managers
                         if (windowRect != ActiveWindowRect && ActiveWindowRectChanged != null)
                             ActiveWindowRectChanged(this, new WindowRectEventArgs(ActiveWindowRect = windowRect));
                     }
-                    // Check current cursor position
-                    WindowInterop.Point cPos;
-                    WindowInterop.GetCursorPos(out cPos);
-                    if (CursorPosition != cPos && CursorPositionChanged != null)
-                        CursorPositionChanged(this, new CursorPosEventArgs(CursorPosition = cPos));
-                    Thread.Sleep(17); // ~59ips
+                    Thread.Sleep(50); // ~20ips
                 }
             });
             checkWindowsThread.Start();
@@ -132,6 +141,8 @@ namespace CleverDock.Managers
                 checkWorkingAreaThread.Abort();
             if (checkWindowsThread != null)
                 checkWindowsThread.Abort();
+            if (checkMouseThread != null)
+                checkMouseThread.Abort();
         }
 
         void WindowManager_ActiveWindowChanged(object sender, EventArgs e)
