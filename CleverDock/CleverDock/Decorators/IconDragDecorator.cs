@@ -76,6 +76,11 @@ namespace CleverDock.Decorators
             foreach(var w in windows)
                 draggedIcon.Windows.Add(w);
             container.Children.Insert(index, draggedIcon);
+            RemoveDraggedIcon();
+        }
+
+        private void RemoveDraggedIcon()
+        {
             draggedIconWindow.Close();
             draggedIconWindow = null;
         }
@@ -196,6 +201,7 @@ namespace CleverDock.Decorators
                 }
                 else
                 {
+                    RemoveDraggedIcon();
                     if(draggedIcon.Windows.Any())
                     {
                         DockIcon icon = new DockIcon(draggedIcon.Info);
