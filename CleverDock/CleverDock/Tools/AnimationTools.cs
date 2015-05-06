@@ -17,6 +17,19 @@ namespace CleverDock.Tools
             BeginAnimation(fadeOut, element, UIElement.OpacityProperty, completed);
         }
 
+        public static void Collapse(double seconds, int finalWidth, FrameworkElement element, Action completed = null, double delay = 0)
+        {
+            var collapse = new DoubleAnimation
+            {
+                To = finalWidth,
+                Duration = TimeSpan.FromSeconds(seconds),
+                BeginTime = TimeSpan.FromSeconds(delay),
+                EasingFunction = new QuadraticEase()
+            };
+            BeginAnimation(collapse, element, FrameworkElement.WidthProperty);
+            BeginAnimation(collapse, element, FrameworkElement.HeightProperty, completed);
+        }
+
         public static void ExpandX(double seconds, int finalWidth, FrameworkElement element, Action completed = null, double delay = 0)
         {
             var collapse = new DoubleAnimation
