@@ -8,11 +8,11 @@
     <Grid Name="IconGrid">
         <Grid.ContextMenu>
             <ContextMenu>
+                <MenuItem Header="Exit CleverDock" Click="MenuCloseDock_Click"/>
                 <MenuItem Name="SelectTheme" Header="Select Theme"/>
                 <MenuItem Name="ReserveScreen" Header="Reserve screen edge"/>
                 <MenuItem Name="AutoHide" Header="AutoHide"/>
                 <MenuItem Name="RemoveTaskbar" Header="Remove Windows taskbar"/>
-                <MenuItem Header="Exit CleverDock" Click="MenuCloseDock_Click"/>
                 <Separator />
                 <MenuItem Name="MenuPin" Header="Pin To Dock" Click="MenuPin_Click" IsCheckable="True"/>
                 <MenuItem Name="MenuMinimize" Header="Minimize" Click="MenuMinimize_Click" IsEnabled="False"/>
