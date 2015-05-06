@@ -85,7 +85,7 @@ namespace CleverDock.Managers
             var res = II.SHGetFileInfo(path, FILE_ATTRIBUTE_NORMAL, ref shinfo, Marshal.SizeOf(shinfo), flags);
 
             if (res == 0)
-                throw (new FileNotFoundException());
+                return null;
 
             var iconIndex = shinfo.iIcon;
 

@@ -20,6 +20,8 @@ namespace CleverDock.Tools
             GaussianBlurFilter filter = new GaussianBlurFilter(radius);
             using(var kimage = BitmapSourceToKaliko(image))
             {
+                if (kimage == null)
+                    return null;
                 kimage.ApplyFilter(filter);
                 return KalikoToBitmap(kimage);
             }
@@ -27,6 +29,8 @@ namespace CleverDock.Tools
 
         private static KalikoImage BitmapSourceToKaliko(BitmapSource image)
         {
+            if (image == null)
+                return null;
             var stream = new MemoryStream();
             BitmapEncoder enc = new PngBitmapEncoder();
             enc.Frames.Add(BitmapFrame.Create(image));
