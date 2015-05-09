@@ -15,6 +15,8 @@ using System.Timers;
 using CleverDock.Controls;
 using CleverDock.Helpers;
 using CleverDock.Decorators;
+using System.Collections.Generic;
+using Microsoft.Win32;
 
 namespace CleverDock
 {
@@ -24,6 +26,7 @@ namespace CleverDock
     public partial class MainWindow : Window
     {
         public static MainWindow Window;
+        public WidgetsWindow Widgets;
 
         public double TopReservedSpace = 20;
         public double TopPadding = 60;
@@ -49,11 +52,18 @@ namespace CleverDock
             new AutoHideDecorator(this);
             // Load settings.
             DockIcons.LoadSettings();
-            // Load theme.
-            ThemeManager.Manager.ThemeWindow(this);
             // Change framerate to 60fps.
             Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline),
                new FrameworkPropertyMetadata { DefaultValue = 60 });
+            // Load widgets window.
+            Widgets = new WidgetsWindow();
+            // Load theme.
+            ThemeManager.Manager.ThemeWindow(new List<Window> { this, Widgets });
+            // Show widgets.
+            if (SettingsManager.Settings.ShowWidgets)
+                Widgets.Show();
+        }
+
         }
 
         void Manager_WorkingAreaChanged(object sender, EventArgs e)
@@ -72,6 +82,12 @@ namespace CleverDock
                 case "RemoveTaskbar":
                 case "DockEdgeSpacing":
                     SetDimensions();
+                    break;
+                case "ShowWidgets":
+                    if (SettingsManager.Settings.ShowWidgets)
+                        Widgets.Show();
+                    else
+                        Widgets.Close();
                     break;
             }
         }

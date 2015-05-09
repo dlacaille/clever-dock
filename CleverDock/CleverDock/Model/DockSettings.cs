@@ -35,6 +35,7 @@ namespace CleverDock.Model
             SaveAutomatically = true,
             RemoveTaskbar = true,
             ReserveScreenSpace = false,
+            ShowWidgets = true,
             Icons = new List<SerializableIconInfo>(),
             Theme = ThemeManager.DefaultTheme
         };
@@ -134,6 +135,13 @@ namespace CleverDock.Model
         {
             get { return _autoHide; }
             set { _autoHide = value; OnPropertyChanged(); }
+        }
+
+        private bool _showWidgets;
+        public bool ShowWidgets
+        {
+            get { return _showWidgets; }
+            set { _showWidgets = value; OnPropertyChanged(); }
         }
 
         public int OuterIconWidth

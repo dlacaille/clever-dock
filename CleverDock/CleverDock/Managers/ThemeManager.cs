@@ -26,7 +26,6 @@ namespace CleverDock.Managers
             }
         }
 
-
         public event EventHandler<ThemeEventArgs> ThemeChanged;
         public event EventHandler<EventArgs> ThemeListChanged;
 
@@ -38,13 +37,13 @@ namespace CleverDock.Managers
             Path = "/Cleverdock;component/Themes/Metal2/style.xaml"
         };
 
-        private Window window;
+        private List<Window> windows;
         private ResourceDictionary theme;
         public ThemeSettings Settings { get; set; }
 
-        public void ThemeWindow(Window window)
+        public void ThemeWindow(List<Window> windows)
         {            
-            this.window = window;
+            this.windows = windows;
             LoadTheme(SettingsManager.Settings.Theme);
             WatchChanges(ThemeFolder);
         }
@@ -109,9 +108,12 @@ namespace CleverDock.Managers
 
         public void LoadResourceDictionary(ResourceDictionary resourceDict)
         {
-            if (theme != null)
-                window.Resources.MergedDictionaries.Remove(theme);
-            window.Resources.MergedDictionaries.Add(theme = resourceDict);
+            foreach(var window in windows)
+            {
+                if (theme != null)
+                    window.Resources.MergedDictionaries.Remove(theme);
+                window.Resources.MergedDictionaries.Add(theme = resourceDict);
+            }
         }
 
         public void WatchChanges(string path)
@@ -133,7 +135,7 @@ namespace CleverDock.Managers
 
         private void OnChanged(object source, EventArgs e)
         {
-            window.Dispatcher.Invoke(() =>
+            MainWindow.Window.Dispatcher.Invoke(() =>
             {
                 if (ThemeListChanged != null)
                     ThemeListChanged(this, new EventArgs());

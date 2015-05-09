@@ -222,6 +222,15 @@ namespace CleverDock.Interop
 
         #endregion
 
+        #region SetWindowLong constants
+
+        /// <summary>
+        /// Transparent and clickthrough window.
+        /// </summary>
+        public const int WS_EX_TRANSPARENT = 0x00000020;
+
+        #endregion
+
         #region AnimateWindow constants
         /// <summary>
         /// Activates the window. Do not use this value with AW_HIDE.

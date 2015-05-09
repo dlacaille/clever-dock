@@ -166,6 +166,9 @@
     <Compile Include="DraggedIconWindow.xaml.cs">
       <DependentUpon>DraggedIconWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WidgetsWindow.xaml.cs">
+      <DependentUpon>WidgetsWindow.xaml</DependentUpon>
+    </Compile>
     <None Include="Themes\FlatLight\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -210,6 +213,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Page Include="Themes\Metal2\style.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WidgetsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

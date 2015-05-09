@@ -36,6 +36,18 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="Label" x:Key="ClockStyle">
+        <Setter Property="Opacity" Value="0.5"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="40"/>
+        <Setter Property="FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="Grid.Margin" Value="30,10"/>
+        <Setter Property="Label.Effect">
+            <Setter.Value>
+                <DropShadowEffect Opacity="0.2" BlurRadius="10" ShadowDepth="0" />
+            </Setter.Value>
+        </Setter>
+    </Style>
     <BitmapImage x:Key="BackgroundImage" UriSource="pack://siteoforigin:,,,/Themes/Dark2/bg.png"></BitmapImage>
     <Style TargetType="Rectangle" x:Key="BackgroundLeftStyle">
        <Setter Property="Grid.Margin" Value="-15,0,0,0"/>
