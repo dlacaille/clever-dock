@@ -38,6 +38,7 @@ namespace CleverDock.Managers
                 try
                 {
                     settings = JsonConvert.DeserializeObject<DockSettings>(stream.ReadToEnd());
+                    settings.PropertyChanged += settings_PropertyChanged;
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -45,6 +46,12 @@ namespace CleverDock.Managers
                     settings = DockSettings.DefaultDockSettings;
                 }
             }
+        }
+
+        static void settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (Settings.SaveAutomatically)
+                SaveSettings();
         }
 
         public static void SaveSettings(string path = SettingsFile)
