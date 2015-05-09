@@ -47,6 +47,7 @@ namespace CleverDock
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
             WindowManager.Manager.WorkingAreaChanged += Manager_WorkingAreaChanged;
             SettingsManager.Settings.PropertyChanged += Settings_PropertyChanged;
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             Application.Current.Exit += Application_Exit;
             // Decorate the window.
             new AutoHideDecorator(this);
@@ -64,6 +65,12 @@ namespace CleverDock
                 Widgets.Show();
         }
 
+        void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SetDimensions();
+            });
         }
 
         void Manager_WorkingAreaChanged(object sender, EventArgs e)
