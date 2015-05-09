@@ -151,6 +151,7 @@
     <Compile Include="Interop\IconInterop.cs" />
     <Compile Include="Interop\WindowInterop.cs" />
     <Compile Include="Model\Theme.cs" />
+    <Compile Include="Model\ThemeSettings.cs" />
     <Compile Include="Model\Window.cs" />
     <Compile Include="Tools\AnimationTools.cs" />
     <Compile Include="Controls\DockIconContainer.cs" />
@@ -165,6 +166,12 @@
     <Compile Include="DraggedIconWindow.xaml.cs">
       <DependentUpon>DraggedIconWindow.xaml</DependentUpon>
     </Compile>
+    <None Include="Themes\FlatLight\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Flat\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -183,15 +190,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Content Include="Themes\Dark.xaml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Page Include="Themes\Metal.xaml">
+    <Page Include="DraggedIconWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DraggedIconWindow.xaml">
+    <None Include="Themes\Dark2\style.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Dark2\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Flat\style.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\FlatLight\style.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Page Include="Themes\Metal2\style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -231,6 +249,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Effects\BrightnessEffect.fx" />
+    <None Include="Themes\FlatLight\bg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Flat\bg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Dark2\bg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Resource Include="Themes\Metal2\bg.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

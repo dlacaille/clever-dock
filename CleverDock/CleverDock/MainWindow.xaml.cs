@@ -26,7 +26,7 @@ namespace CleverDock
         public static MainWindow Window;
 
         public double TopReservedSpace = 20;
-        public double TopPadding = 50;
+        public double TopPadding = 60;
         public double SidePadding = 200;
         public bool ContextMenuOpened = false;
 
@@ -144,7 +144,6 @@ namespace CleverDock
             Left = DockLeft;
             Top = DockTop;
             DockIcons.Height = SettingsManager.Settings.OuterIconHeight;
-            DockPanelBackground.Height = DockPanelStroke.Height = SettingsManager.Settings.OuterIconHeight + 4;
             if (SettingsManager.Settings.ReserveScreenSpace || SettingsManager.Settings.RemoveTaskbar)
             {
                 int reservedSpace = (int)(SettingsManager.Settings.ReserveScreenSpace ? DockIcons.Height + SettingsManager.Settings.DockEdgeSpacing + TopReservedSpace : 0);
@@ -165,7 +164,7 @@ namespace CleverDock
 
         public void PlaceDock()
         {
-            DockIcons.SetValue(Canvas.TopProperty, TopPadding);
+            DockIcons.SetValue(Canvas.BottomProperty, (double)SettingsManager.Settings.DockEdgeSpacing);
             DockIcons.SetValue(Canvas.LeftProperty, SidePadding);
         }
     }

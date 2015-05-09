@@ -24,8 +24,6 @@ namespace CleverDock.Model
         public static DockSettings DefaultDockSettings = new DockSettings
         {
             IconSize = 48,
-            IconPaddingX = 15,
-            IconPaddingY = 20,
             CollapseDuration = 0.2,
             HotspotHeight = 20,
             DockEdgeSpacing = 20,
@@ -73,20 +71,6 @@ namespace CleverDock.Model
         {
             get { return _dockShowDelay; }
             set { _dockShowDelay = value; OnPropertyChanged(); }
-        }
-
-        private int _iconPaddingX;
-        public int IconPaddingX
-        {
-            get { return _iconPaddingX; }
-            set { _iconPaddingX = value; OnPropertyChanged(); }
-        }
-
-        private int _iconPaddingY;
-        public int IconPaddingY
-        {
-            get { return _iconPaddingY; }
-            set { _iconPaddingY = value; OnPropertyChanged(); }
         }
 
         private int _hotspotHeight;
@@ -154,12 +138,12 @@ namespace CleverDock.Model
 
         public int OuterIconWidth
         {
-            get { return IconSize + IconPaddingX; }
+            get { return IconSize + (ThemeManager.Manager.Settings ?? ThemeSettings.DefaultThemeSettings).IconPaddingX; }
         }
 
         public int OuterIconHeight
         {
-            get { return IconSize + IconPaddingY; }
+            get { return IconSize + (ThemeManager.Manager.Settings ?? ThemeSettings.DefaultThemeSettings).IconPaddingY; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -190,8 +190,8 @@ namespace CleverDock.Decorators
         {
             if (!DockIsVisible)
                 return;
-            double dockHeight = window.DockIcons.ActualHeight + SettingsManager.Settings.DockEdgeSpacing + window.TopPadding;
-            AnimationTools.TranslateY(SettingsManager.Settings.DockHideDuration, dockHeight, Canvas.TopProperty, window.DockIcons);
+            double dockHeight = window.DockIcons.ActualHeight;
+            AnimationTools.TranslateY(SettingsManager.Settings.DockHideDuration, -dockHeight, Canvas.BottomProperty, window.DockIcons);
             DockIsVisible = false;
         }
 
@@ -199,7 +199,7 @@ namespace CleverDock.Decorators
         {
             if (DockIsVisible)
                 return;
-            AnimationTools.TranslateY(SettingsManager.Settings.DockShowDuration, window.TopPadding, Canvas.TopProperty, window.DockIcons);
+            AnimationTools.TranslateY(SettingsManager.Settings.DockShowDuration, SettingsManager.Settings.DockEdgeSpacing, Canvas.BottomProperty, window.DockIcons);
             DockIsVisible = true;
         }
     }

@@ -1,10 +1,14 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:Effects="clr-namespace:CleverDock.Effects;assembly=CleverDock"
-                    xmlns:Controls="clr-namespace:CleverDock.Controls;assembly=CleverDock">
-    <!-- Effects -->
+                    xmlns:Effects="clr-namespace:CleverDock.Effects"
+                    xmlns:Controls="clr-namespace:CleverDock.Controls">
     <Effects:BrightnessEffect x:Key="BrightnessEffect" Brightness="0.1" />
-    <!-- Dock styles -->
+    <Style TargetType="Controls:DockIconContainer" x:Key="DockIconContainerStyle">
+       <Setter Property="Canvas.Margin" Value="0,0,0,0"/>
+    </Style>
+    <Style TargetType="Grid" x:Key="BackgroundGridStyle">
+       <Setter Property="Canvas.Margin" Value="0,0,0,-6"/>
+    </Style>
     <Style TargetType="{x:Type ContextMenu}">
         <Setter Property="SnapsToDevicePixels" Value="False" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -32,52 +36,44 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style TargetType="Polygon" x:Key="DockBackgroundStrokeStyle">
-        <Setter Property="Points" Value="0,65 1,65 1,69 0,69"/>
-        <Setter Property="Polygon.RenderTransform">
-            <Setter.Value>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="{Binding ElementName=DockIcons, Path=ActualWidth }"/>
-                </TransformGroup>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Polygon.Fill">
-            <Setter.Value>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FF2d3032" Offset="1"/>
-                    <GradientStop Color="#FF3b3f42"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
+    <BitmapImage x:Key="BackgroundImage" UriSource="pack://application:,,,/Cleverdock;component/Themes/Metal2/bg.png"></BitmapImage>
+    <Style TargetType="Rectangle" x:Key="BackgroundLeftStyle">
+       <Setter Property="Grid.Margin" Value="-15,0,0,0"/>
+       <Setter Property="Grid.Width" Value="24"/>
+       <Setter Property="Grid.Height" Value="41"/>
+       <Setter Property="Rectangle.Fill">  
+           <Setter.Value>
+                <ImageBrush ImageSource="{DynamicResource BackgroundImage}"
+                    Viewbox="0,0,0.4,1"
+                    Stretch="Fill"/>
+           </Setter.Value>  
+       </Setter>  
     </Style>
-    <Style TargetType="Polygon" x:Key="DockBackgroundStyle">
-        <Setter Property="Points" Value="0.03,30 0.97,30 1,65 0,65"/>
-        <Setter Property="Opacity" Value="1"/>
-        <Setter Property="Polygon.RenderTransform">
-            <Setter.Value>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="{Binding ElementName=DockIcons, Path=ActualWidth }"/>
-                </TransformGroup>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Polygon.Effect">
-            <Setter.Value>
-                <DropShadowEffect Direction="-90" Opacity="0.5" BlurRadius="3"/>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Polygon.Fill">
-            <Setter.Value>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FF292b2c" Offset="1"/>
-                    <GradientStop Color="#FF575859"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
+    <Style TargetType="Rectangle" x:Key="BackgroundCenterStyle">
+       <Setter Property="Grid.Height" Value="41"/>
+       <Setter Property="Grid.Margin" Value="9,0"/>
+       <Setter Property="Rectangle.Fill">  
+           <Setter.Value>
+                <ImageBrush ImageSource="{DynamicResource BackgroundImage}" 
+                    Viewbox="0.4,0,0.1,1"
+                    ViewboxUnits="RelativeToBoundingBox"
+                    Stretch="Fill"/>
+           </Setter.Value>  
+       </Setter>  
     </Style>
-    <Style TargetType="Controls:DockIconContainer" x:Key="DockIconContainerStyle">
-        <Setter Property="Margin" Value="0,-3,0,0"/>
+    <Style TargetType="Rectangle" x:Key="BackgroundRightStyle">
+       <Setter Property="Grid.Margin" Value="0,0,-15,0"/>
+       <Setter Property="Grid.Width" Value="24"/>
+       <Setter Property="Grid.Height" Value="41"/>
+       <Setter Property="Rectangle.Fill">  
+           <Setter.Value>
+                <ImageBrush ImageSource="{DynamicResource BackgroundImage}"
+                    Viewbox="0.6,0,0.4,1"
+                    ViewboxUnits="RelativeToBoundingBox"
+                    Stretch="Fill"/>
+           </Setter.Value>  
+       </Setter>  
     </Style>
-    <!-- Icon styles -->
     <Style TargetType="Image" x:Key="IconImageStyle">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="RenderOptions.BitmapScalingMode" Value="LowQuality"/>
@@ -122,32 +118,6 @@
                 <Setter Property="Image.Effect" Value="{x:Null}" />
             </DataTrigger>
         </Style.Triggers>
-    </Style>
-    <Style TargetType="Image" x:Key="IconImageMirrorStyle">
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-        <Setter Property="Margin" Value="0,80,0,-30"/>
-        <Setter Property="Opacity" Value="0.15"/>
-        <Setter Property="Image.RenderTransform">
-            <Setter.Value>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1" ScaleX="1"/>
-                    <SkewTransform AngleY="0" AngleX="0"/>
-                    <RotateTransform Angle="0"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style TargetType="Rectangle" x:Key="IconButtonStyle">
-        <Setter Property="StrokeThickness" Value="0"/>
-        <Setter Property="Rectangle.Fill" Value="Transparent"/>
-    </Style>
-    <Style TargetType="Rectangle" x:Key="IconBackgroundStyle">
-        <Setter Property="StrokeThickness" Value="0"/>
-        <Setter Property="Rectangle.Fill" Value="Transparent"/>
     </Style>
     <Style TargetType="Label" x:Key="IconTextStyle">
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -197,6 +167,24 @@
                     <GradientStop Color="#2000C4FF" Offset="0.44"/>
                     <GradientStop Color="#0000C4FF" Offset="0.85"/>
                 </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="Image" x:Key="IconImageMirrorStyle">
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="Margin" Value="0,80,0,-30"/>
+        <Setter Property="Opacity" Value="0.30"/>
+        <Setter Property="Image.RenderTransform">
+            <Setter.Value>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                    <SkewTransform AngleY="0" AngleX="0"/>
+                    <RotateTransform Angle="0"/>
+                    <TranslateTransform/>
+                </TransformGroup>
             </Setter.Value>
         </Setter>
     </Style>

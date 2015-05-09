@@ -42,7 +42,7 @@
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
-        <Rectangle Name="IconButton" Style="{DynamicResource IconButtonStyle}"/>
+        <Rectangle Name="IconButton" Style="{DynamicResource IconButtonStyle}" Fill="Transparent"/>
         <Label Name="IconText" Content="{Binding ElementName=DockIconControl, Path=Text}" Style="{DynamicResource IconTextStyle}"/>
         <Rectangle Name="IconLight" IsHitTestVisible="False" Style="{DynamicResource IconLightStyle}"/>
     </Grid>

@@ -1,5 +1,7 @@
 ﻿using CleverDock.Handlers;
+using CleverDock.Model;
 using CleverDock.Tools;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Window = System.Windows.Window;
 using Theme = CleverDock.Model.Theme;
 
 namespace CleverDock.Managers
@@ -23,6 +26,7 @@ namespace CleverDock.Managers
             }
         }
 
+
         public event EventHandler<ThemeEventArgs> ThemeChanged;
         public event EventHandler<EventArgs> ThemeListChanged;
 
@@ -31,11 +35,12 @@ namespace CleverDock.Managers
         public static Theme DefaultTheme = new Theme
         {
             Name = "Default - Metal",
-            Path = "/Cleverdock;component/Themes/Metal.xaml"
+            Path = "/Cleverdock;component/Themes/Metal2/style.xaml"
         };
 
         private Window window;
         private ResourceDictionary theme;
+        public ThemeSettings Settings { get; set; }
 
         public void ThemeWindow(Window window)
         {            
@@ -54,8 +59,11 @@ namespace CleverDock.Managers
                     LoadComponentTheme(theme.Path);
                 else
                 {
-                    var xaml = XamlHelper.LoadXaml(theme.Path);
+                    var xamlPath = Path.Combine(theme.Path, "style.xaml");
+                    var xaml = XamlHelper.LoadXaml(xamlPath);
                     LoadResourceDictionary(xaml);
+                    var settingsPath = Path.Combine(theme.Path, "theme.json");
+                    LoadSettings(settingsPath);
                 }
                 SettingsManager.Settings.Theme = theme;
                 if (ThemeChanged != null)
@@ -66,6 +74,30 @@ namespace CleverDock.Managers
                 MessageBox.Show("Theme \"" + theme.Name + "\" failed to load. \n" + ex.Message);
                 LoadTheme(DefaultTheme);
             }
+        }
+
+        public void LoadSettings(string path)
+        {
+            Settings = GetSettings(path);
+        }
+
+        public ThemeSettings GetSettings(string path)
+        {
+            if (!File.Exists(path))
+                return ThemeSettings.DefaultThemeSettings;
+            using (var stream = new StreamReader(path))
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<ThemeSettings>(stream.ReadToEnd());
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Settings = ThemeSettings.DefaultThemeSettings;
+                }
+            }
+            return ThemeSettings.DefaultThemeSettings;
         }
 
         public void LoadComponentTheme(string path)
@@ -84,16 +116,19 @@ namespace CleverDock.Managers
 
         public void WatchChanges(string path)
         {
-            var watcher = new FileSystemWatcher();
-            watcher.Path = ThemeFolder;
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-               | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            watcher.Filter = "*.xaml";
-            watcher.Changed += OnChanged;
-            watcher.Created += OnChanged;
-            watcher.Deleted += OnChanged;
-            watcher.Renamed += OnChanged;
-            watcher.EnableRaisingEvents = true;
+            foreach(var filter in new string[] { "style.xaml", "theme.json" })
+            {
+                var watcher = new FileSystemWatcher();
+                watcher.Path = ThemeFolder;
+                watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                watcher.Filter = filter;
+                watcher.IncludeSubdirectories = true;
+                watcher.Changed += OnChanged;
+                watcher.Created += OnChanged;
+                watcher.Deleted += OnChanged;
+                watcher.Renamed += OnChanged;
+                watcher.EnableRaisingEvents = true;
+            }
         }
 
         private void OnChanged(object source, EventArgs e)
@@ -110,10 +145,10 @@ namespace CleverDock.Managers
 
         public Theme[] GetThemes()
         {
-            var themes = Directory.GetFiles(ThemeFolder, "*.xaml").Select(f => new Theme()
+            var themes = Directory.GetFiles(ThemeFolder, "theme.json", SearchOption.AllDirectories).Select(f => new Theme()
                 {
-                    Name = Path.GetFileNameWithoutExtension(f),
-                    Path = f
+                    Name = GetSettings(f).ThemeName,
+                    Path = new FileInfo(f).Directory.FullName
                 }).ToList();
             themes.Insert(0, DefaultTheme);
             return themes.ToArray();
