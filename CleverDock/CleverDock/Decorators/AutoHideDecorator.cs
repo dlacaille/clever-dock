@@ -50,8 +50,10 @@ namespace CleverDock.Decorators
                 case "AutoHide":
                     if (!SettingsManager.Settings.AutoHide && !DockIsVisible)
                         ShowDock();
-                    dockHideTimer.Stop();
-                    dockShowTimer.Stop();
+                    if (dockHideTimer != null)
+                        dockHideTimer.Stop();
+                    if (dockShowTimer != null)
+                        dockShowTimer.Stop();
                     break;
             }
         }
