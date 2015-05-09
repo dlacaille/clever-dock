@@ -28,6 +28,8 @@ namespace CleverDock.Controls
         public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive", typeof(bool), typeof(DockIcon));
         public ObservableCollection<Window> Windows = new ObservableCollection<Window>();
 
+        private bool bouncing = false;
+
         public ImageSource Icon
         {
             get { return (ImageSource)GetValue(IconProperty); }
@@ -237,6 +239,9 @@ namespace CleverDock.Controls
 
         public void AnimateIconBounce()
         {
+            if (bouncing)
+                return;
+            bouncing = true;
             var translation = new DoubleAnimation
             {
                     From = 0,
@@ -257,6 +262,10 @@ namespace CleverDock.Controls
             var sb = new Storyboard();
             sb.Children.Add(translation);
             sb.Begin(IconGrid);
+            sb.Completed += (s, e) =>
+            {
+                bouncing = false;
+            };
         }
 
         private void MenuPin_Click(object sender, RoutedEventArgs e)
