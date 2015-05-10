@@ -59,7 +59,7 @@ namespace CleverDock
             // Load widgets window.
             Widgets = new WidgetsWindow();
             // Load theme.
-            ThemeManager.Manager.ThemeWindow(new List<Window> { this, Widgets });
+            ThemeManager.Manager.ThemeWindow();
             // Show widgets.
             if (SettingsManager.Settings.ShowWidgets)
                 Widgets.Show();

@@ -37,13 +37,11 @@ namespace CleverDock.Managers
             Path = "/Cleverdock;component/Themes/Metal2/style.xaml"
         };
 
-        private List<Window> windows;
         private ResourceDictionary theme;
         public ThemeSettings Settings { get; set; }
 
-        public void ThemeWindow(List<Window> windows)
+        public void ThemeWindow()
         {            
-            this.windows = windows;
             LoadTheme(SettingsManager.Settings.Theme);
             WatchChanges(ThemeFolder);
         }
@@ -108,12 +106,9 @@ namespace CleverDock.Managers
 
         public void LoadResourceDictionary(ResourceDictionary resourceDict)
         {
-            foreach(var window in windows)
-            {
-                if (theme != null)
-                    window.Resources.MergedDictionaries.Remove(theme);
-                window.Resources.MergedDictionaries.Add(theme = resourceDict);
-            }
+            if (theme != null)
+                Application.Current.Resources.MergedDictionaries.Remove(theme);
+            Application.Current.Resources.MergedDictionaries.Add(resourceDict);
         }
 
         public void WatchChanges(string path)
