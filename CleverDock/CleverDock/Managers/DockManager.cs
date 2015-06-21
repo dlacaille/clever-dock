@@ -16,7 +16,7 @@ namespace CleverDock.Managers
 {
     public class DockManager
     {
-        private Window Window;
+        public Window Window;
 
         private static DockManager manager;
         public static DockManager Manager

@@ -13,6 +13,14 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid Style="{DynamicResource WindowGridStyle}" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+        <i:Interaction.Behaviors>
+            <b:DockAutoHideBehavior/>
+        </i:Interaction.Behaviors>
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <TranslateTransform Y="0" x:Name="DockTransform" />
+            </TransformGroup>
+        </Grid.RenderTransform>
         <Grid Width="{Binding ElementName=DockIcons, Path=ActualWidth}" Style="{DynamicResource BackgroundGridStyle}">
             <Rectangle x:Name="BackgroundLeft" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource BackgroundLeftStyle}"/>
             <Rectangle x:Name="BackgroundCenter" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Style="{DynamicResource BackgroundCenterStyle}"/>
