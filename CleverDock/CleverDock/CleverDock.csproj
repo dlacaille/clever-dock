@@ -97,6 +97,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Funq">
+      <HintPath>..\packages\Funq.1.0.0\lib\net40\Funq.dll</HintPath>
+    </Reference>
     <Reference Include="Kaliko.ImageLibrary, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\ImageLibrary.2.0.0\lib\Kaliko.ImageLibrary.dll</HintPath>
@@ -111,6 +114,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -125,9 +129,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Decorators\AutoHideDecorator.cs" />
-    <Compile Include="Decorators\WindowManagerDecorator.cs" />
-    <Compile Include="Effects\BrightnessEffect.cs" />
+    <Compile Include="Behaviors\DockIconBounceBehavior.cs" />
+    <Compile Include="Behaviors\DockIconDragBehavior.cs" />
+    <Compile Include="Behaviors\DockIconMinimizeBehavior.cs" />
+    <Compile Include="Models\ViewModels\ThemeViewModel.cs" />
+    <Compile Include="Tools\FrameworkHelper.cs" />
+    <Compile Include="Views\Converters\AdditionConverter.cs" />
+    <Compile Include="Content\Effects\BrightnessEffect.cs" />
     <Compile Include="Handlers\CursorPosEventArgs.cs" />
     <Compile Include="Handlers\ThemeEventArgs.cs" />
     <Compile Include="Handlers\WindowEventArgs.cs" />
@@ -136,33 +144,39 @@
     <Compile Include="Interop\DwmInterop.cs" />
     <Compile Include="Interop\ProcessInterop.cs" />
     <Compile Include="Interop\SystemInterop.cs" />
+    <Compile Include="Managers\DockManager.cs" />
     <Compile Include="Managers\ProcessManager.cs" />
-    <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\TaskbarManager.cs" />
     <Compile Include="Managers\ThemeManager.cs" />
     <Compile Include="Managers\WindowManager.cs" />
     <Compile Include="Managers\WorkAreaManager.cs" />
-    <Compile Include="Model\SerializableIconInfo.cs" />
-    <Compile Include="Model\DockSettings.cs" />
+    <Compile Include="Models\IconModel.cs" />
+    <Compile Include="Models\SettingsModel.cs" />
+    <Compile Include="Models\ThemeSettingsModel.cs" />
+    <Compile Include="Models\Patterns\ActionCommand.cs" />
+    <Compile Include="Models\Patterns\SerializableModelBase.cs" />
+    <Compile Include="Models\ViewModels\ActionCommand.cs" />
+    <Compile Include="Models\ViewModels\MainViewModel.cs" />
     <Compile Include="Interop\IconInterop.cs" />
     <Compile Include="Interop\WindowInterop.cs" />
-    <Compile Include="Model\Theme.cs" />
-    <Compile Include="Model\ThemeSettings.cs" />
-    <Compile Include="Model\Window.cs" />
+    <Compile Include="Models\ThemeModel.cs" />
+    <Compile Include="Models\ViewModels\ThemeSettingsViewModel.cs" />
+    <Compile Include="Interop\Win32Window.cs" />
+    <Compile Include="Models\Patterns\VMLocator.cs" />
     <Compile Include="Tools\AnimationTools.cs" />
-    <Compile Include="Controls\DockIconContainer.cs" />
-    <Compile Include="Controls\DockIcon.xaml.cs">
+    <Compile Include="Views\Controls\DockIcon.xaml.cs">
       <DependentUpon>DockIcon.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Decorators\IconDragDecorator.cs" />
     <Compile Include="Tools\BitmapEffectHelper.cs" />
     <Compile Include="Tools\PathTools.cs" />
     <Compile Include="Tools\StringUtils.cs" />
     <Compile Include="Tools\XamlHelper.cs" />
-    <Compile Include="DraggedIconWindow.xaml.cs">
+    <Compile Include="Views\DraggedIconWindow.xaml.cs">
       <DependentUpon>DraggedIconWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WidgetsWindow.xaml.cs">
+    <Compile Include="Models\Patterns\ViewModelBase.cs" />
+    <Compile Include="Models\ViewModels\IconViewModel.cs" />
+    <Compile Include="Views\WidgetsWindow.xaml.cs">
       <DependentUpon>WidgetsWindow.xaml</DependentUpon>
     </Compile>
     <None Include="Themes\FlatLight\theme.json">
@@ -171,7 +185,7 @@
     <None Include="Themes\Flat\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -179,17 +193,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Decorators\FileDropDecorator.cs" />
     <Compile Include="Managers\IconManager.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Controls\DockIcon.xaml">
+    <Page Include="Views\Controls\DockIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DraggedIconWindow.xaml">
+    <Page Include="Views\DraggedIconWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -212,13 +225,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WidgetsWindow.xaml">
+    <Page Include="Views\WidgetsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\IconInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -236,7 +248,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="Effects\BrightnessEffect.ps" />
+    <Resource Include="Content\Effects\BrightnessEffect.ps" />
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -251,7 +263,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Effects\BrightnessEffect.fx" />
+    <Resource Include="Content\Chrome.png" />
+    <Content Include="Content\Effects\BrightnessEffect.fx" />
     <Resource Include="FodyWeavers.xml" />
     <None Include="Themes\FlatLight\bg.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -281,6 +294,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>echo "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Utilities\bin\x64\fxc.exe" /T ps_2_0 /E main /Fo "$(ProjectDir)Effects\BrightnessEffect.ps" "$(ProjectDir)Effects\BrightnessEffect.fx"</PreBuildEvent>

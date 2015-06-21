@@ -1,5 +1,4 @@
 ﻿using CleverDock.Handlers;
-using CleverDock.Model;
 using CleverDock.Tools;
 using Newtonsoft.Json;
 using System;
@@ -9,8 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using Window = System.Windows.Window;
-using Theme = CleverDock.Model.Theme;
+using CleverDock.ViewModels;
+using CleverDock.Interop;
+using CleverDock.Patterns;
+using CleverDock.Models;
 
 namespace CleverDock.Managers
 {
@@ -29,25 +30,22 @@ namespace CleverDock.Managers
         public event EventHandler<ThemeEventArgs> ThemeChanged;
         public event EventHandler<EventArgs> ThemeListChanged;
 
-        private const string ThemeFolder = "Themes";
-
-        public static Theme DefaultTheme = new Theme
+        public static ThemeModel DefaultTheme = new ThemeModel
         {
             Name = "Default - Metal",
             Path = "/Cleverdock;component/Themes/Metal2/style.xaml"
         };
 
         private ResourceDictionary theme;
-        public ThemeSettings Settings { get; set; }
 
         public void ThemeWindow()
-        {            
-            LoadTheme(SettingsManager.Settings.Theme);
-            WatchChanges(ThemeFolder);
+        {
+            LoadTheme(VMLocator.Main.Theme);
         }
 
-        public void LoadTheme(Theme theme)
+        public ThemeSettingsViewModel LoadTheme(ThemeModel theme)
         {
+            ThemeSettingsViewModel result = null;
             try
             {
                 if (theme == null)
@@ -60,9 +58,9 @@ namespace CleverDock.Managers
                     var xaml = XamlHelper.LoadXaml(xamlPath);
                     LoadResourceDictionary(xaml);
                     var settingsPath = Path.Combine(theme.Path, "theme.json");
-                    LoadSettings(settingsPath);
+                    result = GetSettings(settingsPath);
                 }
-                SettingsManager.Settings.Theme = theme;
+                VMLocator.Main.Theme = theme;
                 if (ThemeChanged != null)
                     ThemeChanged(this, new ThemeEventArgs(theme));
             } 
@@ -71,30 +69,25 @@ namespace CleverDock.Managers
                 MessageBox.Show("Theme \"" + theme.Name + "\" failed to load. \n" + ex.Message);
                 LoadTheme(DefaultTheme);
             }
+            return result;
         }
 
-        public void LoadSettings(string path)
-        {
-            Settings = GetSettings(path);
-        }
-
-        public ThemeSettings GetSettings(string path)
+        public ThemeSettingsViewModel GetSettings(string path)
         {
             if (!File.Exists(path))
-                return ThemeSettings.DefaultThemeSettings;
+                return ThemeSettingsViewModel.DefaultThemeSettings;
             using (var stream = new StreamReader(path))
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject<ThemeSettings>(stream.ReadToEnd());
+                    return JsonConvert.DeserializeObject<ThemeSettingsViewModel>(stream.ReadToEnd());
                 }
                 catch (InvalidOperationException ex)
                 {
                     Console.WriteLine(ex.Message);
-                    Settings = ThemeSettings.DefaultThemeSettings;
+                    return ThemeSettingsViewModel.DefaultThemeSettings;
                 }
             }
-            return ThemeSettings.DefaultThemeSettings;
         }
 
         public void LoadComponentTheme(string path)
@@ -109,46 +102,6 @@ namespace CleverDock.Managers
             if (theme != null)
                 Application.Current.Resources.MergedDictionaries.Remove(theme);
             Application.Current.Resources.MergedDictionaries.Add(resourceDict);
-        }
-
-        public void WatchChanges(string path)
-        {
-            foreach(var filter in new string[] { "style.xaml", "theme.json" })
-            {
-                var watcher = new FileSystemWatcher();
-                watcher.Path = ThemeFolder;
-                watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                watcher.Filter = filter;
-                watcher.IncludeSubdirectories = true;
-                watcher.Changed += OnChanged;
-                watcher.Created += OnChanged;
-                watcher.Deleted += OnChanged;
-                watcher.Renamed += OnChanged;
-                watcher.EnableRaisingEvents = true;
-            }
-        }
-
-        private void OnChanged(object source, EventArgs e)
-        {
-            MainWindow.Window.Dispatcher.Invoke(() =>
-            {
-                if (ThemeListChanged != null)
-                    ThemeListChanged(this, new EventArgs());
-                // Reload theme if it still exists
-                if (GetThemes().Any(t => t.Path == SettingsManager.Settings.Theme.Path))
-                    LoadTheme(SettingsManager.Settings.Theme);
-            });
-        }
-
-        public Theme[] GetThemes()
-        {
-            var themes = Directory.GetFiles(ThemeFolder, "theme.json", SearchOption.AllDirectories).Select(f => new Theme()
-                {
-                    Name = GetSettings(f).ThemeName,
-                    Path = new FileInfo(f).Directory.FullName
-                }).ToList();
-            themes.Insert(0, DefaultTheme);
-            return themes.ToArray();
         }
     }
 }

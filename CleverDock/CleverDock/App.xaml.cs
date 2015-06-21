@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using CleverDock.Managers;
+using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace CleverDock
 {
@@ -7,5 +9,10 @@ namespace CleverDock
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            // Change Timeline frame rate to 60fps.
+            Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata { DefaultValue = 60 });
+        }
     }
 }

@@ -1,0 +1,54 @@
+﻿<UserControl x:Name="DockIconControl" x:Class="CleverDock.Controls.DockIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:m="clr-namespace:CleverDock.Managers"
+             xmlns:b="clr-namespace:CleverDock.Behaviors">
+    <Grid x:Name="ItemGrid" Background="#01000000">
+        <i:Interaction.Behaviors>
+            <b:DockIconDragBehavior/>
+        </i:Interaction.Behaviors>
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                <i:InvokeCommandAction Command="{Binding Source={x:Static m:DockManager.Manager}, Path=LeftMouseDownCommand}" CommandParameter="{Binding}"/>
+            </i:EventTrigger>
+            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                <i:InvokeCommandAction Command="{Binding Source={x:Static m:DockManager.Manager}, Path=LeftMouseUpCommand}" CommandParameter="{Binding}"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        <Grid Style="{DynamicResource IconImageMirrorContainerStyle}">
+            <Image Source="{Binding BlurredIcon}" Style="{DynamicResource IconImageMirrorStyle}"
+                                          Height="{Binding ElementName=Icon, Path=ActualHeight, Converter={StaticResource Addition}, ConverterParameter=6}"
+                                          Width="{Binding ElementName=Icon, Path=ActualWidth, Converter={StaticResource Addition}, ConverterParameter=6}"/>
+        </Grid>
+        <Image Source="{Binding Icon}" Name="Icon" RenderOptions.EdgeMode="Aliased" Style="{DynamicResource IconImageStyle}"
+                                          Height="{Binding Main.IconSize, Source={StaticResource Locator}}"
+                                          Width="{Binding Main.IconSize, Source={StaticResource Locator}}"/>
+        <Rectangle Style="{DynamicResource IconLightStyle}" Visibility="{Binding Path=IsActive, Converter={StaticResource BoolToVis}}" />
+        <Label UseLayoutRounding="True" Content="{Binding Text}" HorizontalAlignment="Center" VerticalAlignment="Top" Style="{DynamicResource IconTextStyle}" />
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Exit CleverDock" Command="{Binding ExitCommand}"/>
+                <MenuItem Name="SelectTheme" Header="Select Theme" ItemsSource="{Binding Themes}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Name}" />
+                            <Setter Property="Command" Value="{Binding LoadCommand}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <MenuItem Name="ReserveScreen" Header="Reserve screen edge"/>
+                <MenuItem Name="AutoHide" Header="AutoHide"/>
+                <MenuItem Name="RemoveTaskbar" Header="Remove Windows taskbar"/>
+                <Separator />
+                <MenuItem Name="MenuPin" IsChecked="{Binding Pinned}" Header="Pin To Dock" IsCheckable="True"/>
+                <MenuItem Name="MenuMinimize" IsEnabled="{Binding CanMinimize}" Header="Minimize" Command="{Binding MinimizeCommand}"/>
+                <MenuItem Name="MenuRestore" IsEnabled="{Binding CanRestore}" Header="Restore" Command="{Binding RestoreCommand}"/>
+                <MenuItem Name="MenuClose" IsEnabled="{Binding IsActive}" Header="Close" Command="{Binding CloseCommand}"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
+    </Grid>
+</UserControl>

@@ -27,6 +27,7 @@ namespace CleverDock
         {
             InitializeComponent();
             ShowInTaskbar = false;
+            Loaded += DraggedIconWindow_Loaded;
             WindowManager.Manager.ActiveWindowChanged += Manager_ActiveWindowChanged;
         }
 

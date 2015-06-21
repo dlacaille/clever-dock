@@ -1,4 +1,24 @@
-﻿<Application x:Class="CleverDock.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" StartupUri="MainWindow.xaml">
-    <Application.Resources></Application.Resources>
+﻿<Application x:Class="CleverDock.App" 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             xmlns:c="clr-namespace:CleverDock.Converters"
+            xmlns:m="clr-namespace:CleverDock.Managers"
+             xmlns:p="clr-namespace:CleverDock.Patterns"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+                </Style.Resources>
+            </Style>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <c:AdditionConverter x:Key="Addition" />
+            <p:VMLocator x:Key="Locator" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Cleverdock;component/Themes/Metal2/style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

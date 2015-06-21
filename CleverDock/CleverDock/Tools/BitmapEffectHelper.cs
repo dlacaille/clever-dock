@@ -1,5 +1,6 @@
 ﻿using Kaliko.ImageLibrary;
 using Kaliko.ImageLibrary.Filters;
+using Kaliko.ImageLibrary.Scaling;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +23,8 @@ namespace CleverDock.Tools
             {
                 if (kimage == null)
                     return null;
+                var padding = (int)Math.Ceiling(radius);
+                kimage.Crop(-padding, padding, (int)image.Width + padding * 2, (int)image.Height + padding * 2);
                 kimage.ApplyFilter(filter);
                 return KalikoToBitmap(kimage);
             }

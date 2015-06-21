@@ -1,29 +1,36 @@
-﻿using System;
-using System.IO;
+﻿using CleverDock.Managers;
+using CleverDock.Patterns;
+using CleverDock.Tools;
+using CleverDock.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
-using CleverDock.Controls;
-using CleverDock.Managers;
-using CleverDock.Model;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Interactivity;
+using System.Windows.Media;
 
-namespace CleverDock.Decorators
+namespace CleverDock.Behaviors
 {
-    public class FileDropDecorator
+    public class DockFileDropBehavior : Behavior<FrameworkElement>
     {
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+            AssociatedObject.AllowDrop = true;
+            AssociatedObject.DragEnter += DockIconContainer_DragEnter;
+            AssociatedObject.Drop += DockIconContainer_Drop;
+            AssociatedObject.DragOver += DockIconContainer_DragOver;
+            AssociatedObject.DragLeave += DockIconContainer_DragLeave;
+        }
         private DockIconContainer container;
 
         private bool dragInProgress;
         private int dragIndex = -1;
         private DockIcon dragItem;
-
-        public FileDropDecorator(DockIconContainer _container)
-        {
-            container = _container;
-            container.AllowDrop = true;
-            container.DragEnter += DockIconContainer_DragEnter;
-            container.Drop += DockIconContainer_Drop;
-            container.DragOver += DockIconContainer_DragOver;
-            container.DragLeave += DockIconContainer_DragLeave;
-        }
 
         private void DockIconContainer_DragLeave(object sender, DragEventArgs e)
         {
@@ -47,12 +54,12 @@ namespace CleverDock.Decorators
             if (dragIndex == -1)
             {
                 var files = (string[]) e.Data.GetData(DataFormats.FileDrop);
-                dragItem = new DockIcon(new IconInfo
+                dragItem = new DockIcon(new IconModel
                 {
-                        Path = files[0],
-                        Name = Path.GetFileNameWithoutExtension(files[0])
+                    Path = files[0],
+                    Name = Path.GetFileNameWithoutExtension(files[0])
                 });
-                dragIndex = container.GetDropIndex(e.GetPosition(container).X - SettingsManager.Settings.OuterIconWidth / 2);
+                dragIndex = container.GetDropIndex(e.GetPosition(container).X - VMLocator.Main.OuterIconWidth / 2);
                 container.Children.Insert(dragIndex, dragItem);
             }
         }
@@ -61,9 +68,9 @@ namespace CleverDock.Decorators
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop))
                 return;
-            if (dragItem != null && dragIndex > 0 && SettingsManager.Settings.SaveAutomatically)
+            if (dragItem != null && dragIndex > 0 && VMLocator.Main.SaveAutomatically)
             {
-                dragItem.Info.Pinned = true;
+                dragItem.Pinned = true;
                 container.SaveSettings();
             }
             EndDrag();

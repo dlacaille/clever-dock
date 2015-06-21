@@ -17,7 +17,7 @@ namespace CleverDock.Effects
         
         // Shader
         private static readonly PixelShader m_pixelshader = 
-            new PixelShader{ UriSource = new Uri("pack://application:,,,/CleverDock;component/Effects/BrightnessEffect.ps") };
+            new PixelShader{ UriSource = new Uri("pack://application:,,,/CleverDock;component/Content/Effects/BrightnessEffect.ps") };
 
         public BrightnessEffect() 
         {

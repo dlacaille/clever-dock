@@ -1,12 +1,12 @@
 ﻿using System;
-using CleverDock.Model;
+using CleverDock.Interop;
 
 namespace CleverDock.Handlers
 {
     public class WindowEventArgs : EventArgs
     {
-        public Window Window { get; set; }
-        public WindowEventArgs(Window window)
+        public Win32Window Window { get; set; }
+        public WindowEventArgs(Win32Window window)
         {
             Window = window;
         }

@@ -6,15 +6,19 @@ using System.Windows;
 using System.Windows.Interop;
 using CleverDock.Handlers;
 using CleverDock.Interop;
-using Window = CleverDock.Model.Window;
 using System.Diagnostics;
 using System.Text;
+using System.Windows.Threading;
+using CleverDock.Patterns;
+using CleverDock.Tools;
+using CleverDock.ViewModels;
+using System.IO;
 
 namespace CleverDock.Managers
 {
     public class WindowManager
     {
-        public List<Window> Windows { get; set; }
+        public List<Win32Window> Windows { get; set; }
 
         private const long WS_OVERLAPPED = 0x00000000L;
         private const long WS_CHILD = 0x40000000L;
@@ -53,9 +57,17 @@ namespace CleverDock.Managers
 
         public WindowManager()
         {
-            Windows = new List<Window>();
+            Windows = new List<Win32Window>();
             WindowListChanged += WindowManager_WindowListChanged;
             ActiveWindowChanged += WindowManager_ActiveWindowChanged;
+            WindowAdded += WindowManager_WindowAdded;
+            WindowRemoved += WindowManager_WindowRemoved;
+            Application.Current.Exit += Current_Exit;
+        }
+
+        void Current_Exit(object sender, ExitEventArgs e)
+        {
+            Stop();
         }
 
         ~WindowManager()
@@ -162,18 +174,54 @@ namespace CleverDock.Managers
             List<IntPtr> chwnds = (from w in Windows select w.Hwnd).ToList();
             foreach (var h in hwnds.Except(chwnds)) // Get removed windows
             {
-                Window window = new Window(h);
+                var window = new Win32Window(h);
                 Windows.Add(window);
                 if (WindowAdded != null)
                     WindowAdded(this, new WindowEventArgs(window));
             }
             foreach (var h in chwnds.Except(hwnds)) // Get added windows
             {
-                Window window = Windows.Find(w => w.Hwnd == h);
+                var window = Windows.Find(w => w.Hwnd == h);
                 if (WindowRemoved != null)
                     WindowRemoved(this, new WindowEventArgs(window));
                 Windows.Remove(window);
             }
+        }
+
+        void WindowManager_WindowRemoved(object sender, WindowEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                var foundItem = VMLocator.Main.Icons.FirstOrDefault(i => i.Windows.Any(w => w.Hwnd == e.Window.Hwnd));
+                if (foundItem != null)
+                {
+                    foundItem.Windows.Remove(e.Window);
+                    if (!foundItem.Windows.Any() && !foundItem.Pinned)
+                        VMLocator.Main.Icons.Remove(foundItem);
+                }
+            }));
+        }
+
+        void WindowManager_WindowAdded(object sender, WindowEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                var foundItems = VMLocator.Main.Icons.Where(i => PathTools.SamePath(i.Path, e.Window.FileName));
+                IconViewModel windowIcon = null;
+                if (foundItems.Any())
+                    windowIcon = foundItems.First();
+                if (!foundItems.Any() || (windowIcon != null && windowIcon.Windows.Count > 0))
+                {
+                    windowIcon = new IconViewModel()
+                    {
+                        Name = Path.GetFileName(e.Window.FileName),
+                        Path = e.Window.FileName,
+                        Pinned = false
+                    };
+                    VMLocator.Main.Icons.Add(windowIcon);
+                }
+                windowIcon.Windows.Add(e.Window);
+            }));
         }
 
         private bool isTaskBarWindow(IntPtr hwnd)

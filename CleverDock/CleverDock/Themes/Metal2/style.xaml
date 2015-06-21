@@ -3,11 +3,8 @@
                     xmlns:Effects="clr-namespace:CleverDock.Effects"
                     xmlns:Controls="clr-namespace:CleverDock.Controls">
     <Effects:BrightnessEffect x:Key="BrightnessEffect" Brightness="0.1" />
-    <Style TargetType="Controls:DockIconContainer" x:Key="DockIconContainerStyle">
-       <Setter Property="Canvas.Margin" Value="0,0,0,0"/>
-    </Style>
-    <Style TargetType="Grid" x:Key="BackgroundGridStyle">
-       <Setter Property="Canvas.Margin" Value="0,0,0,-6"/>
+    <Style TargetType="{x:Type Grid}" x:Key="WindowGridStyle">
+        <Setter Property="Canvas.Margin" Value="0,0,0,10"/>
     </Style>
     <Style TargetType="{x:Type ContextMenu}">
         <Setter Property="SnapsToDevicePixels" Value="False" />
@@ -48,57 +45,103 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <BitmapImage x:Key="BackgroundImage" UriSource="pack://application:,,,/Cleverdock;component/Themes/Metal2/bg.png"></BitmapImage>
+    <BitmapImage x:Key="BackgroundImage" UriSource="/Themes/Metal2/bg.png"></BitmapImage>
     <Style TargetType="Rectangle" x:Key="BackgroundLeftStyle">
-       <Setter Property="Grid.Margin" Value="-15,0,0,0"/>
-       <Setter Property="Grid.Width" Value="24"/>
-       <Setter Property="Grid.Height" Value="41"/>
-       <Setter Property="Rectangle.Fill">  
-           <Setter.Value>
+        <Setter Property="Grid.Margin" Value="-15,0,0,0"/>
+        <Setter Property="Grid.Width" Value="24"/>
+        <Setter Property="Grid.Height" Value="41"/>
+        <Setter Property="Rectangle.Fill">  
+            <Setter.Value>
                 <ImageBrush ImageSource="{DynamicResource BackgroundImage}"
                     Viewbox="0,0,0.4,1"
                     Stretch="Fill"/>
-           </Setter.Value>  
-       </Setter>  
+            </Setter.Value>  
+        </Setter>  
     </Style>
     <Style TargetType="Rectangle" x:Key="BackgroundCenterStyle">
-       <Setter Property="Grid.Height" Value="41"/>
-       <Setter Property="Grid.Margin" Value="9,0"/>
-       <Setter Property="Rectangle.Fill">  
-           <Setter.Value>
+        <Setter Property="Grid.Height" Value="41"/>
+        <Setter Property="Grid.Margin" Value="9,0"/>
+        <Setter Property="Rectangle.Fill">  
+            <Setter.Value>
                 <ImageBrush ImageSource="{DynamicResource BackgroundImage}" 
                     Viewbox="0.4,0,0.1,1"
                     ViewboxUnits="RelativeToBoundingBox"
                     Stretch="Fill"/>
-           </Setter.Value>  
-       </Setter>  
+            </Setter.Value>  
+        </Setter>  
     </Style>
     <Style TargetType="Rectangle" x:Key="BackgroundRightStyle">
-       <Setter Property="Grid.Margin" Value="0,0,-15,0"/>
-       <Setter Property="Grid.Width" Value="24"/>
-       <Setter Property="Grid.Height" Value="41"/>
-       <Setter Property="Rectangle.Fill">  
-           <Setter.Value>
+        <Setter Property="Grid.Margin" Value="0,0,-15,0"/>
+        <Setter Property="Grid.Width" Value="24"/>
+        <Setter Property="Grid.Height" Value="41"/>
+        <Setter Property="Rectangle.Fill">  
+            <Setter.Value>
                 <ImageBrush ImageSource="{DynamicResource BackgroundImage}"
                     Viewbox="0.6,0,0.4,1"
                     ViewboxUnits="RelativeToBoundingBox"
                     Stretch="Fill"/>
-           </Setter.Value>  
-       </Setter>  
+            </Setter.Value>  
+        </Setter>  
+    </Style>
+    <Style TargetType="Label" x:Key="IconTextStyle">
+        <Setter Property="Margin" Value="-500,-60,-500,70"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Opacity" Value="0"/>
+        <Setter Property="Label.Effect">
+            <Setter.Value>
+                <DropShadowEffect Opacity="0.8" BlurRadius="1" ShadowDepth="1" />
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ElementName=ItemGrid, Path=IsMouseOver}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="Opacity" To="1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="Opacity" To="0" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Rectangle" x:Key="IconLightStyle">
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="34"/>
+        <Setter Property="Height" Value="4"/>
+        <Setter Property="Margin" Value="0,0,0,2"/>
+        <Setter Property="Rectangle.Fill">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="0,0" StartPoint="0.5,0" SpreadMethod="Reflect">
+                    <GradientStop Color="#FFCFFFFF" Offset="0.13"/>
+                    <GradientStop Color="#5F37CFCF" Offset="0.43"/>
+                    <GradientStop Color="#2000C4FF" Offset="0.44"/>
+                    <GradientStop Color="#0000C4FF" Offset="0.85"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style TargetType="Image" x:Key="IconImageStyle">
-        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="RenderOptions.BitmapScalingMode" Value="LowQuality"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-        <Setter Property="Margin" Value="0,0,0,10"/>
+        <Setter Property="Margin" Value="4,0,4,20"/>
         <Setter Property="Image.RenderTransform">
             <Setter.Value>
                 <TransformGroup>
-                    <ScaleTransform ScaleX="0" ScaleY="0" />
-                    <SkewTransform />
-                    <RotateTransform />
-                    <TranslateTransform />
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
                 </TransformGroup>
             </Setter.Value>
         </Setter>
@@ -131,64 +174,17 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
-    <Style TargetType="Label" x:Key="IconTextStyle">
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Top"/>
-        <Setter Property="Margin" Value="-500,-51,-500,0"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="18"/>
-        <Setter Property="FontFamily" Value="Segoe UI Light"/>
-        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
-        <Setter Property="SnapsToDevicePixels" Value="True"/>
-        <Setter Property="Opacity" Value="0"/>
-        <Setter Property="Label.Effect">
-            <Setter.Value>
-                <DropShadowEffect Opacity="0.8" BlurRadius="1" ShadowDepth="1" />
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding ElementName=IconButton, Path=IsMouseOver}" Value="True">
-                <DataTrigger.EnterActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="Opacity" To="1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </DataTrigger.EnterActions>
-                <DataTrigger.ExitActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="Opacity" To="0" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </DataTrigger.ExitActions>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-    <Style TargetType="Rectangle" x:Key="IconLightStyle">
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="Width" Value="34"/>
-        <Setter Property="Height" Value="4"/>
-        <Setter Property="Margin" Value="0,0,0,-4"/>
-        <Setter Property="Rectangle.Fill">
-            <Setter.Value>
-                <LinearGradientBrush EndPoint="0,0" StartPoint="0.5,0" SpreadMethod="Reflect">
-                    <GradientStop Color="#FFCFFFFF" Offset="0.13"/>
-                    <GradientStop Color="#5F37CFCF" Offset="0.43"/>
-                    <GradientStop Color="#2000C4FF" Offset="0.44"/>
-                    <GradientStop Color="#0000C4FF" Offset="0.85"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
+    <Style TargetType="Grid" x:Key="IconImageMirrorContainerStyle">
+        <Setter Property="Margin" Value="0,0,0,6"/>
+        <Setter Property="ClipToBounds" Value="True"/>
     </Style>
     <Style TargetType="Image" x:Key="IconImageMirrorStyle">
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-        <Setter Property="Margin" Value="0,80,0,-30"/>
         <Setter Property="Opacity" Value="0.30"/>
+        <Setter Property="Margin" Value="0,0,0,-30"/>
         <Setter Property="Image.RenderTransform">
             <Setter.Value>
                 <TransformGroup>

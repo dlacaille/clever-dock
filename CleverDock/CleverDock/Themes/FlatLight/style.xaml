@@ -3,11 +3,8 @@
                     xmlns:Effects="clr-namespace:CleverDock.Effects;assembly=CleverDock"
                     xmlns:Controls="clr-namespace:CleverDock.Controls;assembly=CleverDock">
     <Effects:BrightnessEffect x:Key="BrightnessEffect" Brightness="0.1" />
-    <Style TargetType="Controls:DockIconContainer" x:Key="DockIconContainerStyle">
-       <Setter Property="Canvas.Margin" Value="0,0,0,0"/>
-    </Style>
-    <Style TargetType="Grid" x:Key="BackgroundGridStyle">
-       <Setter Property="Canvas.Margin" Value="0,0,0,-6"/>
+    <Style TargetType="{x:Type Grid}" x:Key="WindowGridStyle">
+        <Setter Property="Canvas.Margin" Value="0,0,0,10"/>
     </Style>
     <Style TargetType="{x:Type ContextMenu}">
         <Setter Property="SnapsToDevicePixels" Value="False" />
@@ -50,55 +47,52 @@
     </Style>
     <BitmapImage x:Key="BackgroundImage" UriSource="pack://siteoforigin:,,,/Themes/FlatLight/bg.png"></BitmapImage>
     <Style TargetType="Rectangle" x:Key="BackgroundLeftStyle">
-       <Setter Property="Grid.Margin" Value="-4,0,0,0"/>
-       <Setter Property="Grid.Width" Value="24"/>
-       <Setter Property="Grid.Height" Value="41"/>
-       <Setter Property="Rectangle.Fill">  
-           <Setter.Value>
+        <Setter Property="Grid.Margin" Value="-4,0,0,0"/>
+        <Setter Property="Grid.Width" Value="24"/>
+        <Setter Property="Grid.Height" Value="41"/>
+        <Setter Property="Rectangle.Fill">
+            <Setter.Value>
                 <ImageBrush ImageSource="{DynamicResource BackgroundImage}"
                     Viewbox="0,0,0.4,1"
                     Stretch="Fill"/>
-           </Setter.Value>  
-       </Setter>  
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style TargetType="Rectangle" x:Key="BackgroundCenterStyle">
-       <Setter Property="Grid.Height" Value="41"/>
-       <Setter Property="Grid.Margin" Value="20,0"/>
-       <Setter Property="Rectangle.Fill">  
-           <Setter.Value>
+        <Setter Property="Grid.Height" Value="41"/>
+        <Setter Property="Grid.Margin" Value="20,0"/>
+        <Setter Property="Rectangle.Fill">
+            <Setter.Value>
                 <ImageBrush ImageSource="{DynamicResource BackgroundImage}" 
                     Viewbox="0.4,0,0.1,1"
                     ViewboxUnits="RelativeToBoundingBox"
                     Stretch="Fill"/>
-           </Setter.Value>  
-       </Setter>  
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style TargetType="Rectangle" x:Key="BackgroundRightStyle">
-       <Setter Property="Grid.Margin" Value="0,0,-4,0"/>
-       <Setter Property="Grid.Width" Value="24"/>
-       <Setter Property="Grid.Height" Value="41"/>
-       <Setter Property="Rectangle.Fill">  
-           <Setter.Value>
+        <Setter Property="Grid.Margin" Value="0,0,-4,0"/>
+        <Setter Property="Grid.Width" Value="24"/>
+        <Setter Property="Grid.Height" Value="41"/>
+        <Setter Property="Rectangle.Fill">
+            <Setter.Value>
                 <ImageBrush ImageSource="{DynamicResource BackgroundImage}"
                     Viewbox="0.6,0,0.4,1"
                     ViewboxUnits="RelativeToBoundingBox"
                     Stretch="Fill"/>
-           </Setter.Value>  
-       </Setter>  
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style TargetType="Image" x:Key="IconImageStyle">
-        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="RenderOptions.BitmapScalingMode" Value="LowQuality"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-        <Setter Property="Margin" Value="0,0,0,10"/>
+        <Setter Property="Margin" Value="4,0,4,20"/>
         <Setter Property="Image.RenderTransform">
             <Setter.Value>
                 <TransformGroup>
-                    <ScaleTransform ScaleX="0" ScaleY="0" />
-                    <SkewTransform />
-                    <RotateTransform />
-                    <TranslateTransform />
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
                 </TransformGroup>
             </Setter.Value>
         </Setter>
@@ -126,19 +120,14 @@
             <DataTrigger Binding="{Binding ElementName=IconButton, Path=IsMouseOver}" Value="True">
                 <Setter Property="Image.Effect" Value="{StaticResource BrightnessEffect}" />
             </DataTrigger>
-            <DataTrigger Binding="{Binding ElementName=IconButton, Path=IsPressed}" Value="True">
-                <Setter Property="Image.Effect" Value="{StaticResource BrightnessEffect}" />
-            </DataTrigger>
             <DataTrigger Binding="{Binding ElementName=IconButton, Path=IsMouseOver}" Value="False">
                 <Setter Property="Image.Effect" Value="{x:Null}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
     <Style TargetType="Label" x:Key="IconTextStyle">
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Top"/>
-        <Setter Property="Margin" Value="-500,-49,-500,0"/>
-        <Setter Property="Foreground" Value="#222"/>
+        <Setter Property="Margin" Value="-500,-20,-500,20"/>
+        <Setter Property="Foreground" Value="#FF3B3F42"/>
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
@@ -149,21 +138,21 @@
                 <ControlTemplate TargetType="{x:Type Label}">
                     <Grid>
                         <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Border Background="#FFF3F3F3" CornerRadius="4" Padding="5,2">
-                          <ContentPresenter RecognizesAccessKey="True" />
+                        <Border Background="#fff" CornerRadius="4" Padding="5,2">
+                            <ContentPresenter RecognizesAccessKey="True" />
                         </Border>
                         <Polygon Grid.Row="1" 
-                            Points="0,0 9,10, 18,0" Fill="#FFF3F3F3"
+                            Points="0,0 9,10, 18,0" Fill="#fff"
                             VerticalAlignment="Top" HorizontalAlignment="Center"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding ElementName=IconButton, Path=IsMouseOver}" Value="True">
+            <DataTrigger Binding="{Binding ElementName=ItemGrid, Path=IsMouseOver}" Value="True">
                 <DataTrigger.EnterActions>
                     <BeginStoryboard>
                         <Storyboard>
@@ -186,8 +175,12 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Width" Value="20"/>
         <Setter Property="Height" Value="4"/>
-        <Setter Property="Margin" Value="0,0,0,-4"/>
+        <Setter Property="Margin" Value="0,0,0,2"/>
         <Setter Property="Rectangle.Fill" Value="#FF00C4FF"/>
+    </Style>
+    <Style TargetType="Grid" x:Key="IconImageMirrorContainerStyle">
+        <Setter Property="Margin" Value="0,0,0,6"/>
+        <Setter Property="ClipToBounds" Value="True"/>
     </Style>
     <Style TargetType="Image" x:Key="IconImageMirrorStyle">
         <Setter Property="VerticalAlignment" Value="Bottom"/>
