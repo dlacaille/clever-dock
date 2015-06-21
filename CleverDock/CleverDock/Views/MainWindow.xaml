@@ -3,7 +3,6 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:m="clr-namespace:CleverDock.Managers"
         xmlns:b="clr-namespace:CleverDock.Behaviors"
-        xmlns:c="clr-namespace:CleverDock.Controls"
         x:Class="CleverDock.MainWindow" Title="CleverDock" Name="CleverDock"
         Width="{Binding ElementName=DockIcons, Path=ActualWidth, Converter={StaticResource Addition}, ConverterParameter=30}"
         Height="140" Visibility="Visible" WindowStyle="None" AllowsTransparency="True" Topmost="True" ShowInTaskbar="False"

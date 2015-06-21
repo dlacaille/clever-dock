@@ -129,6 +129,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\DockAutoHideBehavior.cs" />
     <Compile Include="Behaviors\DockIconBounceBehavior.cs" />
     <Compile Include="Behaviors\DockIconDragBehavior.cs" />
     <Compile Include="Behaviors\DockIconMinimizeBehavior.cs" />
@@ -164,9 +165,6 @@
     <Compile Include="Interop\Win32Window.cs" />
     <Compile Include="Models\Patterns\VMLocator.cs" />
     <Compile Include="Tools\AnimationTools.cs" />
-    <Compile Include="Views\Controls\DockIcon.xaml.cs">
-      <DependentUpon>DockIcon.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tools\BitmapEffectHelper.cs" />
     <Compile Include="Tools\PathTools.cs" />
     <Compile Include="Tools\StringUtils.cs" />
@@ -198,10 +196,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Controls\DockIcon.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\DraggedIconWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

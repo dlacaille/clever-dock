@@ -12,7 +12,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media;
 using CleverDock.Tools;
 using System.Timers;
-using CleverDock.Controls;
 using CleverDock.Helpers;
 using System.Collections.Generic;
 using Microsoft.Win32;
