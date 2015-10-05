@@ -1,7 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:Effects="clr-namespace:CleverDock.Effects"
-                    xmlns:Controls="clr-namespace:CleverDock.Controls">
+                    xmlns:Effects="clr-namespace:CleverDock.Effects">
     <Effects:BrightnessEffect x:Key="BrightnessEffect" Brightness="0.1" />
     <Style TargetType="{x:Type Grid}" x:Key="WindowGridStyle">
         <Setter Property="Canvas.Margin" Value="0,0,0,10"/>
