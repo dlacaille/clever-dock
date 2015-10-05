@@ -182,9 +182,9 @@ namespace CleverDock.ViewModels
             }
             if (Pinned && string.IsNullOrEmpty(ImagePath))
             {
-                var bitmap = IconManager.GetIcon(Path, VMLocator.Main.IconSize);
-                BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
+                var bitmap = IconManager.GetIcon(Path, VMLocator.Main.IconSize) ?? IconManager.UnknownIcon;
                 Icon = bitmap;
+                BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
             }
         }
 
