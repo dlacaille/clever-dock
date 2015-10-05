@@ -131,7 +131,6 @@
     <Compile Include="Behaviors\DockAutoHideBehavior.cs" />
     <Compile Include="Behaviors\DockIconBounceBehavior.cs" />
     <Compile Include="Behaviors\DockIconDragBehavior.cs" />
-    <Compile Include="Behaviors\DockIconMinimizeBehavior.cs" />
     <Compile Include="Models\ViewModels\ThemeViewModel.cs" />
     <Compile Include="Tools\FrameworkHelper.cs" />
     <Compile Include="Views\Converters\AdditionConverter.cs" />
