@@ -154,7 +154,6 @@
     <Compile Include="Models\ThemeSettingsModel.cs" />
     <Compile Include="Models\Patterns\ActionCommand.cs" />
     <Compile Include="Models\Patterns\SerializableModelBase.cs" />
-    <Compile Include="Models\ViewModels\ActionCommand.cs" />
     <Compile Include="Models\ViewModels\MainViewModel.cs" />
     <Compile Include="Interop\IconInterop.cs" />
     <Compile Include="Interop\WindowInterop.cs" />
