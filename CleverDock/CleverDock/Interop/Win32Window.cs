@@ -9,46 +9,9 @@ namespace CleverDock.Interop
 {
     public class Win32Window
     {
-        private Thread titleThread;
-        public event EventHandler TitleChanged;
-
         public Win32Window(IntPtr _hwnd)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Application.Current.Exit += Current_Exit;
-            });
-            // TODO: Title changed event.
             Hwnd = _hwnd;
-            titleThread = new Thread(() =>
-            {
-                string title = Title;
-                while(true)
-                {
-                    string newTitle = Title;
-                    if (newTitle != title)
-                    {
-                        if (TitleChanged != null)
-                            TitleChanged(this, new EventArgs());
-                        title = newTitle;
-                    }
-                    Thread.Sleep(100); // ~10ips
-                }
-
-            });
-            titleThread.Start();
-        }
-
-        void Current_Exit(object sender, ExitEventArgs e)
-        {
-            if (titleThread != null)
-                titleThread.Abort();
-        }
-
-        ~Win32Window()
-        {
-            if(titleThread != null)
-                titleThread.Abort();
         }
 
         public void Toggle()
