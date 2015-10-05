@@ -1,0 +1,20 @@
+{
+  "Version": "0.4.1",
+  "CollapseDuration": 0.2,
+  "DockHideDuration": 0.5,
+  "DockShowDuration": 0.3,
+  "DockHideDelay": 0.0,
+  "DockShowDelay": 0.0,
+  "HotspotHeight": 20,
+  "DockEdgeSpacing": 20,
+  "IconSize": 48,
+  "Theme": null,
+  "Icons": [],
+  "SaveAutomatically": true,
+  "ReserveScreenSpace": false,
+  "RemoveTaskbar": true,
+  "AutoHide": true,
+  "ShowWidgets": true,
+  "OuterIconWidth": 0,
+  "OuterIconHeight": 0
+}
