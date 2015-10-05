@@ -122,8 +122,9 @@ namespace CleverDock.ViewModels
                 if (IsInDesignMode)
                 {
                     _icons = new ObservableCollection<IconViewModel> {
-                        new IconViewModel(new IconModel { Name = "chrome.exe", Path = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }),
-                        new IconViewModel(new IconModel { Name = "sublime_text.exe", Path = @"C:\Program Files\Sublime Text 3\sublime_text.exe" }),
+                        new IconViewModel(new IconModel { Name = "explorer.exe", Path = @"explorer.exe" }),
+                        new IconViewModel(new IconModel { Name = "notepad.exe", Path = @"notepad.exe" }),
+                        new IconViewModel(new IconModel { Name = "unknown.exe", Path = @"unknown.exe" }),
                     };
                 }
                 if (_icons == null)
