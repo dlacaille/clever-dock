@@ -4,12 +4,9 @@ using CleverDock.Patterns;
 using CleverDock.ViewModels;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace CleverDock.Managers
@@ -50,7 +47,7 @@ namespace CleverDock.Managers
             // Add a hook to receive window events from Windows.
             HwndSource source = PresentationSource.FromVisual(Window) as HwndSource;
             source.AddHook(WndProc);
-            // These two lines are necessary to capture the HSHELL_FLASH events in the above hook.
+            // These two lines are necessary to capture the window events in the above hook.
             WindowInterop.RegisterShellHookWindow(handle);
             WindowInterop.RegisterWindowMessage("SHELLHOOK");
             SetWindowPosition();
@@ -86,11 +83,39 @@ namespace CleverDock.Managers
             if (wParam.ToInt32() == WindowInterop.HSHELL_FLASH)
             {
                 // Find the window with corresponding Hwnd and bounce it.
-                foreach (IconViewModel icon in VMLocator.Main.Icons)
-                    if (icon.Windows.Any(w => w.Hwnd == lParam))
-                        icon.AnimateIconBounce();
+                FindIcon(lParam)?.AnimateIconBounce();
+            }
+            // If windows sends the HSHELL_GETMINRECT event, a window in the taskbar is minimizing or maximizing.
+            if (wParam.ToInt32() == WindowInterop.HSHELL_GETMINRECT)
+            {
+                var param = Marshal.PtrToStructure<WindowInterop.MinRectParam>(lParam);
+                var icon = FindIcon(param.hWnd);
+                var point = icon.Element.TransformToVisual(Window).Transform(new Point(0, 0));
+                var rect = new WindowInterop.SRect
+                {
+                    Bottom = (short)(point.Y + Window.Top + icon.Element.ActualHeight),
+                    Left = (short)(point.X + Window.Left),
+                    Right = (short)(point.X + Window.Left + icon.Element.ActualWidth),
+                    Top = (short)(point.Y + Window.Top)
+                };
+                var newParam = new WindowInterop.MinRectParam
+                {
+                    hWnd = param.hWnd,
+                    Rect = rect
+                };
+                Marshal.StructureToPtr(newParam, lParam, true);
+                handled = true;
+                return new IntPtr(1);
             }
             return IntPtr.Zero;
+        }
+
+        public IconViewModel FindIcon(IntPtr hwnd)
+        {
+            foreach (IconViewModel icon in VMLocator.Main.Icons)
+                if (icon.Windows.Any(w => w.Hwnd == hwnd))
+                    return icon;
+            return null;
         }
 
         private void SetWindowPosition()

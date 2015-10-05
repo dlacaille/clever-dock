@@ -36,6 +36,28 @@ namespace CleverDock.Interop
         }
 
         /// <summary>
+        /// Rectangle used in HSHELL_GETMINRECT.
+        /// </summary>
+        public struct SRect
+        {
+            public short Left, Top, Right, Bottom;
+
+            public static implicit operator System.Windows.Rect(SRect r)
+            {
+                return new System.Windows.Rect(r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top);
+            }
+        }
+
+        /// <summary>
+        /// lParam for HSHELL_GETMINRECT.
+        /// </summary>
+        public struct MinRectParam
+        {
+            public IntPtr hWnd;
+            public SRect Rect;
+        }
+
+        /// <summary>
         /// Point structure used in GetCursorPos.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
@@ -321,6 +343,7 @@ namespace CleverDock.Interop
 
         #region RegisterShellHookWindow constants
         public const int HSHELL_FLASH = 0x8006;
+        public const int HSHELL_GETMINRECT = 0x0005;
         #endregion
 
         #region Methods
