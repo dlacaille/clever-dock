@@ -227,13 +227,15 @@ namespace CleverDock.Managers
         private bool isTaskBarWindow(IntPtr hwnd)
         {
             //long style = WindowInterop.GetWindowLongPtr(hwnd, WindowInterop.GWL_STYLE); // Get style.
-            if (//HasFlag(style, TARGETWINDOW) &&
-                WindowInterop.IsWindowVisible(hwnd))// &&
-                //WindowInvoke.GetParent(hwnd) == IntPtr.Zero)
+            if (/*HasFlag(style, TARGETWINDOW) &&*/
+                WindowInterop.IsWindowVisible(hwnd) /*&&
+                WindowInterop.GetParent(hwnd) == IntPtr.Zero*/)
             {
+                var window = new Win32Window(hwnd);
                 bool noOwner = WindowInterop.GetWindow(hwnd, WindowInterop.GW_OWNER) == IntPtr.Zero;
                 long exStyle = WindowInterop.GetWindowLongPtr(hwnd, WindowInterop.GWL_EXSTYLE); // Get extended style.
-                return noOwner && (exStyle & WS_EX_TOOLWINDOW) == 0;
+                bool isWin10AppFrame = window.ClassName == "ApplicationFrameWindow";
+                return noOwner && (exStyle & WS_EX_TOOLWINDOW) == 0 && !isWin10AppFrame;
             }
             return false;
         }
