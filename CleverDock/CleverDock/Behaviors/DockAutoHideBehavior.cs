@@ -1,11 +1,8 @@
 ﻿using CleverDock.Helpers;
 using CleverDock.Managers;
-using CleverDock.Tools;
+using CleverDock.Patterns;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Interactivity;
 using System.Windows.Media;
@@ -25,10 +22,21 @@ namespace CleverDock.Behaviors
             base.OnAttached();
             WindowManager.Manager.ActiveWindowRectChanged += Manager_ActiveWindowRectChanged;
             WindowManager.Manager.CursorPositionChanged += Manager_CursorPositionChanged;
+            VMLocator.Main.PropertyChanged += Main_PropertyChanged;
+        }
+
+        private void Main_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // If the dock is hidden an AutoHide is set to false, show it.
+            if (e.PropertyName == "AutoHide")
+                if (Hidden && !VMLocator.Main.AutoHide)
+                    Show();
         }
 
         void Manager_CursorPositionChanged(object sender, Handlers.CursorPosEventArgs e)
         {
+            if (!VMLocator.Main.AutoHide)
+                return;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (Hidden && MouseHotspot.Contains(WindowManager.Manager.CursorPosition))
@@ -38,6 +46,8 @@ namespace CleverDock.Behaviors
 
         void Manager_ActiveWindowRectChanged(object sender, Handlers.WindowRectEventArgs e)
         {
+            if (!VMLocator.Main.AutoHide)
+                return;
             Application.Current.Dispatcher.Invoke(() =>
             {
                 HideOrShowDock();
