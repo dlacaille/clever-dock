@@ -38,7 +38,7 @@
                         <i:Interaction.Behaviors>
                             <b:DockIconDragBehavior/>
                             <b:DockIconBounceBehavior/>
-                            <b:DockIconMinimizeBehavior/>
+                            <b:DockIconLoadedBehavior/>
                         </i:Interaction.Behaviors>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseLeftButtonUp">

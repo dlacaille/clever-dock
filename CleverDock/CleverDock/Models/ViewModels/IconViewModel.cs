@@ -190,7 +190,16 @@ namespace CleverDock.ViewModels
 
         #endregion
 
-        #region Properties
+        #region Utilities
+
+        /// <summary>
+        /// FrameworkElement reference set by DockIconLoadedBehavior.
+        /// </summary>
+        public FrameworkElement Element { get; set; }
+
+        #endregion
+
+        #region Binded Properties
 
         private ImageSource _icon;
         /// <summary>
