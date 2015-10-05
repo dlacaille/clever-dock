@@ -12,6 +12,17 @@ namespace CleverDock.Managers
 {
     public class IconManager
     {
+        private static BitmapImage unknownIcon = null;
+        public static BitmapSource UnknownIcon
+        {
+            get
+            {
+                if (unknownIcon == null)
+                    unknownIcon = new BitmapImage(new Uri("pack://application:,,,/CleverDock;component/Content/unknown.png"));
+                return unknownIcon;
+            }
+        }
+
         private static BitmapSource IconSource(IntPtr handle)
         {
             var result = Imaging.CreateBitmapSourceFromHIcon(handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());

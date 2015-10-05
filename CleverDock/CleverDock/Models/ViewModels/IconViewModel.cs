@@ -172,8 +172,9 @@ namespace CleverDock.ViewModels
             if (hasWindows)
             {
                 Win32Window window = Windows.First();
-                Text = StringUtils.LimitCharacters(window.Title, 40, 50);
-                var bitmap = IconManager.GetIcon(window.FileName, VMLocator.Main.IconSize);
+                Text = string.IsNullOrEmpty(window.Title) ? System.IO.Path.GetFileName(window.FileName) : window.Title;
+                Text = StringUtils.LimitCharacters(Text, 40, 50);
+                var bitmap = IconManager.GetIcon(window.FileName, VMLocator.Main.IconSize) ?? IconManager.UnknownIcon;
                 Icon = bitmap;
                 BlurredIcon = BitmapEffectHelper.GaussianBlur(bitmap, 2.5f);
                 ChildIcon = IconManager.GetAppIcon(window.Hwnd);

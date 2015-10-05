@@ -257,6 +257,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Effects\BrightnessEffect.fx" />
+    <Resource Include="Content\unknown.png" />
     <Resource Include="FodyWeavers.xml" />
     <None Include="Themes\FlatLight\bg.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
