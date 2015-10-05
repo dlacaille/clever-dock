@@ -256,7 +256,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Content\Chrome.png" />
     <Content Include="Content\Effects\BrightnessEffect.fx" />
     <Resource Include="FodyWeavers.xml" />
     <None Include="Themes\FlatLight\bg.png">
