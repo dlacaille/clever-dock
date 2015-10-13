@@ -1,7 +1,7 @@
 ﻿<Window x:Class="CleverDock.WidgetsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="WidgetsWindow" Height="100" Width="300"
+        Title="WidgetsWindow" Height="140" Width="300"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent">
     <Grid>
         <Label Name="Clock" Content="21:20" Style="{DynamicResource ClockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>

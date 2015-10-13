@@ -47,6 +47,7 @@ namespace CleverDock
             Dispatcher.Invoke(() =>
             {
                 SetDimensions();
+                SetTopmost();
             });
         }
 
@@ -106,7 +107,7 @@ namespace CleverDock
             {
                 // Uses interop to place the window at topmost position.
                 var hwnd = new WindowInteropHelper(this).Handle;
-                WindowInterop.SetWindowPos(hwnd, WindowInterop.HWND_TOPMOST, 0, 0, 0, 0, WindowInterop.SWP_NOMOVE | WindowInterop.SWP_NOSIZE);
+                WindowInterop.SetWindowPos(hwnd, WindowInterop.HWND_BOTTOM, 0, 0, 0, 0, WindowInterop.SWP_NOMOVE | WindowInterop.SWP_NOSIZE);
             });
         }
     }
