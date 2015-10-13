@@ -15,6 +15,8 @@ namespace CleverDock.Managers
     {
         public Window Window;
 
+        public WidgetsWindow WidgetsWindow { get; set; }
+
         private static DockManager manager;
         public static DockManager Manager
         {
@@ -51,6 +53,15 @@ namespace CleverDock.Managers
             WindowInterop.RegisterShellHookWindow(handle);
             WindowInterop.RegisterWindowMessage("SHELLHOOK");
             SetWindowPosition();
+            // Show the widgets window
+            ShowWidgets();
+        }
+
+        public void ShowWidgets()
+        {
+            if (WidgetsWindow == null)
+                WidgetsWindow = new WidgetsWindow();
+            WidgetsWindow.Show();
         }
 
         public void SetWorkingArea(bool reserveScrenSpace)
@@ -90,6 +101,8 @@ namespace CleverDock.Managers
             {
                 var param = Marshal.PtrToStructure<WindowInterop.MinRectParam>(lParam);
                 var icon = FindIcon(param.hWnd);
+                if (icon == null)
+                    return IntPtr.Zero;
                 var point = icon.Element.TransformToVisual(Window).Transform(new Point(0, 0));
                 var rect = new WindowInterop.SRect
                 {
@@ -112,10 +125,7 @@ namespace CleverDock.Managers
 
         public IconViewModel FindIcon(IntPtr hwnd)
         {
-            foreach (IconViewModel icon in VMLocator.Main.Icons)
-                if (icon.Windows.Any(w => w.Hwnd == hwnd))
-                    return icon;
-            return null;
+            return VMLocator.Main.Icons.FirstOrDefault(i => i.Windows.Any(w => w.Hwnd == hwnd));
         }
 
         private void SetWindowPosition()
