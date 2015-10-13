@@ -35,17 +35,17 @@ namespace CleverDock.Behaviors
             AssociatedObject.MouseLeave += AssociatedObject_MouseLeave;
         }
 
-        void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        void AssociatedObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             isMouseDown = true;
         }
 
-        void AssociatedObject_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        void AssociatedObject_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             isMouseDown = false;
         }
 
-        void AssociatedObject_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        void AssociatedObject_MouseLeave(object sender, MouseEventArgs e)
         {
             if (isMouseDown)
             {
@@ -84,8 +84,12 @@ namespace CleverDock.Behaviors
             itemsControl.ReleaseMouseCapture();
             itemsControl.MouseUp -= itemsControl_MouseUp;
             itemsControl.MouseMove -= itemsControl_MouseMove;
-            draggedIconWindow.Close();
-            draggedIconWindow = null;
+            var window = draggedIconWindow;
+            AnimationTools.FadeOut(0.2, window, 0, () =>
+            {
+                window.Close();
+                window = null;
+            });
             icon = null;
             placeholder = null;
         }
