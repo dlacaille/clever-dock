@@ -15,14 +15,14 @@ namespace CleverDock.Managers
         {
             IntPtr ptr = IntPtr.Zero;
             SystemInterop.RECT rect = new SystemInterop.RECT() { Left = left, Top = top, Right = right, Bottom = bottom };
-            SystemInterop.SystemParametersInfo(SystemInterop.SPI.SPI_SETWORKAREA, 0, ref rect, SystemInterop.SPIF.SPIF_CHANGE);
+            SystemInterop.SystemParametersInfo(SystemInterop.SPI.SPI_SETWORKAREA, 0, ref rect, SystemInterop.SPIF.SPIF_UPDATEINIFILE);
         }
 
         public static SystemInterop.RECT GetWorkingArea()
         {
             IntPtr ptr = IntPtr.Zero;
             SystemInterop.RECT rect = new SystemInterop.RECT();
-            SystemInterop.SystemParametersInfo(SystemInterop.SPI.SPI_GETWORKAREA, 0, ref rect, SystemInterop.SPIF.SPIF_CHANGE);
+            SystemInterop.SystemParametersInfo(SystemInterop.SPI.SPI_GETWORKAREA, 0, ref rect, SystemInterop.SPIF.SPIF_UPDATEINIFILE);
             return rect;
         }
     }
