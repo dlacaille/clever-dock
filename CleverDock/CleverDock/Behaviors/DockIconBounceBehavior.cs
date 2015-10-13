@@ -29,7 +29,7 @@ namespace CleverDock.Behaviors
             {
                 From = 0,
                 To = -30,
-                Duration = TimeSpan.FromSeconds(0.5),
+                Duration = TimeSpan.FromSeconds(1.2),
                 AutoReverse = true
             };
             translation.EasingFunction = new BounceEase
