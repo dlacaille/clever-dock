@@ -1,5 +1,4 @@
-﻿using CleverDock.Managers;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media.Animation;
 
 namespace CleverDock
