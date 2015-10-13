@@ -130,14 +130,16 @@ namespace CleverDock.Managers
                     if (windowCount != Windows.Count && WindowListChanged != null)
                         WindowListChanged(this, new EventArgs());
                     // Check active window
-                    IntPtr activeWindow = WindowInterop.GetForegroundWindow();
-                    if (ActiveWindow != activeWindow && ActiveWindowChanged != null && activeWindow != dockHwnd)
-                        ActiveWindowChanged(activeWindow, new EventArgs());
+                    IntPtr activeHwnd = WindowInterop.GetForegroundWindow();
+                    var activeWindow = new Win32Window(activeHwnd);
+                    var isDock = activeWindow.FileName == Process.GetCurrentProcess().MainModule.FileName;
+                    if (ActiveWindow != activeHwnd && ActiveWindowChanged != null && !isDock)
+                        ActiveWindowChanged(activeHwnd, new EventArgs());
                     // Check active window location
-                    if (activeWindow != IntPtr.Zero && activeWindow != dockHwnd)
+                    if (activeHwnd != IntPtr.Zero && !isDock)
                     {
                         WindowInterop.Rect windowRect = new WindowInterop.Rect();
-                        WindowInterop.GetWindowRect(activeWindow, ref windowRect);
+                        WindowInterop.GetWindowRect(activeHwnd, ref windowRect);
                         if (windowRect != ActiveWindowRect && ActiveWindowRectChanged != null)
                             ActiveWindowRectChanged(this, new WindowRectEventArgs(ActiveWindowRect = windowRect));
                     }
