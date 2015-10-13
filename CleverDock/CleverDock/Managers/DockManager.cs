@@ -55,7 +55,7 @@ namespace CleverDock.Managers
 
         public void SetWorkingArea(bool reserveScrenSpace)
         {
-            var reserved = reserveScrenSpace ? (int)Window.Height : 0;
+            var reserved = reserveScrenSpace ? 100 : 0;
             WorkAreaManager.SetWorkingArea(0, 0, ScreenHelper.ScreenWidth, ScreenHelper.ScreenHeight - reserved);
         }
 
