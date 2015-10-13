@@ -33,14 +33,14 @@
         </Setter>
     </Style>
     <Style TargetType="Label" x:Key="ClockStyle">
-        <Setter Property="Opacity" Value="0.7"/>
+        <Setter Property="Opacity" Value="0.8"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="40"/>
+        <Setter Property="FontSize" Value="56"/>
         <Setter Property="FontFamily" Value="Segoe UI Light"/>
-        <Setter Property="Grid.Margin" Value="30,10"/>
+        <Setter Property="Grid.Margin" Value="30,0"/>
         <Setter Property="Label.Effect">
             <Setter.Value>
-                <DropShadowEffect Opacity="0.4" Direction="-90" BlurRadius="0" ShadowDepth="1" />
+                <DropShadowEffect Opacity="0.7" Direction="-90" BlurRadius="0" ShadowDepth="1" />
             </Setter.Value>
         </Setter>
     </Style>
