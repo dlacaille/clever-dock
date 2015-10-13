@@ -36,9 +36,9 @@ namespace CleverDock.Managers
             try
             {
                 if (hIcon == IntPtr.Zero)
-                    hIcon = WI.SendMessage(hwnd, WI.WM_GETICON, WI.ICON_SMALL2, 0);
+                    hIcon = WI.SendMessage(hwnd, WI.WM.GETICON, WI.ICON_SMALL2, 0);
                 if (hIcon == IntPtr.Zero)
-                    hIcon = WI.SendMessage(hwnd, WI.WM_GETICON, WI.ICON_BIG, 0);
+                    hIcon = WI.SendMessage(hwnd, WI.WM.GETICON, WI.ICON_BIG, 0);
                 if (hIcon == IntPtr.Zero)
                     hIcon = WI.GetClassLongPtr(hwnd, WI.GCL_HICON);
                 if (hIcon == IntPtr.Zero)

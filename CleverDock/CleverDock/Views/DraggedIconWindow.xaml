@@ -8,6 +8,6 @@
         WindowStyle="None" AllowsTransparency="True" HorizontalAlignment="Center" VerticalAlignment="Center"
         Background="Transparent">
     <Grid>
-        <Image Source="{Binding Icon}" Width="{Binding Main.IconSize, Source={StaticResource Locator}}" Height="{Binding Main.IconSize, Source={StaticResource Locator}}" />
+        <Image Source="{Binding Icon}" />
     </Grid>
 </Window>

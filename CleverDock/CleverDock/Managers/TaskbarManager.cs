@@ -45,7 +45,6 @@ namespace CleverDock.Managers
             var possibleTitles = new string[] { "Start", "Démarrer" };
             if (WindowInterop.GetWindowText(Hwnd, buffer, buffer.Capacity) > 0)
             {
-                Console.WriteLine(buffer);
                 if (possibleTitles.Contains(buffer.ToString()))
                 {
                     vistaStartMenuWnd = Hwnd;
