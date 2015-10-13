@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Text;
-using System.Threading;
-using CleverDock.Interop;
 using CleverDock.Managers;
-using System.Windows;
 
 namespace CleverDock.Interop
 {
@@ -25,6 +22,8 @@ namespace CleverDock.Interop
         public void Minimize()
         {
             WindowInterop.ShowWindow(Hwnd, WindowInterop.ShowStyle.Minimize);
+            if (IsActive)
+                WindowManager.Manager.ActiveWindow = IntPtr.Zero;
         }
 
         public void Restore()
@@ -36,7 +35,7 @@ namespace CleverDock.Interop
 
         public void Close()
         {
-            WindowInterop.SendMessage(Hwnd, WindowInterop.WM_CLOSE, 0, 0);
+            WindowInterop.SendMessage(Hwnd, WindowInterop.WM.CLOSE, 0, 0);
         }
 
         public IntPtr Hwnd { get; set; }
