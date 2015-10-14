@@ -32,8 +32,7 @@ namespace CleverDock.Managers
         private const long WS_EX_WINDOWEDGE = 0x00000100L;
         private const long WS_EX_DLGMODALFRAME = 0x00000001L;
         private const long WS_EX_OVERLAPPEDWINDOW = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
-
-        private Thread checkMouseThread;
+        
         private Thread checkWindowsThread;
         private Thread checkWorkingAreaThread;
         public event EventHandler WorkingAreaChanged;
@@ -42,10 +41,8 @@ namespace CleverDock.Managers
         public event EventHandler<WindowEventArgs> WindowRemoved;
         public event EventHandler<WindowRectEventArgs> ActiveWindowRectChanged;
         public event EventHandler ActiveWindowChanged;
-        public event EventHandler<CursorPosEventArgs> CursorPositionChanged;
         public IntPtr ActiveWindow;
         private IntPtr dockHwnd;
-        public Point CursorPosition;
         public Rect ActiveWindowRect;
 
         private static WindowManager manager;
@@ -102,19 +99,6 @@ namespace CleverDock.Managers
                 }
             });
             checkWorkingAreaThread.Start();
-            checkMouseThread = new Thread(() =>
-            {
-                WindowInterop.Point cPos;
-                while (true)
-                {
-                    // Check current cursor position
-                    WindowInterop.GetCursorPos(out cPos);
-                    if (CursorPosition != cPos && CursorPositionChanged != null)
-                        CursorPositionChanged(this, new CursorPosEventArgs(CursorPosition = cPos));
-                    Thread.Sleep(15); // ~66ips
-                }
-            });
-            checkMouseThread.Start();
             checkWindowsThread = new Thread(() =>
             {
                 while (true)
@@ -155,8 +139,6 @@ namespace CleverDock.Managers
                 checkWorkingAreaThread.Abort();
             if (checkWindowsThread != null)
                 checkWindowsThread.Abort();
-            if (checkMouseThread != null)
-                checkMouseThread.Abort();
         }
 
         void WindowManager_ActiveWindowChanged(object sender, EventArgs e)
@@ -236,8 +218,8 @@ namespace CleverDock.Managers
                 var window = new Win32Window(hwnd);
                 bool noOwner = WindowInterop.GetWindow(hwnd, WindowInterop.GW_OWNER) == IntPtr.Zero;
                 long exStyle = WindowInterop.GetWindowLongPtr(hwnd, WindowInterop.GWL_EXSTYLE); // Get extended style.
-                bool isWin10AppFrame = window.ClassName == "ApplicationFrameWindow";
-                return noOwner && (exStyle & WS_EX_TOOLWINDOW) == 0 && !isWin10AppFrame;
+                bool isWin10App = window.ClassName == "ApplicationFrameWindow";
+                return noOwner && (exStyle & WS_EX_TOOLWINDOW) == 0 && !isWin10App;
             }
             return false;
         }

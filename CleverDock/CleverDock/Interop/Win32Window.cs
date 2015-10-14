@@ -35,7 +35,7 @@ namespace CleverDock.Interop
 
         public void Close()
         {
-            WindowInterop.SendMessage(Hwnd, WindowInterop.WM.CLOSE, 0, 0);
+            WindowInterop.SendMessage(Hwnd, WindowMessage.CLOSE, 0, 0);
         }
 
         public IntPtr Hwnd { get; set; }

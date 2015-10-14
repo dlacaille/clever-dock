@@ -132,11 +132,14 @@
     <Compile Include="Behaviors\DockIconBounceBehavior.cs" />
     <Compile Include="Behaviors\DockIconDragBehavior.cs" />
     <Compile Include="Behaviors\DockIconLoadedBehavior.cs" />
+    <Compile Include="Handlers\MouseButtonEventArgs.cs" />
+    <Compile Include="Handlers\MouseMoveEventArgs.cs" />
+    <Compile Include="Interop\WindowMessage.cs" />
+    <Compile Include="Managers\MouseManager.cs" />
     <Compile Include="Models\ViewModels\ThemeViewModel.cs" />
     <Compile Include="Tools\FrameworkHelper.cs" />
     <Compile Include="Views\Converters\AdditionConverter.cs" />
     <Compile Include="Content\Effects\BrightnessEffect.cs" />
-    <Compile Include="Handlers\CursorPosEventArgs.cs" />
     <Compile Include="Handlers\ThemeEventArgs.cs" />
     <Compile Include="Handlers\WindowEventArgs.cs" />
     <Compile Include="Handlers\WindowRectEventArgs.cs" />

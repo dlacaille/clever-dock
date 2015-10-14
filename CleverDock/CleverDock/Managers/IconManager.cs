@@ -7,6 +7,7 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using WI = CleverDock.Interop.WindowInterop;
 using II = CleverDock.Interop.IconInterop;
+using CleverDock.Interop;
 
 namespace CleverDock.Managers
 {
@@ -36,9 +37,9 @@ namespace CleverDock.Managers
             try
             {
                 if (hIcon == IntPtr.Zero)
-                    hIcon = WI.SendMessage(hwnd, WI.WM.GETICON, WI.ICON_SMALL2, 0);
+                    hIcon = WI.SendMessage(hwnd, WindowMessage.GETICON, WI.ICON_SMALL2, 0);
                 if (hIcon == IntPtr.Zero)
-                    hIcon = WI.SendMessage(hwnd, WI.WM.GETICON, WI.ICON_BIG, 0);
+                    hIcon = WI.SendMessage(hwnd, WindowMessage.GETICON, WI.ICON_BIG, 0);
                 if (hIcon == IntPtr.Zero)
                     hIcon = WI.GetClassLongPtr(hwnd, WI.GCL_HICON);
                 if (hIcon == IntPtr.Zero)

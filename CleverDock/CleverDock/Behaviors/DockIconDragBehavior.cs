@@ -2,6 +2,7 @@
 using CleverDock.Patterns;
 using CleverDock.Tools;
 using CleverDock.ViewModels;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,9 +18,10 @@ namespace CleverDock.Behaviors
         private ItemsControl itemsControl;
         private IconViewModel icon;
         private IconViewModel placeholder;
+        private Point mouseStart;
         private double mouseX, mouseY;
 
-        private Panel Panel 
+        private Panel Panel
         {
             get
             {
@@ -32,11 +34,30 @@ namespace CleverDock.Behaviors
             base.OnAttached();
             AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
             AssociatedObject.MouseLeftButtonUp += AssociatedObject_MouseLeftButtonUp;
+            AssociatedObject.MouseMove += AssociatedObject_MouseMove;
             AssociatedObject.MouseLeave += AssociatedObject_MouseLeave;
+        }
+
+        private void AssociatedObject_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DetachIcon();
+        }
+
+        private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
+        {
+            var pos = e.GetPosition(AssociatedObject);
+            if (Distance(mouseStart, pos) > 10)
+                DetachIcon();
+        }
+
+        private double Distance(Point a, Point b)
+        {
+            return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
         }
 
         void AssociatedObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            mouseStart = e.GetPosition(AssociatedObject);
             isMouseDown = true;
         }
 
@@ -45,12 +66,14 @@ namespace CleverDock.Behaviors
             isMouseDown = false;
         }
 
-        void AssociatedObject_MouseLeave(object sender, MouseEventArgs e)
+        void DetachIcon()
         {
             if (isMouseDown)
             {
+                AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
+                AssociatedObject.MouseLeave -= AssociatedObject_MouseLeave;
                 itemsControl = FrameworkHelper.GetParent<ItemsControl>(AssociatedObject);
-                WindowManager.Manager.CursorPositionChanged += Manager_CursorPositionChanged;
+                MouseManager.Manager.MouseMoved += Manager_MouseMoved;
                 icon = (IconViewModel)AssociatedObject.DataContext;
                 VMLocator.Main.Icons.Remove(icon);
                 if (draggedIconWindow == null)
@@ -80,7 +103,7 @@ namespace CleverDock.Behaviors
             }
             // Clean up events and variables.
             isMouseDown = false;
-            WindowManager.Manager.CursorPositionChanged -= Manager_CursorPositionChanged;
+            MouseManager.Manager.MouseMoved -= Manager_MouseMoved;
             itemsControl.ReleaseMouseCapture();
             itemsControl.MouseUp -= itemsControl_MouseUp;
             itemsControl.MouseMove -= itemsControl_MouseMove;
@@ -92,6 +115,11 @@ namespace CleverDock.Behaviors
             });
             icon = null;
             placeholder = null;
+        }
+
+        private bool IsInElement(double x, double y)
+        {
+            return x >= 0 && x <= AssociatedObject.ActualWidth && y >= 0 && y <= AssociatedObject.ActualHeight;
         }
 
         private bool IsInDock(double x, double y)
@@ -141,7 +169,7 @@ namespace CleverDock.Behaviors
             return index - 1;
         }
 
-        void Manager_CursorPositionChanged(object sender, Handlers.CursorPosEventArgs e)
+        private void Manager_MouseMoved(object sender, Handlers.MouseMoveEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {

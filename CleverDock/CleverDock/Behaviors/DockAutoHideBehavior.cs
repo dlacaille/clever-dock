@@ -21,8 +21,19 @@ namespace CleverDock.Behaviors
         {
             base.OnAttached();
             WindowManager.Manager.ActiveWindowRectChanged += Manager_ActiveWindowRectChanged;
-            WindowManager.Manager.CursorPositionChanged += Manager_CursorPositionChanged;
+            MouseManager.Manager.MouseMoved += Manager_MouseMoved;
             VMLocator.Main.PropertyChanged += Main_PropertyChanged;
+        }
+
+        private void Manager_MouseMoved(object sender, Handlers.MouseMoveEventArgs e)
+        {
+            if (!VMLocator.Main.AutoHide)
+                return;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (Hidden && MouseHotspot.Contains(e.CursorPosition))
+                    Show();
+            });
         }
 
         private void Main_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -31,17 +42,6 @@ namespace CleverDock.Behaviors
             if (e.PropertyName == "AutoHide")
                 if (Hidden && !VMLocator.Main.AutoHide)
                     Show();
-        }
-
-        void Manager_CursorPositionChanged(object sender, Handlers.CursorPosEventArgs e)
-        {
-            if (!VMLocator.Main.AutoHide)
-                return;
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (Hidden && MouseHotspot.Contains(WindowManager.Manager.CursorPosition))
-                    Show();
-            });
         }
 
         void Manager_ActiveWindowRectChanged(object sender, Handlers.WindowRectEventArgs e)

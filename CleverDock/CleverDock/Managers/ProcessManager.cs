@@ -4,7 +4,7 @@ using CleverDock.Interop;
 
 namespace CleverDock.Managers
 {
-    class ProcessManager
+    public class ProcessManager
     {
         // Vista +
         public static string GetExecutablePath(int dwProcessId)
