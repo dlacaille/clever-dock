@@ -4,9 +4,7 @@ CleverDock
 A simple dock for Windows which features extensive theming capabilities and blurry 
 reflections. The dock is fully compatible with Windows Vista/7/8/8.1.
 
-Windows 10 compatibility issues
--------------------------------
-I am currently fixing some bugs on Windows 10. Version 0.5.0 should take care of them and will be released shortly.
+***I am currently fixing some bugs on Windows 10. Version 0.5.0 should take care of them and will be released shortly.***
 
 This software is still an early alpha and may contain bugs.
 
