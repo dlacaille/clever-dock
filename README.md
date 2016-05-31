@@ -4,7 +4,7 @@ CleverDock
 A simple dock for Windows which features extensive theming capabilities and blurry 
 reflections. The dock is fully compatible with Windows Vista/7/8/8.1.
 
-***I have stopped maintaning this project. I lost the motivation since a lot of the features I wanted (fluid animations when dropping an icon, window-peek on icons hover, overall performance) were not possible on WPF. I also end up losing a lot of time trying to comprehend XAML layouts and intricacies. I am currently trying to re-create this project using C++ and DirectComposition. Hopefully we will have our modern, fast and beautiful Windows dock soon enough!***
+***I have stopped maintaning this project. I lost the motivation since a lot of the features I wanted (fluid physics for icons a la Kibadock, window-peek on icons hover, overall performance) were not possible on WPF. I also end up losing a lot of time trying to comprehend XAML layouts and intricacies and doing interop. I am currently trying to re-create this project using C++ and DirectComposition. Hopefully we will have our modern, fast and beautiful Windows dock soon enough!***
 
 This software is still an early alpha and may contain bugs.
 
