@@ -57,15 +57,15 @@ How to install
 
 Troubleshooting
 ---------------
-#####The dock worked once but now it crashes everytime i try to open it.
+##### The dock worked once but now it crashes everytime i try to open it.
 > There may be an issue with your configuration file. Try to erase config.json and restart the dock.
 
-#####I closed the dock from task manager / The dock crashed and now I have no task bar.
+##### I closed the dock from task manager / The dock crashed and now I have no task bar.
 > Start CleverDock using the task manager (in the File menu and then Start). Then right-click on CleverDock and click "Exit CleverDock"
 > If that did not work, open the task manager and close explorer, then use the file menu to start explorer.exe again.
 
-#####CleverDock can not start, it crashes as soon as I try to open it.
+##### CleverDock can not start, it crashes as soon as I try to open it.
 > You may not have .Net Framework 4.5. Install it using [this link.](http://www.microsoft.com/fr-ca/download/details.aspx?id=30653)<br />
 
-#####I can not restore/minimize/close a specific application on the dock.
+##### I can not restore/minimize/close a specific application on the dock.
 > The app you can't use may have been started as an administrator. The dock must have administrator rights to control these processes. Simply exit CleverDock then start it again by right clicking and selecting *Run as administrator*. You can also check the box *Run this program as an administrator* in the executable's properties window in the *Compatibility* tab.
