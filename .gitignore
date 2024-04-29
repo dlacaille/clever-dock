@@ -1,2 +1,4 @@
-CleverDock/CleverDock/obj/
-CleverDock/CleverDock/bin/
+obj
+bin
+.idea
+packages

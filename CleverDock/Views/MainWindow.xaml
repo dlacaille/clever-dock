@@ -1,0 +1,116 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:m="clr-namespace:CleverDock.Managers"
+        xmlns:b="clr-namespace:CleverDock.Behaviors"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        x:Class="CleverDock.MainWindow" Title="CleverDock" Name="CleverDock"
+        Width="{Binding ElementName=DockIcons, Path=ActualWidth, Converter={StaticResource Addition}, ConverterParameter=30}"
+        Height="140" Visibility="Visible" WindowStyle="None" AllowsTransparency="True" Topmost="True"
+        ShowInTaskbar="False"
+        Background="Transparent" DataContext="{Binding Main, Source={StaticResource Locator}}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction
+                Command="{Binding Source={x:Static m:DockManager.Manager}, Path=WindowLoadedCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid Style="{DynamicResource WindowGridStyle}" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+        <i:Interaction.Behaviors>
+            <b:DockAutoHideBehavior />
+        </i:Interaction.Behaviors>
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <TranslateTransform Y="0" x:Name="DockTransform" />
+            </TransformGroup>
+        </Grid.RenderTransform>
+        <Grid Width="{Binding ElementName=DockIcons, Path=ActualWidth}" Style="{DynamicResource BackgroundGridStyle}">
+            <Rectangle x:Name="BackgroundLeft" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                       Style="{DynamicResource BackgroundLeftStyle}" />
+            <Rectangle x:Name="BackgroundCenter" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                       Style="{DynamicResource BackgroundCenterStyle}" />
+            <Rectangle x:Name="BackgroundRight" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Style="{DynamicResource BackgroundRightStyle}" />
+        </Grid>
+        <ItemsControl x:Name="DockIcons" ItemsSource="{Binding Icons}" HorizontalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel x:Name="IconStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid x:Name="ItemGrid" Background="#01000000">
+                        <i:Interaction.Behaviors>
+                            <b:DockIconDragBehavior />
+                            <b:DockIconBounceBehavior />
+                            <b:DockIconLoadedBehavior />
+                        </i:Interaction.Behaviors>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                <i:InvokeCommandAction
+                                    Command="{Binding Source={x:Static m:DockManager.Manager}, Path=LeftMouseUpCommand}"
+                                    CommandParameter="{Binding}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                <i:InvokeCommandAction
+                                    Command="{Binding Source={x:Static m:DockManager.Manager}, Path=LeftMouseDownCommand}"
+                                    CommandParameter="{Binding}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <Grid Style="{DynamicResource IconImageMirrorContainerStyle}">
+                            <Image Source="{Binding BlurredIcon}" Style="{DynamicResource IconImageMirrorStyle}"
+                                   Height="{Binding ElementName=Icon, Path=ActualHeight, Converter={StaticResource Addition}, ConverterParameter=6}"
+                                   Width="{Binding ElementName=Icon, Path=ActualWidth, Converter={StaticResource Addition}, ConverterParameter=6}" />
+                        </Grid>
+                        <Image Source="{Binding Icon}" Name="Icon" RenderOptions.EdgeMode="Aliased"
+                               Style="{DynamicResource IconImageStyle}"
+                               Height="{Binding Main.IconSize, Source={StaticResource Locator}}"
+                               Width="{Binding Main.IconSize, Source={StaticResource Locator}}">
+                            <Image.RenderTransform>
+                                <TransformGroup>
+                                    <TranslateTransform Y="0" x:Name="ImageTransform" />
+                                </TransformGroup>
+                            </Image.RenderTransform>
+                        </Image>
+                        <Rectangle Style="{DynamicResource IconLightStyle}"
+                                   Visibility="{Binding Path=IsActive, Converter={StaticResource BoolToVis}}" />
+                        <Label UseLayoutRounding="True" Content="{Binding Text}" HorizontalAlignment="Center"
+                               VerticalAlignment="Top" Style="{DynamicResource IconTextStyle}" />
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Exit CleverDock" Command="{Binding ExitCommand}" />
+                                <MenuItem Name="SelectTheme" Header="Select Theme" ItemsSource="{Binding Themes}">
+                                    <MenuItem.ItemContainerStyle>
+                                        <Style TargetType="MenuItem">
+                                            <Setter Property="Header" Value="{Binding Name}" />
+                                            <Setter Property="Command" Value="{Binding LoadCommand}" />
+                                        </Style>
+                                    </MenuItem.ItemContainerStyle>
+                                </MenuItem>
+                                <MenuItem Name="ReserveScreen"
+                                          IsChecked="{Binding Main.ReserveScreenSpace, Source={StaticResource Locator}}"
+                                          Header="Reserve screen edge" IsCheckable="True" />
+                                <MenuItem Name="AutoHide"
+                                          IsChecked="{Binding Main.AutoHide, Source={StaticResource Locator}}"
+                                          Header="AutoHide" IsCheckable="True" />
+                                <MenuItem Name="RemoveTaskbar"
+                                          IsChecked="{Binding Main.RemoveTaskbar, Source={StaticResource Locator}}"
+                                          Header="Remove Windows taskbar" IsCheckable="True" />
+                                <Separator />
+                                <MenuItem Name="MenuPin" IsChecked="{Binding Pinned}" Header="Pin To Dock"
+                                          IsCheckable="True" />
+                                <MenuItem Name="MenuMinimize" IsEnabled="{Binding CanMinimize}" Header="Minimize"
+                                          Command="{Binding MinimizeCommand}" />
+                                <MenuItem Name="MenuRestore" IsEnabled="{Binding CanRestore}" Header="Restore"
+                                          Command="{Binding RestoreCommand}" />
+                                <MenuItem Name="MenuClose" IsEnabled="{Binding IsActive}" Header="Close"
+                                          Command="{Binding CloseCommand}" />
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>
